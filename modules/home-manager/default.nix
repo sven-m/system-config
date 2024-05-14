@@ -26,7 +26,10 @@
     # used for more complex zsh configuration
     initExtra = "source ~/.config/zshrc_extra";
   };
-  programs.neovim.enable = true;
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+  };
   programs.bat.enable = true;
   programs.bat.config.theme = "TwoDark";
   programs.eza.enable = true;

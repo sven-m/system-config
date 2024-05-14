@@ -14,9 +14,9 @@
     gs = "git status";
     gl = "git lg1";
     gll = "git lg2";
-    nixswitchflake = "nix run nix-darwin -- switch --flake";
-    nixswitchmain = "nixswitchflake github:sven-m/system-config";
-    nixswitchlocal = "nixswitchflake ~/src/system-config";
+    nix-darwin-switch = "nix run nix-darwin -- switch";
+    ndsm = "nix-darwin-switch --flake github:sven-m/system-config";
+    ndsl = "nix-darwin-switch --flake ~/src/system-config";
   };
   programs.zsh = {
     enable = true;
@@ -44,24 +44,22 @@
   programs.ssh = {
     enable = true;
   };
-  home = {
-    file = {
-      # These are named "*_extra" because home-manager already puts the normal file in place
-      ".config/git/config_extra".source = ./dotfiles/gitconfig;
-      ".config/zshrc_extra".source = ./dotfiles/zshrc;
-      ".ssh/config".source = ./dotfiles/ssh_config;
-      ".config/alacritty/alacritty.toml".source = ./dotfiles/alacritty.toml;
-      ".config/nvim/init.lua".source = ./dotfiles/nvim/init.lua;
-      "./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
-        source = ./dotfiles/Preferences.sublime-settings;
-      };
+  home.file = {
+    # These are named "*_extra" because home-manager already puts the normal file in place
+    ".config/git/config_extra".source = ./dotfiles/gitconfig;
+    ".config/zshrc_extra".source = ./dotfiles/zshrc;
+    ".ssh/config".source = ./dotfiles/ssh_config;
+    ".config/alacritty/alacritty.toml".source = ./dotfiles/alacritty.toml;
+    ".config/nvim/init.lua".source = ./dotfiles/nvim/init.lua;
+    "./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
+      source = ./dotfiles/Preferences.sublime-settings;
     };
-    activation = {
-      copyAppSymLinks = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        rm -rf "$HOME/Applications/NixLaunchPadFix"
-        mkdir "$HOME/Applications/NixLaunchPadFix"
-        cp -P "$HOME/Applications/Home Manager Apps"/*.app "$HOME/Applications/NixLaunchPadFix"
-      '';
-    };
+  };
+  home.activation = {
+    copyAppSymLinks = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      rm -rf "$HOME/Applications/NixLaunchPadFix"
+      mkdir "$HOME/Applications/NixLaunchPadFix"
+      cp -P "$HOME/Applications/Home Manager Apps"/*.app "$HOME/Applications/NixLaunchPadFix"
+    '';
   };
 }

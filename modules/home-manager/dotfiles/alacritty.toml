@@ -11,5 +11,8 @@ bindings = [
   { key = "Left",  mods = "Alt", chars = "\u001BB" },
 ]
 
+[selection]
+save_to_clipboard = true
+
 [window]
 dimensions = { columns = 120, lines = 40 }

@@ -6,7 +6,11 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
 
 Run the following command to apply the configuration on your local system:
 ```sh
+# main branch
 nix run nix-darwin -- switch --flake github:sven-m/system-config
+
+# specific branch
+nix run nix-darwin -- switch --flake 'github:sven-m/system-config?ref=<branch>'
 ```
 
 ## Local development

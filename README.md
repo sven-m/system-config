@@ -4,10 +4,9 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
 
 ## Installation
 
-Run the following command to apply the configuration on your local system:
+Run the following command to apply the configuration on the local system:
 ```sh
-# main branch
-nix run nix-darwin -- switch --flake github:sven-m/system-config
+nix run nix-darwin -- switch --flake github:sven-m/system-config#sven-mbp
 ```
 
 ## Local development

@@ -12,6 +12,8 @@
   };
   home.shellAliases = {
     gs = "git status";
+    gl = "git lg1";
+    gll = "git lg2";
     nixswitchflake = "nix run nix-darwin -- switch --flake";
     nixswitchmain = "nixswitchflake github:sven-m/system-config";
     nixswitchlocal = "nixswitchflake ~/src/system-config";

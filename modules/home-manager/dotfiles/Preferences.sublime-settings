@@ -1,0 +1,5 @@
+{
+	"rulers": [80, 100],
+	"update_check": false,
+	"draw_white_space": ["all"],
+}

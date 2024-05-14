@@ -27,6 +27,7 @@
       "spotify"
       "1password"
       "android-studio"
+      "google-drive"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;
@@ -54,14 +55,19 @@
   security.pam.enableSudoTouchIdAuth = true;
   system.defaults.finder.AppleShowAllExtensions = true;
   system.defaults.finder._FXShowPosixPathInTitle = true;
-  system.defaults.NSGlobalDomain.InitialKeyRepeat = 14;
-  system.defaults.NSGlobalDomain.KeyRepeat = 1;
+  system.defaults.NSGlobalDomain = {
+    InitialKeyRepeat = 14;
+    KeyRepeat = 1;
+    NSAutomaticCapitalizationEnabled = false;
+    NSAutomaticPeriodSubstitutionEnabled = false;
+  };
   system.defaults.dock.mineffect = "scale";
   system.defaults.dock.mru-spaces = false;
   system.defaults.dock.orientation = "left";
   system.defaults.dock.showhidden = true;
   system.defaults.finder.FXPreferredViewStyle = "Nlsv";
   system.defaults.finder.ShowStatusBar = true;
+  system.defaults.finder.FXEnableExtensionChangeWarning = false;
   system.defaults.menuExtraClock.ShowSeconds = true;
   system.defaults.menuExtraClock.ShowDayOfWeek = true;
   networking.computerName = "sven-mbp";

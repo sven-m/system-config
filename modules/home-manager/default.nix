@@ -36,11 +36,11 @@
       include = { path = "~/.config/git/config_extra"; };
     };
   };
-  home.file.".config/git/config_extra".source = ./dotfiles/git/config;
+  home.file.".config/git/config_extra".source = ./dotfiles/gitconfig;
   programs.ssh = {
     enable = true;
   };
-  home.file.".ssh/config".source = ./dotfiles/ssh/config;
+  home.file.".ssh/config".source = ./dotfiles/ssh_config;
   home.file.".config/alacritty/alacritty.toml".source = ./dotfiles/alacritty.toml;
   home.file.".config/zshrc_extra".source = ./dotfiles/zshrc;
   home.file.".config/nvim/init.lua".source = ./dotfiles/nvim/init.lua;

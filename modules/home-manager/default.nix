@@ -15,8 +15,8 @@
     gl = "git lg1";
     gll = "git lg2";
     nix-darwin-switch = "nix run nix-darwin -- switch";
-    ndsm = "nix-darwin-switch --flake github:sven-m/system-config";
-    ndsl = "nix-darwin-switch --flake ~/src/system-config";
+    ndsmain = "nix-darwin-switch --flake github:sven-m/system-config#sven-mbp";
+    ndslocal = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
   };
   programs.zsh = {
     enable = true;

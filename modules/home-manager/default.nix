@@ -12,7 +12,7 @@
   };
   home.shellAliases = {
     gs = "git status";
-    nixswitch = "nix run nix-darwin -- switch --flake github:sven-m/system-config";
+    nixswitch = "nix run nix-darwin -- switch --flake";
   };
   programs.zsh = {
     enable = true;

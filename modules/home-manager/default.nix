@@ -1,4 +1,8 @@
-{pkgs, lib, ...}: {
+{pkgs, lib, ...}:
+let
+  android_home = "$HOME/Library/Android/sdk";
+in
+{
   home.stateVersion = "23.11";
   home.packages = with pkgs; [ 
     coreutils
@@ -9,7 +13,14 @@
   home.sessionVariables = {
     PAGER = "less";
     CLICOLOR = "1";
+    ANDROID_HOME = "${android_home}";
   };
+  home.sessionPath = [
+    "${android_home}/cmdline-tools/latest/bin"
+    "${android_home}/build-tools/35.0.0-rc3/"
+    "${android_home}/platform-tools"
+    "${android_home}/emulator"
+  ];
   home.shellAliases = {
     gs = "git status";
     gl = "git lg1";

@@ -1,10 +1,10 @@
-{ config, lib, pkgs, nixpkgs-unstable, ...}: {
+{ config, lib, pkgs, pkgs-unstable, ...}: {
   home.stateVersion = "23.11";
-  home.packages = with pkgs; [ 
-    coreutils
-    less
-    ipatool
-    jdk22
+  home.packages = [ 
+    pkgs.coreutils
+    pkgs.less
+    pkgs.ipatool
+    pkgs-unstable.jdk22
   ];
 
   home.sessionVariables = {
@@ -19,6 +19,9 @@
     "${ANDROID_HOME}/emulator"
   ];
   home.shellAliases = {
+    ll = "eza -l";
+    la = "eza -a";
+    lla = "eza -la";
     gs = "git status";
     gl = "git lg1";
     gll = "git lg2";
@@ -26,12 +29,15 @@
     ndsmain = "nix-darwin-switch --flake github:sven-m/system-config#sven-mbp";
     ndslocal = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
   };
-  programs.alacritty.enable = true;
+  programs.alacritty = {
+    enable = true;
+    package = pkgs-unstable.alacritty;
+  };
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    autosuggestion.enable = true;
+    enableAutosuggestions = true;
     # used for more complex zsh configuration
     initExtra = "source ~/.config/zshrc_extra";
   };
@@ -41,7 +47,11 @@
   };
   programs.bat.enable = true;
   programs.bat.config.theme = "TwoDark";
-  programs.eza.enable = true;
+  programs.eza = {
+    enable = true;
+    git = true;
+    icons = true;
+  };
   programs.git = {
     enable = true;
     diff-so-fancy = {

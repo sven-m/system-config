@@ -10,9 +10,11 @@
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, ... }: {
+  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, ... }:
+    let system = "aarch64-darwin"; in
+  {
     darwinConfigurations.sven-mbp = darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
+      inherit system;
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -28,7 +30,10 @@
             ];
           };
           home-manager.extraSpecialArgs = {
-            inherit nixpkgs-unstable;
+            pkgs-unstable = import nixpkgs-unstable {
+              inherit system;
+              config.allowUnfree = true;
+            };
           };
         }
       ];

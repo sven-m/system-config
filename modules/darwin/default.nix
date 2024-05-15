@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   users.users.sven.home = "/Users/sven";
   environment.shells = [ pkgs.bash pkgs.zsh ];
   environment.loginShell = pkgs.zsh;
@@ -71,6 +71,6 @@
   system.defaults.menuExtraClock.ShowSeconds = true;
   system.defaults.menuExtraClock.ShowDayOfWeek = true;
   networking.computerName = "sven-mbp";
-  networking.hostName = "sven-mbp";
+  networking.hostName = config.networking.computerName;
   system.stateVersion = 4;
 }

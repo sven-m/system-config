@@ -1,25 +1,22 @@
-{pkgs, lib, ...}:
-let
-  android_home = "$HOME/Library/Android/sdk";
-in
-{
+{ config, lib, pkgs, nixpkgs-unstable, ...}: {
   home.stateVersion = "23.11";
   home.packages = with pkgs; [ 
     coreutils
     less
-    alacritty
     ipatool
+    jdk22
   ];
+
   home.sessionVariables = {
     PAGER = "less";
     CLICOLOR = "1";
-    ANDROID_HOME = "${android_home}";
+    ANDROID_HOME = "$HOME/Library/Android/sdk";
   };
-  home.sessionPath = [
-    "${android_home}/cmdline-tools/latest/bin"
-    "${android_home}/build-tools/35.0.0-rc3/"
-    "${android_home}/platform-tools"
-    "${android_home}/emulator"
+  home.sessionPath = with config.home.sessionVariables; [
+    "${ANDROID_HOME}/cmdline-tools/latest/bin"
+    "${ANDROID_HOME}/build-tools/35.0.0-rc3/"
+    "${ANDROID_HOME}/platform-tools"
+    "${ANDROID_HOME}/emulator"
   ];
   home.shellAliases = {
     gs = "git status";
@@ -29,6 +26,7 @@ in
     ndsmain = "nix-darwin-switch --flake github:sven-m/system-config#sven-mbp";
     ndslocal = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
   };
+  programs.alacritty.enable = true;
   programs.zsh = {
     enable = true;
     enableCompletion = true;

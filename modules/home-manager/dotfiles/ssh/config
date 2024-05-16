@@ -2,3 +2,5 @@ IgnoreUnknown UseKeychain
 
 IdentityFile ~/.ssh/id_ed25519
 UseKeychain yes
+
+Include local_config

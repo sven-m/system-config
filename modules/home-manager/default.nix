@@ -1,11 +1,24 @@
-{ config, lib, pkgs, pkgs-unstable, ...}: {
+{ config, lib, pkgs, pkgs-unstable, ...}: 
+let touchLocalConfigsScript = 
+    configFileName: lib.hm.dag.entryAfter ["writeBoundary"] ''
+      mkdir -p "$(dirname "${configFileName}")"
+      touch "${configFileName}"
+    '';
+in {
   home.stateVersion = "23.11";
+
+  
+  # Packages
+
   home.packages = [ 
     pkgs.coreutils
     pkgs.less
     pkgs.ipatool
     pkgs-unstable.jdk22
   ];
+
+
+  # Shell configuration
 
   home.sessionVariables = {
     PAGER = "less";
@@ -29,22 +42,97 @@
     ndsmain = "nix-darwin-switch --flake github:sven-m/system-config#sven-mbp";
     ndslocal = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
   };
+
+
+  # ZSH
+
+  programs.zsh = {
+    enable = true;
+    # These settings are so convenient, that the added complexity of having a generated .zshrc is
+    # worth it. 
+    enableCompletion = true;
+    syntaxHighlighting.enable = true;
+    enableAutosuggestions = true;
+    # The remaining shell configuration is done through the below included file.
+    initExtra = lib.fileContents ./dotfiles/zsh/zshrc.inc.zsh;
+  };
+  home.activation.touchLocalZshConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    config="$HOME/.config/zsh/local.zshrc.zsh"
+    mkdir -p "$(dirname "$config")"
+    touch "$config"
+  '';
+
+  # Alacritty
+
   programs.alacritty = {
     enable = true;
     package = pkgs-unstable.alacritty;
   };
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    syntaxHighlighting.enable = true;
-    enableAutosuggestions = true;
-    # used for more complex zsh configuration
-    initExtra = "source ~/.config/zshrc_extra";
-  };
+  xdg.configFile."alacritty/alacritty.toml".source = ./dotfiles/alacritty/alacritty.toml;
+  
+
+  # Neovim
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;
+    # These settings are so convenient, that the added complexity of having a generated init.lua is
+    # worth it. 
+    plugins = with pkgs.vimPlugins; [
+      vim-nix
+      nvim-tree-lua
+      {
+        plugin = pkgs.vimPlugins.vim-startify;
+        config = "let g:startify_change_to_vcs_root = 0";
+      }
+    ];
+    # The remaining nvim configuration is done through the below included file.
+    extraLuaConfig = lib.fileContents ./dotfiles/nvim/init.inc.lua;
   };
+  home.activation.touchLocalNvimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    config="$HOME/.config/nvim/init-local.lua"
+    mkdir -p "$(dirname "$config")"
+    touch "$config"
+  '';
+
+
+  # SSH
+
+  programs.ssh.enable = true;
+  home.file.".ssh/config".source = ./dotfiles/ssh/config;
+  home.activation.touchLocalSSHConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    config="$HOME/.ssh/local_config"
+    mkdir -p "$(dirname "$config")"
+    touch "$config"
+  '';
+  
+
+  # Git
+
+  programs.git = {
+    enable = true;
+    # These settings are so convenient, that the added complexity of having a generated .gitconfig
+    # is worth it. 
+    diff-so-fancy = {
+      enable = true;
+      changeHunkIndicators = true;
+    };
+    # The remaining git configuration is done through the below included file.
+    extraConfig = {
+      # I prefer to have configuration in gitconfig format
+      include = { path = "~/.config/git/extra.gitconfig"; };
+    };
+  };
+  xdg.configFile."git/extra.gitconfig".source = ./dotfiles/git/extra.gitconfig;
+  home.activation.touchLocalGitConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    config="$HOME/.config/git/local.gitconfig"
+    mkdir -p "$(dirname "$config")"
+    touch "$config"
+  '';
+
+  
+  # Other programs
+
   programs.bat.enable = true;
   programs.bat.config.theme = "TwoDark";
   programs.eza = {
@@ -52,36 +140,20 @@
     git = true;
     icons = true;
   };
-  programs.git = {
-    enable = true;
-    diff-so-fancy = {
-      enable = true;
-      changeHunkIndicators = true;
-    };
-    extraConfig = {
-      # I prefer to have configuration in gitconfig format
-      include = { path = "~/.config/git/config_extra"; };
-    };
+
+  # Sublime Text
+  home.file."./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
+    source = ./dotfiles/sublime/Preferences.sublime-settings;
   };
-  programs.ssh = {
-    enable = true;
-  };
-  home.file = {
-    # These are named "*_extra" because home-manager already puts the normal file in place
-    ".config/git/config_extra".source = ./dotfiles/gitconfig;
-    ".config/zshrc_extra".source = ./dotfiles/zshrc;
-    ".ssh/config".source = ./dotfiles/ssh_config;
-    ".config/alacritty/alacritty.toml".source = ./dotfiles/alacritty.toml;
-    ".config/nvim/init.lua".source = ./dotfiles/nvim/init.lua;
-    "./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
-      source = ./dotfiles/Preferences.sublime-settings;
-    };
-  };
-  home.activation = {
-    copyAppSymLinks = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      rm -rf "$HOME/Applications/NixLaunchPadFix"
-      mkdir "$HOME/Applications/NixLaunchPadFix"
-      cp -P "$HOME/Applications/Home Manager Apps"/*.app "$HOME/Applications/NixLaunchPadFix"
-    '';
-  };
+
+
+  # Copy all macOS application symlinks to ~/Applicationos
+
+  home.activation.copyAppSymLinks = 
+  lib.hm.dag.entryAfter ["writeBoundary"] ''
+    fix_path="$HOME/Applications/NixLaunchPadFix"
+    rm -rf "$fix_path"
+    mkdir "$fix_path"
+    cp -P "$HOME/Applications/Home Manager Apps"/*.app "$fix_path"
+  '';
 }

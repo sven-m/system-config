@@ -15,7 +15,6 @@ in {
     pkgs.less
     pkgs.ipatool
     pkgs-unstable.jdk22
-    pkgs.vagrant
   ];
 
 

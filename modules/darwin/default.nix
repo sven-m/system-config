@@ -60,6 +60,7 @@
     KeyRepeat = 1;
     NSAutomaticCapitalizationEnabled = false;
     NSAutomaticPeriodSubstitutionEnabled = false;
+    ApplePressAndHoldEnabled = false;
   };
   system.defaults.dock.mineffect = "scale";
   system.defaults.dock.mru-spaces = false;

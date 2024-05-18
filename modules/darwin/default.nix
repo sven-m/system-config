@@ -11,6 +11,7 @@
     onActivation.cleanup = "zap";
     brews = [
       "libimobiledevice"
+      "qemu"
     ];
     taps = [
       "majd/repo"
@@ -28,6 +29,8 @@
       "1password"
       "android-studio"
       "google-drive"
+      "vagrant"
+      "utm"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;

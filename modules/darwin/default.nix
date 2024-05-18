@@ -12,9 +12,10 @@
     brews = [
       "libimobiledevice"
       "qemu"
+      "cirruslabs/cli/tart"
     ];
     taps = [
-      "majd/repo"
+      "cirruslabs/cli"
     ];
     casks = [
       "xcodes"
@@ -31,6 +32,7 @@
       "google-drive"
       "vagrant"
       "utm"
+      "docker"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;

@@ -38,7 +38,8 @@ require("nvim-tree").setup({
   },
 })
 
-vim.keymap.set('', '<Leader>qq', '<cmd>qa<CR>')
+vim.keymap.set('', '<Leader>qq', '<cmd>qa!<CR>')
+vim.keymap.set('', '<Leader>wq', '<cmd>wqa<CR>')
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
 vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
 vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')

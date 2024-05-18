@@ -15,7 +15,7 @@ in {
     pkgs.less
     pkgs.ipatool
     pkgs-unstable.jdk22
-    pkgs.docker
+    pkgs.transmission
   ];
 
 
@@ -40,8 +40,8 @@ in {
     gl = "git lg1";
     gll = "git lg2";
     nix-darwin-switch = "nix run nix-darwin -- switch";
-    ndsmain = "nix-darwin-switch --flake github:sven-m/system-config#sven-mbp";
-    ndslocal = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
+    sconf = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
+    econf = "nvim ~/src/system-config";
   };
 
 

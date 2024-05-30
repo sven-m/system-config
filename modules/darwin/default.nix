@@ -13,6 +13,9 @@
       "libimobiledevice"
       "qemu"
       "cirruslabs/cli/tart"
+      "libvirt"
+      "libvirt-glib"
+      "ansible"
     ];
     taps = [
       "cirruslabs/cli"
@@ -28,11 +31,16 @@
       "sublime-text"
       "spotify"
       "1password"
+      "1password-cli"
       "android-studio"
       "google-drive"
       "vagrant"
       "utm"
       "docker"
+      "vmware-fusion"
+      "vagrant-vmware-utility"
+      "balenaetcher"
+      "raspberry-pi-imager"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;
@@ -65,6 +73,8 @@
     KeyRepeat = 1;
     NSAutomaticCapitalizationEnabled = false;
     NSAutomaticPeriodSubstitutionEnabled = false;
+    NSAutomaticQuoteSubstitutionEnabled = false;
+    NSAutomaticSpellingCorrectionEnabled = false;
     ApplePressAndHoldEnabled = false;
   };
   system.defaults.dock.mineffect = "scale";

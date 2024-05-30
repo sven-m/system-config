@@ -48,15 +48,6 @@ typeset -g -A key
 
 # End of borrowed section
 
-#autoload -U history-search-end
-#zle -N history-beginning-search-backward history-search-end
-#zle -N history-beginning-search-forward history-search-end
-#bindkey "\e[A" history-beginning-search-backward-end
-#bindkey "\e[B" history-beginning-search-forward-end
-
-bindkey "\e[A" history-beginning-search-backward
-bindkey "\e[B" history-beginning-search-forward
-
 source "$HOME/.config/zsh/local.zshrc.zsh"
 
 # End included portion

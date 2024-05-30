@@ -14,15 +14,20 @@ vim.opt.incsearch = true
 vim.opt.list = true
 
 vim.opt.number = true
+vim.opt.relativenumber = true
 
 vim.opt.lazyredraw = true
-vim.opt.wrap = false
+vim.opt.wrap = true
 vim.opt.showcmd = true
 vim.opt.showmatch = true
 
 require("nvim-tree").setup({
+  sort = {
+    folders_first = false,
+  },
   git = {
     enable = true,
+    ignore = false,
   },
   renderer = {
     highlight_git = true,

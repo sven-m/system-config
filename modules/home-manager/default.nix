@@ -14,7 +14,7 @@ in {
     pkgs.coreutils
     pkgs.less
     pkgs.ipatool
-    pkgs-unstable.jdk22
+    pkgs.jdk22
     pkgs.transmission
   ];
 
@@ -49,11 +49,11 @@ in {
 
   programs.zsh = {
     enable = true;
-    # These settings are so convenient, that the added complexity of having a generated .zshrc is
-    # worth it. 
+    # These settings are so convenient, that the inconvenience of not being able to directly edit the
+    # generated read-only .zshrc is worth it.
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     # The remaining shell configuration is done through the below included file.
     initExtra = lib.fileContents ./dotfiles/zsh/zshrc.inc.zsh;
   };
@@ -67,7 +67,7 @@ in {
 
   programs.alacritty = {
     enable = true;
-    package = pkgs-unstable.alacritty;
+    package = pkgs.alacritty;
   };
   xdg.configFile."alacritty/alacritty.toml".source = ./dotfiles/alacritty/alacritty.toml;
   

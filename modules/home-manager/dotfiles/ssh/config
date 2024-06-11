@@ -6,3 +6,5 @@ AddKeysToAgent yes
 
 Include local_config
 
+Host malibu-*
+  ForwardAgent yes

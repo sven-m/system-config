@@ -16,6 +16,9 @@ in {
     pkgs.ipatool
     pkgs.jdk22
     pkgs.transmission
+    pkgs.gnused
+    pkgs.s3cmd
+    pkgs.iperf2
   ];
 
 

@@ -16,6 +16,7 @@
       "libvirt"
       "libvirt-glib"
       "ansible"
+      "aria2"
     ];
     taps = [
       "cirruslabs/cli"
@@ -41,6 +42,7 @@
       "vagrant-vmware-utility"
       "balenaetcher"
       "raspberry-pi-imager"
+      "google-chrome"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;

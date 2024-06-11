@@ -19,6 +19,7 @@ in {
     pkgs.gnused
     pkgs.s3cmd
     pkgs.iperf2
+    pkgs.kubernetes-helm
   ];
 
 

@@ -74,6 +74,7 @@
       "Meslo"
     ]; })
   ];
+  nix.enable = false;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';

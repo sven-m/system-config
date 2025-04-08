@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   users.users.sven.home = "/Users/sven";
   environment.shells = [ pkgs.bash pkgs.zsh ];
-  environment.loginShell = pkgs.zsh;
   environment.systemPackages = with pkgs; [
     # prefer using home.packages in home-manager
     xcodes
@@ -13,10 +12,12 @@
       "libimobiledevice"
       "qemu"
       "cirruslabs/cli/tart"
+      "cirruslabs/cli/orchard"
       "libvirt"
       "libvirt-glib"
       "ansible"
       "aria2"
+      "ideviceinstaller"
     ];
     taps = [
       "cirruslabs/cli"
@@ -43,11 +44,22 @@
       "balenaetcher"
       "raspberry-pi-imager"
       "google-chrome"
+      "electrum"
+      "bitcoin-core"
+      "nordvpn"
+      "ledger-live"
+      "obsidian"
+      "sf-symbols"
+      "caffeine"
     ];
     masApps = {
       "1Password for Safari" = 1569813296;
       "Apple Configurator" = 1037126344;
       "Things" = 904280696;
+      "Pages" = 409201541;
+      "Numbers" = 409203825;
+      "Keynote" = 409183694;
+      "Hush" = 1544743900;
     };
   };
   environment.variables = {
@@ -57,8 +69,7 @@
     # prefer using home.shellAliases in home-manager
   };
   programs.zsh.enable = true;
-  fonts.fontDir.enable = true;
-  fonts.fonts = [ 
+  fonts.packages = [ 
     (pkgs.nerdfonts.override { fonts = [
       "Meslo"
     ]; })
@@ -83,6 +94,7 @@
   system.defaults.dock.mru-spaces = false;
   system.defaults.dock.orientation = "left";
   system.defaults.dock.showhidden = true;
+  system.defaults.dock.expose-animation-duration = 0.3;
   system.defaults.finder.FXPreferredViewStyle = "Nlsv";
   system.defaults.finder.ShowStatusBar = true;
   system.defaults.finder.FXEnableExtensionChangeWarning = false;

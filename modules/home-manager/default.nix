@@ -14,12 +14,18 @@ in {
     pkgs.coreutils
     pkgs.less
     pkgs.ipatool
-    pkgs.jdk22
-    pkgs.transmission
+    pkgs.transmission_3
     pkgs.gnused
     pkgs.s3cmd
     pkgs.iperf2
     pkgs.kubernetes-helm
+    pkgs.sshpass
+    pkgs.chatgpt-cli
+    pkgs.yamllint
+    pkgs.vscode
+    pkgs.nodePackages.nodejs
+    pkgs.tree
+    pkgs.ideviceinstaller
   ];
 
 
@@ -66,6 +72,18 @@ in {
     mkdir -p "$(dirname "$config")"
     touch "$config"
   '';
+
+
+  # fzf
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    fileWidgetOptions = [
+      "--preview 'bat {}'"
+    ];
+  };
+
 
   # Alacritty
 
@@ -143,8 +161,9 @@ in {
   programs.eza = {
     enable = true;
     git = true;
-    icons = true;
+    icons = "auto";
   };
+  programs.gpg.enable = true;
 
   # Sublime Text
   home.file."./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {

@@ -75,10 +75,6 @@
     ]; })
   ];
   nix.enable = false;
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
-  services.nix-daemon.enable = true;
   security.pam.enableSudoTouchIdAuth = true;
   system.defaults.finder.AppleShowAllExtensions = true;
   system.defaults.finder._FXShowPosixPathInTitle = true;

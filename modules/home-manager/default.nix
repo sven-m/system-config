@@ -69,7 +69,8 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     '';
   };
 
-  # This allows for having local env variables that I do not want to risk checking into source control
+  # This allows for having local env variables that I do not want to risk checking into source
+  # control
   home.activation.touchLocalZshenv = lib.hm.dag.entryAfter ["writeBoundary"] /* sh */ ''
     touch "${dotfilesDir}/zsh/zshenv_local"
   '';
@@ -92,7 +93,9 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     enable = true;
     package = pkgs.alacritty;
   };
-  xdg.configFile."alacritty/alacritty.toml".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty/alacritty.toml";
+  xdg.configFile."alacritty/alacritty.toml" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty/alacritty.toml";
+  };
   
 
   # Neovim
@@ -118,12 +121,16 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
   };
 
   # This will take all files in nvim/lua and link them in ~/.config/nvim/lua
-  xdg.configFile."nvim/lua".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim/lua";
+  xdg.configFile."nvim/lua" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim/lua";
+  };
 
   # SSH
 
   programs.ssh.enable = true;
-  home.file.".ssh/config".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/ssh/config";
+  home.file.".ssh/config" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/ssh/config";
+  };
   
 
   # Git

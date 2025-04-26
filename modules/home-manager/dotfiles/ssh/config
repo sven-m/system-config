@@ -1,10 +1,30 @@
+# vim: filetype=sshconfig
+
+Include local_config
+
 IgnoreUnknown UseKeychain
 
 IdentityFile ~/.ssh/id_ed25519
 UseKeychain yes
 AddKeysToAgent yes
 
-Include local_config
+
+Host 10.77.1.1
+  User admin
+  Port 20007
+
+Host mikrotik.wan
+  Port 20007
+  User admin
+  ControlPath ~/.ssh/controlmasters/%r@%h:%p
+  ControlMaster auto
+  ControlPersist 10m
 
 Host malibu-*
   ForwardAgent yes
+  #ProxyJump mikrotik.wan
+
+Host iphone
+  User mobile
+  StrictHostKeyChecking accept-new
+  ProxyCommand inetcat 22

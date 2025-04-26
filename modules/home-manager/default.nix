@@ -1,10 +1,6 @@
-{ config, lib, pkgs, pkgs-unstable, ...}: 
-let touchLocalConfigsScript = 
-    configFileName: lib.hm.dag.entryAfter ["writeBoundary"] ''
-      mkdir -p "$(dirname "${configFileName}")"
-      touch "${configFileName}"
-    '';
-in {
+{ config, lib, pkgs, pkgs-unstable, dotfilesDir, ...}: 
+let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-manager/dotfiles"; in
+{
   home.stateVersion = "23.11";
 
   
@@ -58,19 +54,24 @@ in {
   # ZSH
 
   programs.zsh = {
+    # These settings are so convienent, that the added complexity of splitting the config between
+    # this file and "dotfiles/zsh/zshrc" is worth it
     enable = true;
-    # These settings are so convenient, that the inconvenience of not being able to directly edit the
-    # generated read-only .zshrc is worth it.
     enableCompletion = true;
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
-    # The remaining shell configuration is done through the below included file.
-    initExtra = lib.fileContents ./dotfiles/zsh/zshrc.inc.zsh;
+    dotDir = ".config/zsh";
+    initExtra = /* sh */ ''
+    source "${dotfilesDir}/zsh/zshrc"
+    '';
+    envExtra = /* sh */ ''
+    source "${dotfilesDir}/zsh/zshenv_local"
+    '';
   };
-  home.activation.touchLocalZshConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    config="$HOME/.config/zsh/local.zshrc.zsh"
-    mkdir -p "$(dirname "$config")"
-    touch "$config"
+
+  # This allows for having local env variables that I do not want to risk checking into source control
+  home.activation.touchLocalZshenv = lib.hm.dag.entryAfter ["writeBoundary"] /* sh */ ''
+    touch "${dotfilesDir}/zsh/zshenv_local"
   '';
 
 
@@ -91,16 +92,16 @@ in {
     enable = true;
     package = pkgs.alacritty;
   };
-  xdg.configFile."alacritty/alacritty.toml".source = ./dotfiles/alacritty/alacritty.toml;
+  xdg.configFile."alacritty/alacritty.toml".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty/alacritty.toml";
   
 
   # Neovim
 
   programs.neovim = {
-    enable = true;
-    defaultEditor = true;
     # These settings are so convenient, that the added complexity of having a generated init.lua is
     # worth it. 
+    enable = true;
+    defaultEditor = true;
     plugins = with pkgs.vimPlugins; [
       vim-nix
       nvim-tree-lua
@@ -108,50 +109,38 @@ in {
         plugin = pkgs.vimPlugins.vim-startify;
         config = "let g:startify_change_to_vcs_root = 0";
       }
+      nvim-treesitter.withAllGrammars
     ];
-    # The remaining nvim configuration is done through the below included file.
-    extraLuaConfig = lib.fileContents ./dotfiles/nvim/init.inc.lua;
+    # This will include nvim/lua/settings.lua
+    extraLuaConfig = /* lua */ ''
+    require("settings")
+    '';
   };
-  home.activation.touchLocalNvimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    config="$HOME/.config/nvim/init-local.lua"
-    mkdir -p "$(dirname "$config")"
-    touch "$config"
-  '';
 
+  # This will take all files in nvim/lua and link them in ~/.config/nvim/lua
+  xdg.configFile."nvim/lua".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim/lua";
 
   # SSH
 
   programs.ssh.enable = true;
-  home.file.".ssh/config".source = ./dotfiles/ssh/config;
-  home.activation.touchLocalSSHConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    config="$HOME/.ssh/local_config"
-    mkdir -p "$(dirname "$config")"
-    touch "$config"
-  '';
+  home.file.".ssh/config".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/ssh/config";
   
 
   # Git
 
   programs.git = {
+    # These settings are so convienent, that the added complexity of splitting the config between
+    # this file and "main.gitconfig" is worth it
     enable = true;
-    # These settings are so convenient, that the added complexity of having a generated .gitconfig
-    # is worth it. 
     diff-so-fancy = {
       enable = true;
       changeHunkIndicators = true;
     };
-    # The remaining git configuration is done through the below included file.
-    extraConfig = {
+    includes = [
       # I prefer to have configuration in gitconfig format
-      include = { path = "~/.config/git/extra.gitconfig"; };
-    };
+      { path = "${dotfilesDir}/git/main.gitconfig"; }
+    ];
   };
-  xdg.configFile."git/extra.gitconfig".source = ./dotfiles/git/extra.gitconfig;
-  home.activation.touchLocalGitConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    config="$HOME/.config/git/local.gitconfig"
-    mkdir -p "$(dirname "$config")"
-    touch "$config"
-  '';
 
   
   # Other programs
@@ -167,9 +156,8 @@ in {
 
   # Sublime Text
   home.file."./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
-    source = ./dotfiles/sublime/Preferences.sublime-settings;
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/sublime/Preferences.sublime-settings";
   };
-
 
   # Copy all macOS application symlinks to ~/Applicationos
 

@@ -11,7 +11,7 @@
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, ... }:
-    let system = "aarch64-darwin"; in
+  let system = "aarch64-darwin"; in
   {
     darwinConfigurations.sven-mbp = darwin.lib.darwinSystem {
       inherit system;

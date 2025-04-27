@@ -34,6 +34,7 @@
               inherit system;
               config.allowUnfree = true;
             };
+            systemName = "sven-mbp";
           };
         }
       ];

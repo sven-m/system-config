@@ -19,6 +19,7 @@ vim.opt.wrap = true
 vim.opt.showcmd = true
 vim.opt.showmatch = true
 
+vim.g.startify_change_to_vcs_root = 0
 
 require("nvim-tree").setup({
   sort = {

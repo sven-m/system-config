@@ -1,4 +1,5 @@
 # vim: filetype=gitconfig
+# This file is included through the programs.git configuration in modules/home-manager/default.nix
 
 [user]
 	name = Sven Meyer

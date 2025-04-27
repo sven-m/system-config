@@ -1,11 +1,12 @@
-{ config, lib, pkgs, pkgs-unstable, dotfilesDir, ...}: 
-let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-manager/dotfiles"; in
-{
+{ config, lib, pkgs, pkgs-unstable, systemName, ...}: 
+let
+  systemConfigDir = "${config.home.homeDirectory}/src/system-config";
+  dotfilesDir = "${systemConfigDir}/modules/home-manager/dotfiles";
+in {
+
   home.stateVersion = "23.11";
 
-  
   # Packages
-
   home.packages = [ 
     pkgs.coreutils
     pkgs.less
@@ -24,13 +25,12 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     pkgs.ideviceinstaller
   ];
 
-
-  # Shell configuration
-
+  # Shell configuration, here so that I can switch shells without migrating these. Never happens.
   home.sessionVariables = {
     PAGER = "less";
     CLICOLOR = "1";
     ANDROID_HOME = "$HOME/Library/Android/sdk";
+    THEOS = "$HOME/theos";
   };
   home.sessionPath = with config.home.sessionVariables; [
     "${ANDROID_HOME}/cmdline-tools/latest/bin"
@@ -45,17 +45,18 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     gs = "git status";
     gl = "git lg1";
     gll = "git lg2";
-    nix-darwin-switch = "nix run nix-darwin -- switch";
-    sconf = "nix-darwin-switch --flake ~/src/system-config#sven-mbp";
-    econf = "nvim ~/src/system-config";
+    sconf = "nix run nix-darwin -- switch --flake ${systemConfigDir}#${systemName}";
+    econf = "$EDITOR ${systemConfigDir}";
   };
 
-
   # ZSH
-
+  # This will install zsh and apply some really convenient home-manager options, which will make
+  # ~/.zshrc a link to a read-only file in the nix store. The remaining configuration is done
+  # through `dotfiles/zsh/zshrc`, which is configured to be sourced below.
+  #
+  # Local env variables that must not be checked into source control go into 
+  # `dotfiles/zsh/zshenv_local`.
   programs.zsh = {
-    # These settings are so convienent, that the added complexity of splitting the config between
-    # this file and "dotfiles/zsh/zshrc" is worth it
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
@@ -64,20 +65,16 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     initExtra = /* sh */ ''
     source "${dotfilesDir}/zsh/zshrc"
     '';
+
     envExtra = /* sh */ ''
     source "${dotfilesDir}/zsh/zshenv_local"
     '';
   };
-
-  # This allows for having local env variables that I do not want to risk checking into source
-  # control
   home.activation.touchLocalZshenv = lib.hm.dag.entryAfter ["writeBoundary"] /* sh */ ''
     touch "${dotfilesDir}/zsh/zshenv_local"
   '';
 
-
-  # fzf
-
+  # Install fzf, all configuration is here.
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
@@ -86,70 +83,54 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
     ];
   };
 
-
   # Alacritty
-
-  programs.alacritty = {
-    enable = true;
-    package = pkgs.alacritty;
+  # This will install the Alacritty app. All configuration is done through files in the
+  # `dotfiles/alacritty` directory.
+  programs.alacritty.enable = true;
+  xdg.configFile."alacritty" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty";
   };
-  xdg.configFile."alacritty/alacritty.toml" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/alacritty/alacritty.toml";
-  };
-  
 
-  # Neovim
-
+  # Neovim.
+  # This will install neovim. Plugins are listed here, remaining configuration is done through
+  # files in `dotfiles/nvim` directory.
   programs.neovim = {
-    # These settings are so convenient, that the added complexity of having a generated init.lua is
-    # worth it. 
     enable = true;
     defaultEditor = true;
     plugins = with pkgs.vimPlugins; [
       vim-nix
       nvim-tree-lua
-      {
-        plugin = pkgs.vimPlugins.vim-startify;
-        config = "let g:startify_change_to_vcs_root = 0";
-      }
+      vim-startify
       nvim-treesitter.withAllGrammars
     ];
-    # This will include nvim/lua/settings.lua
-    extraLuaConfig = /* lua */ ''
-    require("settings")
-    '';
   };
 
-  # This will take all files in nvim/lua and link them in ~/.config/nvim/lua
-  xdg.configFile."nvim/lua" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim/lua";
+  xdg.configFile."nvim" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim";
   };
 
   # SSH
-
   programs.ssh.enable = true;
   home.file.".ssh/config" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/ssh/config";
   };
-  
 
   # Git
-
+  # This will install git and apply some really convenient home-manager options. This will make
+  # ~/.config/git to be a link to a read-only file in the nix store. The remaining configuration
+  # is done through `dotfiles/git/config`.
   programs.git = {
-    # These settings are so convienent, that the added complexity of splitting the config between
-    # this file and "main.gitconfig" is worth it
     enable = true;
     diff-so-fancy = {
       enable = true;
       changeHunkIndicators = true;
     };
     includes = [
-      # I prefer to have configuration in gitconfig format
-      { path = "${dotfilesDir}/git/main.gitconfig"; }
+      { path = "${dotfilesDir}/git/config"; }
     ];
   };
 
-  
+
   # Other programs
 
   programs.bat.enable = true;
@@ -162,12 +143,12 @@ let dotfilesDir = "${config.home.homeDirectory}/src/system-config/modules/home-m
   programs.gpg.enable = true;
 
   # Sublime Text
+  # Configuration of sublime text is done through `dotfiles/sublime/Preferences.sublime-settings`.
   home.file."./Library/Application Support/Sublime Text/Packages/Declarative/Preferences.sublime-settings" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/sublime/Preferences.sublime-settings";
   };
 
-  # Copy all macOS application symlinks to ~/Applicationos
-
+  # Copy all macOS application symlinks to ~/Applications, so that Launch Pad finds them
   home.activation.copyAppSymLinks = 
   lib.hm.dag.entryAfter ["writeBoundary"] ''
     fix_path="$HOME/Applications/NixLaunchPadFix"

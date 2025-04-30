@@ -4,17 +4,26 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
 
 ## Installation
 
-Run the following command to apply the configuration on the local system:
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/sven-m/system-config.git
+    ```
+
+2. Apply the configuration by running:
+    ```sh
+    system-config/rebuild.sh
+    ```
+
+## Edit Configuration
+
+Run the following command to edit the configuration
 ```sh
-nix run nix-darwin -- switch --flake "github:sven-m/system-config#sven-mbp"
+modify-cfg
 ```
 
-## Local development
+## Apply updated configuration
 
-Clone the repository and run the installation command on the local checkout:
+Run the following command to apply changes to the configuration to the system:
 ```sh
-# Assuming you put your checkouts in ~/src
-cd ~/src
-git clone https://github.com/sven-m/system-config.git
-nix run nix-darwin -- switch --flake "$HOME/src/system-config#sven-mbp"
+rebuild-cfg
 ```

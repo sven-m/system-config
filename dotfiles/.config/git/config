@@ -1,6 +1,3 @@
-# vim: filetype=gitconfig
-# This file is included through the programs.git configuration in modules/home-manager/default.nix
-
 [user]
 	name = Sven Meyer
 	email = meyer.sven@gmail.com
@@ -11,3 +8,15 @@
 [alias]
 	lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %ae%C(reset)%C(auto)%d%C(reset)' --all
 	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %ae%C(reset)'
+
+[core]
+	pager = "diff-so-fancy | less '--tabs=4' -RFX"
+
+[diff-so-fancy]
+	changeHunkIndicators = true
+	markEmptyLines = true
+	stripLeadingSymbols = true
+	useUnicodeRuler = true
+
+[interactive]
+	diffFilter = "diff-so-fancy --patch"

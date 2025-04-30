@@ -1,4 +1,4 @@
 .flake.nix.swp
 /result
 .DS_Store
-/modules/home-manager/dotfiles/zsh/zshenv_local
+dotfiles/.config/zsh/zshenv.local

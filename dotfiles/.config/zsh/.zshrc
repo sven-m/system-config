@@ -1,7 +1,3 @@
-# This file is included through the programs.zsh configuration in modules/home-manager/default.nix
-
-export THEOS=~/theos
-
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi

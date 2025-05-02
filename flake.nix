@@ -24,6 +24,7 @@
     darwin-config = rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
+        warp-terminal
         alacritty
         xcodes
         coreutils

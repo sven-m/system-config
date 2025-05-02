@@ -1,0 +1,4 @@
+--target $HOME
+--dir "$CFG_DIR/dotfiles"
+--no-folding
+--ignore='.DS_Store'

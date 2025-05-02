@@ -17,9 +17,9 @@ then
 fi
 
 # Run stow
-cd "$SCRIPT_DIR"
-nix run ./nix#stow -- --verbose dotfiles
+cd "$SCRIPT_DIR/dotfiles"
+nix run "$SCRIPT_DIR#stow" -- --verbose .
 
 # Apply nix flake
 echo "Applying nix flake at $SCRIPT_DIR"
-nix run nix-darwin -- switch --flake "$SCRIPT_DIR/nix#macbook"
+nix run nix-darwin -- switch --flake "$SCRIPT_DIR#macbook"

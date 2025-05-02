@@ -12,6 +12,7 @@
   };
   outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, ... }:
   let
+    username = "sven";
     system = "aarch64-darwin";
     pkgs = import nixpkgs {
       config.allowUnfree = true;
@@ -172,11 +173,12 @@
       system.defaults.finder.FXEnableExtensionChangeWarning = false;
       system.defaults.menuExtraClock.ShowSeconds = true;
       system.defaults.menuExtraClock.ShowDayOfWeek = true;
-      networking.computerName = "sven-mbp";
       networking.hostName = networking.computerName;
+      networking.computerName = "sven-mbp";
+
       system.stateVersion = 4;
 
-      users.users.sven.home = "/Users/sven";
+      users.users.${username}.home = "/Users/${username}";
     };
     home-config = {
       home.stateVersion = "23.11";
@@ -211,7 +213,7 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = false;
-            users.sven = home-config;
+            users.${username} = home-config;
           };
         }
       ];

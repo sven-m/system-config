@@ -15,8 +15,8 @@
     username = "sven";
     system = "aarch64-darwin";
     pkgs = import nixpkgs {
-      config.allowUnfree = true;
       inherit system;
+      config.allowUnfree = true;
     };
     pkgs-unstable = import nixpkgs-unstable {
       inherit system;
@@ -25,27 +25,26 @@
     darwin-config = rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
-        warp-terminal
         alacritty
+        stow
+        fzf
+        diff-so-fancy
+        starship
         xcodes
         coreutils
+        tree
         less
+        sshpass
         ipatool
         transmission_3
         gnused
         s3cmd
         iperf2
         kubernetes-helm
-        sshpass
-        chatgpt-cli
         yamllint
         vscode
         nodePackages.nodejs
-        tree
         ideviceinstaller
-        stow
-        fzf
-        diff-so-fancy
       ];
       homebrew = {
         enable = true;
@@ -115,6 +114,7 @@
         CLICOLOR = "1";
         ANDROID_HOME = "$HOME/Library/Android/sdk";
         THEOS = "$HOME/theos";
+        STARSHIP_NIX_PATH = "${pkgs.starship}";
       };
       environment.systemPath = with environment.variables; [
         "${ANDROID_HOME}/cmdline-tools/latest/bin"

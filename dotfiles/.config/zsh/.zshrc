@@ -48,3 +48,6 @@ typeset -g -A key
 
 #bindkey $terminfo[kcuu1] history-beginning-search-backward
 #bindkey "\e[B" history-beginning-search-forward
+
+eval "$("$STARSHIP_NIX_PATH/bin/starship" init zsh)"
+

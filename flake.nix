@@ -1,16 +1,15 @@
 {
   description = "nix macos sven-mbp";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-24.11-darwin";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    darwin.url = "github:lnl7/nix-darwin/nix-darwin-24.11";
+    darwin.url = "github:lnl7/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, ... }:
+  outputs = {self, nixpkgs, home-manager, darwin, ... }:
   let
     username = "sven";
     system = "aarch64-darwin";
@@ -18,18 +17,16 @@
       inherit system;
       config.allowUnfree = true;
     };
-    pkgs-unstable = import nixpkgs-unstable {
-      inherit system;
-      config.allowUnfree = true;
-    };
     darwin-config = rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
+        kitty # main terminal
         alacritty
-        stow
+        stow # used for dotfiles
+        tmux
         fzf
-        diff-so-fancy
-        starship
+        diff-so-fancy # used in gitconfig
+        starship # prompt for shell
         xcodes
         coreutils
         tree
@@ -108,13 +105,14 @@
         };
       };
       environment.variables = {
+        BASH_ENV = "$HOME/.bash_env";
         ZDOTDIR = "$HOME/.config/zsh";
+        ANDROID_HOME = "$HOME/Library/Android/sdk";
+        THEOS = "$HOME/theos";
+
         EDITOR = "nvim";
         PAGER = "less";
         CLICOLOR = "1";
-        ANDROID_HOME = "$HOME/Library/Android/sdk";
-        THEOS = "$HOME/theos";
-        STARSHIP_NIX_PATH = "${pkgs.starship}";
       };
       environment.systemPath = with environment.variables; [
         "${ANDROID_HOME}/cmdline-tools/latest/bin"
@@ -132,26 +130,18 @@
         rebuild-cfg = "sh \"$CFG_DIR\"/rebuild.sh";
         modify-cfg = "$EDITOR \"$CFG_DIR\"";
       };
-      programs.zsh = {
+      programs.bash = {
         enable = true;
-        enableFastSyntaxHighlighting = true;
-        enableFzfCompletion = true;
-        enableFzfGit = true;
-        enableFzfHistory = true;
-        #programs.zsh.enableSyntaxHighlighting = true;
-        interactiveShellInit = ''
-        HISTFILE=$ZDOTDIR/zsh_history
-        HISTSIZE=10000
-        SAVEHIST=10000
-        '';
+        completion.enable = true;
       };
       fonts.packages = [ 
-        (pkgs.nerdfonts.override { fonts = [
-          "Meslo"
-        ]; })
+        pkgs.nerd-fonts.meslo-lg
       ];
       nix.enable = false;
-      security.pam.enableSudoTouchIdAuth = true;
+      security.pam.services.sudo_local = {
+        touchIdAuth = true;
+        reattach = true;
+      };
       system.defaults.finder.AppleShowAllExtensions = true;
       system.defaults.finder._FXShowPosixPathInTitle = true;
       system.defaults.NSGlobalDomain = {
@@ -163,16 +153,29 @@
         NSAutomaticSpellingCorrectionEnabled = false;
         ApplePressAndHoldEnabled = false;
       };
-      system.defaults.dock.mineffect = "scale";
-      system.defaults.dock.mru-spaces = false;
-      system.defaults.dock.orientation = "left";
-      system.defaults.dock.showhidden = true;
-      system.defaults.dock.expose-animation-duration = 0.3;
-      system.defaults.finder.FXPreferredViewStyle = "Nlsv";
-      system.defaults.finder.ShowStatusBar = true;
-      system.defaults.finder.FXEnableExtensionChangeWarning = false;
-      system.defaults.menuExtraClock.ShowSeconds = true;
-      system.defaults.menuExtraClock.ShowDayOfWeek = true;
+      system.defaults = {
+        dock = {
+          mineffect = "scale";
+          mru-spaces = false;
+          orientation = "left";
+          showhidden = true;
+          expose-animation-duration = 0.3;
+          persistent-apps = [
+            "/System/Applications/Launchpad.app"
+            "${pkgs.alacritty}/Applications/Alacritty.app"
+            "${pkgs.kitty}/Applications/kitty.app"
+            "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
+            "/Applications/Xcode-16.3.0.app"
+            "/System/Applications/App Store.app"
+            "/System/Applications/System Settings.app"
+          ];
+        };
+        finder.FXPreferredViewStyle = "Nlsv";
+        finder.ShowStatusBar = true;
+        finder.FXEnableExtensionChangeWarning = false;
+        menuExtraClock.ShowSeconds = true;
+        menuExtraClock.ShowDayOfWeek = true;
+      };
       networking.hostName = networking.computerName;
       networking.computerName = "sven-mbp";
 
@@ -182,6 +185,15 @@
     };
     home-config = {
       home.stateVersion = "23.11";
+
+      home.file = let
+        tmuxPlugins = pkgs.linkFarm "tmux-plugins" [
+          { name = "catppuccin"; path = "${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin"; }
+        ];
+      in {
+        ".config/tmux/plugins".source = tmuxPlugins;
+      };
+
       programs.bat = {
         enable = true;
         config.theme = "TwoDark";
@@ -198,6 +210,7 @@
           nvim-tree-lua
           vim-startify
           nvim-treesitter.withAllGrammars
+          catppuccin-vim
         ];
       };
     };

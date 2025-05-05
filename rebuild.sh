@@ -1,11 +1,11 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -e
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-ZSHENV_LOCAL="$SCRIPT_DIR/dotfiles/.config/zsh/zshenv.local"
+ZSHENV_LOCAL="$SCRIPT_DIR/dotfiles/.bash_env"
 CFG_LINE="export CFG_DIR=\"$SCRIPT_DIR\""
 
 # Ensure dotfiles/.config/zsh/zshenv.local contains CFG= line
@@ -15,6 +15,8 @@ then
   echo "Added \"$CFG_LINE\" to $ZSHENV_LOCAL"
   echo "Future rebuilds will rely on this to detect flake and stow location"
 fi
+
+source "$ZSHENV_LOCAL"
 
 # Run stow
 cd "$SCRIPT_DIR/dotfiles"

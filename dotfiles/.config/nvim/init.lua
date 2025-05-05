@@ -1,3 +1,5 @@
+vim.cmd.colorscheme "catppuccin_mocha"
+
 vim.opt.compatible = false
 
 vim.opt.breakindent = true
@@ -53,7 +55,9 @@ require('nvim-treesitter.configs').setup({
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
 vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
 vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
-vim.keymap.set('', '<C-h>', '<C-w>h')
-vim.keymap.set('', '<C-j>', '<C-w>j')
-vim.keymap.set('', '<C-k>', '<C-w>k')
-vim.keymap.set('', '<C-l>', '<C-w>l')
+vim.keymap.set('', '<C-b>', '<C-w>w')
+
+vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })

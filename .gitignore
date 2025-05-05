@@ -1,4 +1,4 @@
 .flake.nix.swp
 /result
 .DS_Store
-dotfiles/.config/zsh/zshenv.local
+dotfiles/.bash_env

@@ -1,4 +1,4 @@
-source .bash_env
+source ~/.bash_env
 
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -15,9 +15,9 @@ command_and_reset_cursor() {
 }
 
 nvim() {
-  command_and_reset_cursor nvim
+  command_and_reset_cursor nvim "$@"
 }
 
 tmux() {
-  command_and_reset_cursor tmux
+  command_and_reset_cursor tmux "$@"
 }

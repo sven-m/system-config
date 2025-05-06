@@ -20,13 +20,12 @@
     darwin-config = rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
-        kitty # main terminal
-        alacritty
         stow # used for dotfiles
         tmux
         fzf
         diff-so-fancy # used in gitconfig
         starship # prompt for shell
+        lazygit
         xcodes
         coreutils
         tree
@@ -65,6 +64,7 @@
           "cirruslabs/cli"
         ];
         casks = [
+          "ghostty"
           "xcodes"
           "daisydisk"
           "qlmarkdown"
@@ -162,6 +162,7 @@
           expose-animation-duration = 0.3;
           persistent-apps = [
             "/System/Applications/Launchpad.app"
+            "/Applications/Ghostty.app"
             "${pkgs.alacritty}/Applications/Alacritty.app"
             "${pkgs.kitty}/Applications/kitty.app"
             "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
@@ -187,8 +188,19 @@
       home.stateVersion = "23.11";
 
       home.file = let
-        tmuxPlugins = pkgs.linkFarm "tmux-plugins" [
-          { name = "catppuccin"; path = "${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin"; }
+        tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
+          {
+            name = "catppuccin";
+            path = "${catppuccin}/share/tmux-plugins/catppuccin";
+          }
+          {
+            name = "cpu";
+            path = "${cpu}/share/tmux-plugins/cpu";
+          }
+          {
+            name = "battery";
+            path = "${battery}/share/tmux-plugins/battery";
+          }
         ];
       in {
         ".config/tmux/plugins".source = tmuxPlugins;

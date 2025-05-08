@@ -84,7 +84,6 @@
           "transmit"
           "wireshark"
           "xcodes"
-          "zoom"
           (only darmok "balenaetcher")
           (only darmok "bitcoin-core")
           (only darmok "docker")
@@ -99,6 +98,7 @@
           (only darmok "vagrant")
           (only darmok "vmware-fusion")
           (only darmok "whatsapp")
+          (only tanagra "zoom")
         ];
 
         masApps = {

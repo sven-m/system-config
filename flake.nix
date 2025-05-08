@@ -242,7 +242,7 @@
           vim-startify
           nvim-treesitter.withAllGrammars
           vimwiki
-          catppuccin-vim
+          catppuccin-nvim
         ];
       };
     };

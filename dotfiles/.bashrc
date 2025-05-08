@@ -6,7 +6,7 @@ fi
 
 eval "$(starship init bash)"
 
-# Runs command $1 and resets cursor back to vertical bar
+# Runs command and all arguments and resets cursor back to vertical bar
 command_and_reset_cursor() {
   command "$@"
   local status=$?

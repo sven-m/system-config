@@ -1,16 +1,47 @@
 [user]
   name = Sven Meyer
-  email = meyer.sven@gmail.com
+  # email set in GIT_AUHTOR_EMAIL
+
+[init]
+  defaultBranch = main
+
 [pull]
   rebase = true
+
+[fetch]
+	prune = true
+
 [push]
   autoSetupRemote = true
+
 [alias]
   lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %ae%C(reset)%C(auto)%d%C(reset)' --all
   lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %ae%C(reset)'
 
 [core]
   pager = "diff-so-fancy | less '--tabs=4' -RFX"
+
+[lfs]
+  repositoryformatversion = 0
+
+[filter "lfs"]
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+
+[diff]
+  tool = opendiff
+
+[difftool "opendiff"]
+  cmd = opendiff "$LOCAL" "$REMOTE"
+
+[merge]
+  tool = opendiff
+
+[mergetool "opendiff"]
+  cmd = opendiff "$LOCAL" "$REMOTE" -ancestor "$BASE" -merge "$MERGED"
+  #trustExitCode = true
 
 [diff-so-fancy]
   changeHunkIndicators = true
@@ -20,3 +51,4 @@
 
 [interactive]
   diffFilter = "diff-so-fancy --patch"
+

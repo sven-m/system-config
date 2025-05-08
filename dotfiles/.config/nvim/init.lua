@@ -23,6 +23,14 @@ vim.opt.showmatch = true
 
 vim.g.startify_change_to_vcs_root = 0
 
+vim.g.vimwiki_list = {
+  {
+    path = "~/Documents/vimwiki/",
+    syntax = "markdown",
+    ext = ".md"
+  }
+}
+
 require("nvim-tree").setup({
   sort = {
     folders_first = false,

@@ -14,16 +14,10 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
     system-config/rebuild.sh
     ```
 
-## Edit Configuration
+## Edit & Update Aliases
 
-Run the following command to edit the configuration
+The configuration defines 2 aliases useful for changing and updating the configuration from anywhere.
 ```sh
-modify-cfg
-```
-
-## Apply updated configuration
-
-Run the following command to apply changes to the configuration to the system:
-```sh
-rebuild-cfg
+modify-cfg  # open the root folder of the sytem config repository in $EDITOR
+rebuild-cfg # re-apply the configuration
 ```

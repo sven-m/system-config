@@ -4,24 +4,32 @@ set -e
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASH_ENV_LOCAL="$SCRIPT_DIR/dotfiles/.bash_env"
 
-ZSHENV_LOCAL="$SCRIPT_DIR/dotfiles/.bash_env"
-CFG_LINE="export CFG_DIR=\"$SCRIPT_DIR\""
+touch "$BASH_ENV_LOCAL"
+source "$BASH_ENV_LOCAL"
 
-# Ensure dotfiles/.config/zsh/zshenv.local contains CFG= line
-if ! grep -qF "$CFG_LINE" "$ZSHENV_LOCAL"
+if [ -z "$CFG_DIR" ] || [ -z "$CFG_VARIANT" ] || [ -z "$GIT_AUTHOR_EMAIL" ]
 then
-  echo "$CFG_LINE" >> "$ZSHENV_LOCAL"
-  echo "Added \"$CFG_LINE\" to $ZSHENV_LOCAL"
-  echo "Future rebuilds will rely on this to detect flake and stow location"
+  echo "Add to $BASH_ENV_LOCAL and adjust:"
+  echo
+  echo "export CFG_DIR=${CFG_DIR:-$SCRIPT_DIR}"
+  echo "export CFG_VARIANT=darmok/tanagra"
+  echo "export GIT_AUTHOR_EMAIL="
+
+  echo
+  echo "Then re-run this command. Exiting."
+  exit 1
 fi
 
-source "$ZSHENV_LOCAL"
-
+echo
+echo "==> Running stow"
 # Run stow
-cd "$SCRIPT_DIR/dotfiles"
-nix run "$SCRIPT_DIR#stow" -- --verbose .
+pushd "$CFG_DIR/dotfiles"
+nix run "$CFG_DIR#stow" -- --verbose .
+popd
 
 # Apply nix flake
-echo "Applying nix flake at $SCRIPT_DIR"
-nix run nix-darwin -- switch --flake "$SCRIPT_DIR#macbook"
+echo
+echo "==> Applying nix flake at $CFG_DIR"
+nix run nix-darwin -- switch --flake "$CFG_DIR#$CFG_VARIANT"

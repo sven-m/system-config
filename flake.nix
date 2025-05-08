@@ -21,6 +21,13 @@
 
     lib = pkgs.lib;
 
+    catppuccin-xcode = pkgs.fetchFromGitHub {
+      owner = "catppuccin";
+      repo = "xcode";
+      rev = "6b483ce504a8b0c558d85a0663ebbcbfc457c2b0";
+      sha256 = "sha256-F9sUoBPJ2kE2wt2FIIrOWhJOacsxYC1tp1ksh++TDG8=";
+    };
+
     darwin-config = {username, only}: rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
@@ -195,7 +202,7 @@
     home-config = {
       home.stateVersion = "23.11";
 
-      home.file = let
+      home.file.".config/tmux/plugins" = let
         tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
           {
             name = "catppuccin";
@@ -211,8 +218,12 @@
           }
         ];
       in {
-        ".config/tmux/plugins".source = tmuxPlugins;
+        source = tmuxPlugins;
       };
+
+      home.activation.copyFile = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      cp "${catppuccin-xcode}/themes/Catppuccin Mocha.xccolortheme" ~/Library/Developer/Xcode/UserData/FontAndColorThemes/
+      '';
 
       programs.bat = {
         enable = true;

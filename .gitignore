@@ -2,3 +2,4 @@
 /result
 .DS_Store
 dotfiles/.bash_env
+dotfiles/.config/git/config.email

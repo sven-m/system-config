@@ -1,6 +1,8 @@
+[include]
+  path = config.email
+
 [user]
   name = Sven Meyer
-  # email set in GIT_AUHTOR_EMAIL
 
 [init]
   defaultBranch = main

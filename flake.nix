@@ -19,8 +19,6 @@
     darmok = "darmok";
     tanagra = "tanagra";
 
-    lib = pkgs.lib;
-
     catppuccin-xcode = pkgs.fetchFromGitHub {
       owner = "catppuccin";
       repo = "xcode";
@@ -262,7 +260,7 @@
       modules = [
         (darwin-config {
           username = "sven";
-          only = (machine: value: lib.mkIf (machine == darmok) value);
+          only = (machine: value: pkgs.lib.mkIf (machine == darmok) value);
         })
         home-manager.darwinModules.home-manager {
           home-manager = {
@@ -280,7 +278,7 @@
       modules = [
         (darwin-config {
           username = "sven";
-          only = (machine: value: lib.mkIf (machine == tanagra) value);
+          only = (machine: value: pkgs.lib.mkIf (machine == tanagra) value);
         })
         home-manager.darwinModules.home-manager {
           home-manager = {

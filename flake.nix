@@ -221,8 +221,14 @@
         source = tmuxPlugins;
       };
 
-      home.activation.copyFile = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      cp "${catppuccin-xcode}/themes/Catppuccin Mocha.xccolortheme" ~/Library/Developer/Xcode/UserData/FontAndColorThemes/
+      home.activation.copyFile = let 
+        filename = "Catppuccin Mocha.xccolortheme";
+        source = "${catppuccin-xcode}/themes/${filename}";
+        destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
+      in
+        home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        cp "${source}" "${destination}"
+        chmod 644 "${destination}"
       '';
 
       programs.bat = {

@@ -1,4 +1,4 @@
-vim.cmd.colorscheme "catppuccin_mocha"
+vim.cmd.colorscheme "catppuccin-mocha"
 
 vim.opt.compatible = false
 

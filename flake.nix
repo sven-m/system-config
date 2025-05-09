@@ -8,7 +8,7 @@
     darwin.url = "github:lnl7/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {self, nixpkgs, home-manager, darwin, ... }:
+  outputs = {self, nixpkgs, home-manager, darwin, ... }@inputs:
   let
     system = "aarch64-darwin";
     pkgs = import nixpkgs {
@@ -49,47 +49,45 @@
         xcodes
         yamllint
       ];
-      homebrew = {
-        enable = true;
-        onActivation = {
-          cleanup = "zap";
-          autoUpdate = true;
-          upgrade = true;
-        };
-        brews = [
-          "mas"
-          "libimobiledevice"
-          "ansible"
-          "aria2"
-          "ideviceinstaller"
-        ];
-        taps = [
-        ];
-        casks = [
-          "1password-cli"
-          "1password"
-          "android-studio"
-          "caffeine"
-          "charles"
-          "daisydisk"
-          "ghostty"
-          "google-chrome"
-          "mac-mouse-fix"
-          "qlmarkdown"
-          "sf-symbols"
-          "spotify"
-          "sublime-text"
-          "transmit"
-          "wireshark"
-          "xcodes"
-        ];
-
-        masApps = {
-          "1Password for Safari" = 1569813296;
-          "Apple Configurator" = 1037126344;
-          "Things" = 904280696;
-        };
+      homebrew.enable = true;
+      homebrew.onActivation = {
+        cleanup = "zap";
+        autoUpdate = true;
+        upgrade = true;
       };
+      homebrew.brews = [
+        "mas"
+        "libimobiledevice"
+        "ansible"
+        "aria2"
+        "ideviceinstaller"
+      ];
+      homebrew.taps = [
+      ];
+      homebrew.casks = [
+        "1password-cli"
+        "1password"
+        "android-studio"
+        "caffeine"
+        "charles"
+        "daisydisk"
+        "ghostty"
+        "google-chrome"
+        "mac-mouse-fix"
+        "qlmarkdown"
+        "sf-symbols"
+        "spotify"
+        "sublime-text"
+        "transmit"
+        "wireshark"
+        "xcodes"
+      ];
+      homebrew.masApps = {
+        "1Password for Safari" = 1569813296;
+        "Apple Configurator" = 1037126344;
+        "Things" = 904280696;
+      };
+
       environment.variables = {
         BASH_ENV = "$HOME/.bash_env";
         ANDROID_HOME = "$HOME/Library/Android/sdk";
@@ -115,6 +113,7 @@
         rebuild-cfg = "sh \"$CFG_DIR\"/rebuild.sh";
         modify-cfg = "$EDITOR \"$CFG_DIR\"";
       };
+
       programs.bash.enable = true;
       programs.bash.completion.enable = true;
       fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
@@ -183,37 +182,35 @@
           source = "${catppuccin-xcode}/themes/${filename}";
           destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
         in
-        home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
         cp "${source}" "${destination}"
         chmod 644 "${destination}"
         '';
 
-        programs.bat = {
-          enable = true;
-          config.theme = "TwoDark";
-        };
-        programs.eza = {
-          enable = true;
-          git = true;
-          icons = "auto";
-        };
-        programs.neovim = {
-          enable = true;
-          plugins = with pkgs.vimPlugins; [
-            vim-nix
-            nvim-tree-lua
-            vim-startify
-            nvim-treesitter.withAllGrammars
-            vimwiki
-            catppuccin-nvim
-          ];
-        };
+        programs.bat.enable = true;
+        programs.bat.config.theme = "TwoDark";
+
+        programs.eza.enable = true;
+        programs.eza.git = true;
+        programs.eza.icons = "auto";
+
+        programs.neovim.enable = true;
+        programs.neovim.plugins = with pkgs.vimPlugins; [
+          vim-nix
+          nvim-tree-lua
+          vim-startify
+          nvim-treesitter.withAllGrammars
+          vimwiki
+          catppuccin-nvim
+        ];
       };
     };
 
     darmok = {
       users.users.sven.home = "/Users/sven";
+
       environment.systemPackages = [ pkgs.transmission_3 ];
+
       homebrew.casks = [
         "balenaetcher"
         "bitcoin-core"
@@ -248,7 +245,11 @@
 
     tanagra = {
       users.users.sven.home = "/Users/sven";
-      homebrew.casks = [ "zoom" ];
+
+      homebrew.casks = [
+        "zoom"
+      ];
+
       system.defaults.dock.persistent-apps = [
         "/System/Applications/Launchpad.app"
         "/Applications/Google Chrome.app"

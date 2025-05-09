@@ -16,20 +16,13 @@
       config.allowUnfree = true;
     };
 
-    darmok = "darmok";
-    tanagra = "tanagra";
+    common-config = rec {
+      system.stateVersion = 4;
 
-    catppuccin-xcode = pkgs.fetchFromGitHub {
-      owner = "catppuccin";
-      repo = "xcode";
-      rev = "6b483ce504a8b0c558d85a0663ebbcbfc457c2b0";
-      sha256 = "sha256-F9sUoBPJ2kE2wt2FIIrOWhJOacsxYC1tp1ksh++TDG8=";
-    };
+      nix.enable = false;
 
-    darwin-config = {username, only}: rec {
       environment.shells = [ pkgs.bash pkgs.zsh ];
       environment.systemPackages = with pkgs; [
-        (only darmok transmission_3)
         btop
         bundler
         coreutils
@@ -89,35 +82,13 @@
           "transmit"
           "wireshark"
           "xcodes"
-          (only darmok "balenaetcher")
-          (only darmok "bitcoin-core")
-          (only darmok "docker")
-          (only darmok "electrum")
-          (only darmok "google-drive")
-          (only darmok "ledger-live")
-          (only darmok "nordvpn")
-          (only darmok "obsidian")
-          (only darmok "raspberry-pi-imager")
-          (only darmok "utm")
-          (only darmok "vagrant-vmware-utility")
-          (only darmok "vagrant")
-          (only darmok "vmware-fusion")
-          (only darmok "whatsapp")
-          (only tanagra "zoom")
         ];
 
         masApps = {
           "1Password for Safari" = 1569813296;
           "Apple Configurator" = 1037126344;
           "Things" = 904280696;
-        }
-        //
-        (only darmok {
-          "Pages" = 409201541;
-          "Numbers" = 409203825;
-          "Keynote" = 409183694;
-          "Hush" = 1544743900;
-        });
+        };
       };
       environment.variables = {
         BASH_ENV = "$HOME/.bash_env";
@@ -147,7 +118,6 @@
       programs.bash.enable = true;
       programs.bash.completion.enable = true;
       fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
-      nix.enable = false;
       security.pam.services.sudo_local.touchIdAuth = true;
       security.pam.services.sudo_local.reattach = true;
       system.keyboard.enableKeyMapping = true;
@@ -167,22 +137,6 @@
         orientation = "left";
         showhidden = true;
         expose-animation-duration = 0.3;
-        persistent-apps = [
-          { app = "/System/Applications/Launchpad.app"; }
-
-          (only tanagra { app = "/Applications/Google Chrome.app"; })
-          (only darmok { app = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"; })
-
-          { app = "/Applications/Ghostty.app"; }
-          { app = "/Applications/Xcode-16.3.0.app"; }
-
-          (only tanagra { app = "/Applications/Slack.app"; })
-          (only tanagra { app = "/Applications/Microsoft Teams.app"; })
-          (only tanagra { app = "/Applications/Microsoft Outlook.app"; })
-
-          { app = "/System/Applications/App Store.app"; }
-          { app = "/System/Applications/System Settings.app"; }
-        ];
       };
       system.defaults.menuExtraClock.ShowSeconds = true;
       system.defaults.menuExtraClock.ShowDayOfWeek = true;
@@ -194,61 +148,118 @@
         _FXShowPosixPathInTitle = true;
       };
 
-      users.users.${username}.home = "/Users/${username}";
-      system.stateVersion = 4;
-    };
-    home-config = {
-      home.stateVersion = "23.11";
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = false;
+      home-manager.users.sven = {
+        home.stateVersion = "23.11";
 
-      home.file.".config/tmux/plugins" = let
-        tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
-          {
-            name = "catppuccin";
-            path = "${catppuccin}/share/tmux-plugins/catppuccin";
-          }
-          {
-            name = "cpu";
-            path = "${cpu}/share/tmux-plugins/cpu";
-          }
-          {
-            name = "battery";
-            path = "${battery}/share/tmux-plugins/battery";
-          }
-        ];
-      in {
-        source = tmuxPlugins;
-      };
+        home.file.".config/tmux/plugins" = let
+          tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
+            {
+              name = "catppuccin";
+              path = "${catppuccin}/share/tmux-plugins/catppuccin";
+            }
+            {
+              name = "cpu";
+              path = "${cpu}/share/tmux-plugins/cpu";
+            }
+            {
+              name = "battery";
+              path = "${battery}/share/tmux-plugins/battery";
+            }
+          ];
+        in {
+          source = tmuxPlugins;
+        };
 
-      home.activation.copyFile = let 
-        filename = "Catppuccin Mocha.xccolortheme";
-        source = "${catppuccin-xcode}/themes/${filename}";
-        destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
-      in
+        home.activation.copyFile = let 
+          catppuccin-xcode = pkgs.fetchFromGitHub {
+            owner = "catppuccin";
+            repo = "xcode";
+            rev = "6b483ce504a8b0c558d85a0663ebbcbfc457c2b0";
+            sha256 = "sha256-F9sUoBPJ2kE2wt2FIIrOWhJOacsxYC1tp1ksh++TDG8=";
+          };
+          filename = "Catppuccin Mocha.xccolortheme";
+          source = "${catppuccin-xcode}/themes/${filename}";
+          destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
+        in
         home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         cp "${source}" "${destination}"
         chmod 644 "${destination}"
-      '';
+        '';
 
-      programs.bat = {
-        enable = true;
-        config.theme = "TwoDark";
+        programs.bat = {
+          enable = true;
+          config.theme = "TwoDark";
+        };
+        programs.eza = {
+          enable = true;
+          git = true;
+          icons = "auto";
+        };
+        programs.neovim = {
+          enable = true;
+          plugins = with pkgs.vimPlugins; [
+            vim-nix
+            nvim-tree-lua
+            vim-startify
+            nvim-treesitter.withAllGrammars
+            vimwiki
+            catppuccin-nvim
+          ];
+        };
       };
-      programs.eza = {
-        enable = true;
-        git = true;
-        icons = "auto";
+    };
+
+    darmok = {
+      users.users.sven.home = "/Users/sven";
+      environment.systemPackages = [ pkgs.transmission_3 ];
+      homebrew.casks = [
+        "balenaetcher"
+        "bitcoin-core"
+        "docker"
+        "electrum"
+        "google-drive"
+        "ledger-live"
+        "nordvpn"
+        "obsidian"
+        "raspberry-pi-imager"
+        "utm"
+        "vagrant-vmware-utility"
+        "vagrant"
+        "vmware-fusion"
+        "whatsapp"
+      ];
+      homebrew.masApps = {
+        "Pages" = 409201541;
+        "Numbers" = 409203825;
+        "Keynote" = 409183694;
+        "Hush" = 1544743900;
       };
-      programs.neovim = {
-        enable = true;
-        plugins = with pkgs.vimPlugins; [
-          vim-nix
-          nvim-tree-lua
-          vim-startify
-          nvim-treesitter.withAllGrammars
-          vimwiki
-          catppuccin-nvim
-        ];
-      };
+      system.defaults.dock.persistent-apps = [
+        "/System/Applications/Launchpad.app"
+        "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
+        "/Applications/Ghostty.app"
+        "/Applications/Xcode-16.3.0.app"
+        "/System/Applications/App Store.app"
+        "/System/Applications/System Settings.app"
+      ];
+    };
+
+    tanagra = {
+      users.users.sven.home = "/Users/sven";
+      homebrew.casks = [ "zoom" ];
+      system.defaults.dock.persistent-apps = [
+        "/System/Applications/Launchpad.app"
+        "/Applications/Google Chrome.app"
+        "/Applications/Ghostty.app"
+        "/Applications/Xcode-16.3.0.app"
+        "/Applications/Slack.app"
+        "/Applications/Microsoft Teams.app"
+        "/Applications/Microsoft Outlook.app"
+        "/System/Applications/App Store.app"
+        "/System/Applications/System Settings.app"
+      ];
     };
   in
   {
@@ -258,17 +269,9 @@
       inherit system;
       inherit pkgs;
       modules = [
-        (darwin-config {
-          username = "sven";
-          only = (machine: value: pkgs.lib.mkIf (machine == darmok) value);
-        })
-        home-manager.darwinModules.home-manager {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = false;
-            users.sven = home-config;
-          };
-        }
+        home-manager.darwinModules.home-manager
+        common-config
+        darmok
       ];
     };
 
@@ -276,19 +279,10 @@
       inherit system;
       inherit pkgs;
       modules = [
-        (darwin-config {
-          username = "sven";
-          only = (machine: value: pkgs.lib.mkIf (machine == tanagra) value);
-        })
-        home-manager.darwinModules.home-manager {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = false;
-            users.sven = home-config;
-          };
-        }
+        home-manager.darwinModules.home-manager
+        common-config
+        tanagra
       ];
     };
-
   };
 }

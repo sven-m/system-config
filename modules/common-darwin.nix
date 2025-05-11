@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, home-manager, username, ... }:
 
 {
   system.stateVersion = 4;
@@ -84,7 +84,7 @@
   };
 
   home-manager.users.${username} = {
-    home.activation.copyFile = let 
+    home.activation.xcodeCatppuccinTheme = let 
       catppuccin-xcode = pkgs.fetchFromGitHub {
         owner = "catppuccin";
         repo = "xcode";
@@ -95,7 +95,7 @@
       source = "${catppuccin-xcode}/themes/${filename}";
       destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
     in
-    inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
+    home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
     cp "${source}" "${destination}"
     chmod 644 "${destination}"
     '';

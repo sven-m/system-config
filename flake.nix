@@ -30,8 +30,8 @@
     darwinConfigurations.darmok = darwin.lib.darwinSystem {
       system = darwin64-system;
       pkgs = darwin-pkgs;
+      specialArgs = { username = "sven"; inherit home-manager; };
       modules = [
-        { username = "sven"; }
         home-manager.darwinModules.home-manager
         ./modules/common.nix
         ./modules/common-darwin.nix
@@ -42,9 +42,7 @@
     nixosConfigurations.jalad = nixpkgs.lib.nixosSystem {
       system = linux64-system;
       pkgs = linux-pkgs;
-      specialArgs = {
-        username = "sven";
-      };
+      specialArgs = { username = "sven"; };
       modules = [
         home-manager.nixosModules.home-manager
         ./modules/common.nix
@@ -55,8 +53,8 @@
     darwinConfigurations.tanagra = darwin.lib.darwinSystem {
       system = darwin64-system;
       pkgs = darwin-pkgs;
+      specialArgs = { username = "sven"; inherit home-manager; };
       modules = [
-        { username = "sven"; }
         home-manager.darwinModules.home-manager
         ./modules/common.nix
         ./modules/common-darwin.nix

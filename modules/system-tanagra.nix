@@ -6,6 +6,7 @@ Configuration for tanagra (macOS)
 - homebrew formulas and casks
 - Mac App Store apps
 - Dock items
+
 */
 
 { config, lib, pkgs, username, ... }:

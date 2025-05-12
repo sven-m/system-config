@@ -17,7 +17,7 @@ Configuration for jalad (nixOS)
 let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPNDocr90NU7RK5CQM8tZ3Go"; in
 {
   imports = [
-    ./jalad-hardware.nix
+    ./system-jalad-hardware.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

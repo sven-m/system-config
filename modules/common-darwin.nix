@@ -13,7 +13,7 @@ Configuration for all macOS systems
 {
   system.stateVersion = 4;
 
-  nix.enable = false;
+  nix.enable = false; # using determinate systems nix
 
   environment.systemPackages = with pkgs; [
     bundler

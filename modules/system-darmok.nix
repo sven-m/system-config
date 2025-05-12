@@ -5,12 +5,13 @@ Configuration for darmok (macOS)
 - homebrew formulas and casks
 - Mac App Store apps
 - Dock items
+
 */
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  users.users.sven.home = "/Users/sven";
+  users.users.${username}.home = "/Users/${username}";
 
   environment.systemPackages = [
     pkgs.transmission_3

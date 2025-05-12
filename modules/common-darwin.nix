@@ -1,3 +1,13 @@
+/* 
+
+Configuration for all macOS systems
+
+- system-wide nix packages
+- homebrew formulas and casks
+- macOS system settings
+- Xcode theme
+*/
+
 { config, lib, pkgs, home-manager, username, ... }:
 
 {
@@ -9,6 +19,10 @@
     bundler
     xcodes
   ];
+
+  environment.variables = {
+    SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  };
 
   homebrew.enable = true;
   homebrew.onActivation = {

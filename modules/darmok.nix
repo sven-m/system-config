@@ -1,3 +1,12 @@
+/*
+
+Configuration for darmok (macOS)
+
+- homebrew formulas and casks
+- Mac App Store apps
+- Dock items
+*/
+
 { config, lib, pkgs, ... }:
 
 {

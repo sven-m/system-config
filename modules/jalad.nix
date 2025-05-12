@@ -1,6 +1,17 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+/*
+
+Configuration for jalad (nixOS)
+
+- nix settings
+- boot loader
+- boot disk unlock through SSH
+- sleep disabled
+- users
+- ssh server
+- sudo
+- system-wide nix packages
+
+*/
 
 { config, lib, pkgs, username, ... }:
 let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPNDocr90NU7RK5CQM8tZ3Go"; in
@@ -105,8 +116,13 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    ghostty
   ];
 
+
+  environment.variables = {
+    SSH_AUTH_SOCK = "$HOME/.1password/agent.sock";
+  };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

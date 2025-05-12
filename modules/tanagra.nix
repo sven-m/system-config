@@ -1,11 +1,24 @@
-{ config, lib, pkgs, ... }:
+/*
+
+Configuration for tanagra (macOS)
+
+- home directory
+- homebrew formulas and casks
+- Mac App Store apps
+- Dock items
+*/
+
+{ config, lib, pkgs, username, ... }:
 
 {
-  users.users.sven.home = "/Users/sven";
+  users.users.${username}.home = "/Users/${username}";
 
   homebrew.casks = [
     "zoom"
   ];
+
+  homebrew.masApps = {
+  };
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Launchpad.app"

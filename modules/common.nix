@@ -1,3 +1,12 @@
+/*
+
+Configuration for all systems (nixOS and macOS)
+
+- system-wide nix packages
+- shell: environment variables, shell aliases
+- home-manager: tmux plugins, bat, eza, neovim plugins
+*/
+
 { config, lib, pkgs, username, ... }:
 
 {

@@ -17,6 +17,10 @@ Configuration for darmok (macOS)
     pkgs.transmission_3
   ];
 
+  environment.shellAliases = {
+    rebuild-cfg = "darwin-rebuild switch --flake $CFG_HOME#darmok";
+  };
+
   homebrew.casks = [
     "balenaetcher"
     "bitcoin-core"

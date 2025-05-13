@@ -7,13 +7,14 @@ Configuration for all systems (nixOS and macOS)
 - home-manager: tmux plugins, bat, eza, neovim plugins
 */
 
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, home-manager, username, ... }:
 
 {
   environment.shells = [ pkgs.bashInteractive ];
   programs.bash.completion.enable = true;
 
   environment.systemPackages = with pkgs; [
+    git
     btop
     coreutils
     diff-so-fancy # used in gitconfig
@@ -55,8 +56,7 @@ Configuration for all systems (nixOS and macOS)
     gs = "git status";
     gl = "git lg1";
     gll = "git lg2";
-    rebuild-cfg = "sh \"$CFG_DIR\"/rebuild.sh";
-    modify-cfg = "$EDITOR \"$CFG_DIR\"";
+    modify-cfg = "$EDITOR \"$CFG_HOME\"";
   };
 
   fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
@@ -93,6 +93,7 @@ Configuration for all systems (nixOS and macOS)
     programs.eza.git = true;
     programs.eza.icons = "auto";
 
+
     programs.neovim.enable = true;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       vim-nix
@@ -102,5 +103,35 @@ Configuration for all systems (nixOS and macOS)
       vimwiki
       catppuccin-nvim
     ];
+
+    home.activation.cfgEnvironment = let 
+      configHomeEnvFile = "$HOME/.config/cfg_home_env";
+      gitConfigLocalFile = "$HOME/.config/git/config.local";
+      gitConfigCommand = /* sh */ "${pkgs.git}/bin/git config --file ${gitConfigLocalFile} user.email";
+    in
+    home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
+    set -euo pipefail
+
+    if ! ${gitConfigCommand}
+    then
+      read -p "Git author email: " user_email
+
+      if [ -n "$user_email" ]
+      then
+        ${gitConfigCommand} "$user_email"
+        echo "✅ Git user.email set to $user_email in ${gitConfigLocalFile}"
+      else
+        echo "Not configuring git user.email."
+      fi
+    fi
+
+    echo "Loading CFG_HOME from ~/.config/cfg_home_env..."
+    source "$HOME/.config/cfg_home_env" 
+
+    pushd "$CFG_HOME/dotfiles"
+    echo ${pkgs.stow}/bin/stow --verbose .
+    popd
+
+    '';
   };
 }

@@ -4,15 +4,20 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
 
 ## Installation
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/sven-m/system-config.git
-    ```
+1. Clone the repository
+   ```sh
+   git clone https://github.com/sven-m/system-config.git
+   ```
+2. Set `$CFG_HOME` in `~/.config/cfg_home_env`
+   ```
+   cd system-config
+   echo export CFG_HOME=\"$PWD\" > ~/.config/cfg_home_env
+   ```
 
-2. Apply the configuration by running:
-    ```sh
-    system-config/rebuild.sh
-    ```
+4. Apply the configuration by running:
+   ```sh
+   nix run nix-darwin -- switch --flake .#variant
+   ```
 
 ## Edit & Update Aliases
 

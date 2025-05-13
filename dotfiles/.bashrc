@@ -1,4 +1,4 @@
-source ~/.bash_env
+source ~/.config/cfg_home_env
 
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"

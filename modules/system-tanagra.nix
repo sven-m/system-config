@@ -14,6 +14,11 @@ Configuration for tanagra (macOS)
 {
   users.users.${username}.home = "/Users/${username}";
 
+  environment.shellAliases = {
+    rebuild-cfg = "darwin-rebuild switch --flake $CFG_HOME#tanagra";
+  };
+
+
   homebrew.casks = [
     "zoom"
   ];

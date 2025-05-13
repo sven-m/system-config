@@ -1,5 +1,5 @@
 [include]
-  path = config.email
+  path = config.local
 
 [user]
   name = Sven Meyer

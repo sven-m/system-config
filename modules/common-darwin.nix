@@ -20,8 +20,8 @@ Configuration for all macOS systems
     xcodes
   ];
 
-  environment.variables = {
-    SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  environment.shellAliases = {
+    xcopen = "open -a $(xcode-select -p)/../..";
   };
 
   homebrew.enable = true;
@@ -43,6 +43,7 @@ Configuration for all macOS systems
     "1password-cli"
     "1password"
     "android-studio"
+    "apparency"
     "caffeine"
     "charles"
     "daisydisk"
@@ -112,6 +113,10 @@ Configuration for all macOS systems
     home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
     cp "${source}" "${destination}"
     chmod 644 "${destination}"
+    '';
+
+    home.activation.sshAgentSocket = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
+      ln -sf "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" "$HOME/.ssh/agent.sock"
     '';
   };
 }

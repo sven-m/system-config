@@ -119,14 +119,13 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     ghostty
   ];
 
-
-  environment.variables = {
-    SSH_AUTH_SOCK = "$HOME/.1password/agent.sock";
-  };
-
   environment.shellAliases = {
     rebuild-cfg = "nixos-rebuild switch --flake $CFG_HOME#jalad";
   };
+
+  home.activation.sshAgentSocket = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
+    ln -sf "$HOME/.1password/agent.sock" "$HOME/.ssh/agent.sock"
+  '';
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

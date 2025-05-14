@@ -21,7 +21,11 @@ vim.opt.wrap = true
 vim.opt.showcmd = true
 vim.opt.showmatch = true
 
+-- startify
+
 vim.g.startify_change_to_vcs_root = 0
+
+-- vimwiki
 
 vim.g.vimwiki_list = {
   {
@@ -30,6 +34,8 @@ vim.g.vimwiki_list = {
     ext = ".md"
   }
 }
+
+-- nvim-tree
 
 require("nvim-tree").setup({
   sort = {
@@ -53,11 +59,71 @@ require("nvim-tree").setup({
   },
 })
 
+-- nvim-treesitter
+
 require('nvim-treesitter.configs').setup({
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
   },
+})
+
+-- lspconfig
+
+require('lspconfig').sourcekit.setup {
+  capabilities = {
+    workspace = {
+      didChangeWatchedFiles = {
+        dynamicRegistration = true,
+      },
+    },
+  },
+  root_dir = require('lspconfig.util').root_pattern('Package.swift', '.git'),
+}
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP Actions',
+  callback = function(args)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {noremap = true, silent = true})
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {noremap = true, silent = true})
+    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+
+    -- Go to next diagnostic
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+
+    -- Show signature help (function args)
+    vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
+  end,
+})
+
+-- nvim-cmp and friends
+
+local cmp = require('cmp')
+
+cmp.setup({
+  mapping = cmp.mapping.preset.insert({
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+  }),
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    { name = "buffer" },
+    { name = "path" },
+  }),
 })
 
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')

@@ -102,6 +102,11 @@ Configuration for all systems (nixOS and macOS)
       nvim-treesitter.withAllGrammars
       vimwiki
       catppuccin-nvim
+      nvim-lspconfig
+      nvim-cmp
+      cmp-nvim-lsp
+      cmp-path
+      cmp-buffer
     ];
 
     home.activation.cfgEnvironment = let 

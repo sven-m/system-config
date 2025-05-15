@@ -119,22 +119,18 @@ Configuration for all systems (nixOS and macOS)
 
     if ! ${gitConfigCommand}
     then
-      read -p "Git author email: " user_email
-
-      if [ -n "$user_email" ]
-      then
-        ${gitConfigCommand} "$user_email"
-        echo "✅ Git user.email set to $user_email in ${gitConfigLocalFile}"
-      else
-        echo "Not configuring git user.email."
+      echo "⚠️ No git author configured yet."
+      echo
+      echo "▶️ Run the following command to set your git author:"
+      echo
+      echo "(echo -n 'Git author email: '; read email; ${gitConfigCommand} \$email)"
       fi
-    fi
 
     echo "Loading CFG_HOME from ~/.config/cfg_home_env..."
     source "$HOME/.config/cfg_home_env" 
 
     pushd "$CFG_HOME/dotfiles"
-    echo ${pkgs.stow}/bin/stow --verbose .
+    ${pkgs.stow}/bin/stow --verbose .
     popd
 
     '';

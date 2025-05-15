@@ -16,7 +16,11 @@ The primary system configuration for my macbook that uses `nix`, `nix-darwin` an
 
 4. Apply the configuration by running:
    ```sh
+   # nix-darwin
    nix run nix-darwin -- switch --flake .#variant
+
+   # nixos
+   nixos-rebuild switch --flake .#variant
    ```
 
 ## Edit & Update Aliases

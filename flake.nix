@@ -42,7 +42,7 @@
     nixosConfigurations.jalad = nixpkgs.lib.nixosSystem {
       system = linux64-system;
       pkgs = linux-pkgs;
-      specialArgs = { username = "sven"; };
+      specialArgs = { username = "sven"; inherit home-manager; };
       modules = [
         home-manager.nixosModules.home-manager
         ./modules/common.nix

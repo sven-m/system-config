@@ -13,7 +13,7 @@ Configuration for jalad (nixOS)
 
 */
 
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, username, home-manager, ... }:
 let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPNDocr90NU7RK5CQM8tZ3Go"; in
 {
   imports = [
@@ -79,6 +79,9 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
+  services.xrdp.enable = true;
+  services.xrdp.defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
+  services.xrdp.openFirewall = true;
 
   # Configure keymap in X11
   #services.xserver.xkb.layout = "us";
@@ -117,15 +120,19 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     ghostty
+    pkgs.gnome-remote-desktop
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "nixos-rebuild switch --flake $CFG_HOME#jalad";
+    rebuild-cfg = "sudo nixos-rebuild switch --flake $CFG_HOME#jalad";
   };
 
-  home.activation.sshAgentSocket = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
-    ln -sf "$HOME/.1password/agent.sock" "$HOME/.ssh/agent.sock"
-  '';
+  home-manager.users.${username} = {
+    home.activation.sshAgentSocket = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
+      ln -sf "$HOME/.1password/agent.sock" "$HOME/.ssh/agent.sock"
+    '';
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

@@ -7,8 +7,11 @@
 
     darwin.url = "github:lnl7/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {self, nixpkgs, home-manager, darwin, ... }@inputs:
+  outputs = {self, nixpkgs, home-manager, darwin, disko, ... }@inputs:
   let
     darwin64-system = "aarch64-darwin";
     linux64-system = "x86_64-linux";
@@ -45,6 +48,7 @@
       specialArgs = { username = "sven"; inherit home-manager; };
       modules = [
         home-manager.nixosModules.home-manager
+        disko.nixosModules.disko
         ./modules/common.nix
         ./modules/system-jalad.nix
       ];

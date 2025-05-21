@@ -18,6 +18,7 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
 {
   imports = [
     ./system-jalad-hardware.nix
+    ./system-jalad-disko.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

@@ -26,7 +26,7 @@
               label = "luks";
               content = {
                 type = "luks";
-                name = "cryptroot";
+                name = "nixos-root";
                 extraOpenArgs = [
                   "--allow-discards"
                   "--perf-no_read_workqueue"

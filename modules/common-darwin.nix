@@ -40,13 +40,14 @@ Configuration for all macOS systems
   homebrew.taps = [
   ];
   homebrew.casks = [
-    "1password-cli"
     "1password"
+    "1password-cli"
     "android-studio"
     "apparency"
     "caffeine"
     "charles"
     "daisydisk"
+    "drawio"
     "ghostty"
     "google-chrome"
     "mac-mouse-fix"

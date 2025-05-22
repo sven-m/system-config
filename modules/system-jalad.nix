@@ -121,7 +121,10 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     ghostty
-    pkgs.gnome-remote-desktop
+    gnome-remote-desktop
+    spotify
+    chromium
+    whatsapp-for-linux
   ];
 
   environment.shellAliases = {
@@ -141,6 +144,18 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+  };
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
 
   # List services that you want to enable:
 

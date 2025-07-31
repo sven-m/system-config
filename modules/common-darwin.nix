@@ -16,6 +16,7 @@ Configuration for all macOS systems
   nix.enable = false; # using determinate systems nix
 
   environment.systemPackages = with pkgs; [
+    betterdisplay
     bundler
     xcodes
   ];
@@ -44,6 +45,7 @@ Configuration for all macOS systems
     "1password-cli"
     "android-studio"
     "apparency"
+    "brave-browser"
     "caffeine"
     "charles"
     "daisydisk"

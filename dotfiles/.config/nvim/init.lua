@@ -34,6 +34,7 @@ vim.g.vimwiki_list = {
     ext = ".md"
   }
 }
+vim.g.vimwiki_auto_header = 1
 
 -- nvim-tree
 

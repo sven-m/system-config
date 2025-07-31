@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+xcode_proj_in_dir="$(find . -maxdepth 1 -name '*.xcodeproj' -print -quit)"
+test -n "$xcode_proj_in_dir"
+
+open -a "$(xcode-select -p)/../.." "$xcode_proj_in_dir"

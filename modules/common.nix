@@ -80,11 +80,14 @@ Configuration for all systems (nixOS and macOS)
           name = "battery";
           path = "${battery}/share/tmux-plugins/battery";
         }
+        {
+          name = "resurrect";
+          path = "${resurrect}/share/tmux-plugins/resurrect";
+        }
       ];
     in {
       source = tmuxPlugins;
     };
-
 
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";

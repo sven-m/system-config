@@ -14,6 +14,11 @@ Configuration for tanagra (macOS)
 {
   users.users.${username}.home = "/Users/${username}";
 
+  environment.systemPackages = [
+    pkgs.typescript
+    pkgs.jetbrains.idea-ultimate
+  ];
+
   environment.shellAliases = {
     rebuild-cfg = "darwin-rebuild switch --flake $CFG_HOME#tanagra";
   };
@@ -28,12 +33,10 @@ Configuration for tanagra (macOS)
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Launchpad.app"
-    "/Applications/Google Chrome.app"
+    "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-16.3.0.app"
+    "/Applications/Xcode-16.4.0.app"
     "/Applications/Slack.app"
-    "/Applications/Microsoft Teams.app"
-    "/Applications/Microsoft Outlook.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

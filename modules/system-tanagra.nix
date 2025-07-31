@@ -20,7 +20,7 @@ Configuration for tanagra (macOS)
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "darwin-rebuild switch --flake $CFG_HOME#tanagra";
+    rebuild-cfg = "sudo darwin-rebuild switch --flake $CFG_HOME#tanagra";
   };
 
 

@@ -44,8 +44,8 @@ Configuration for all macOS systems
   homebrew.taps = [
   ];
   homebrew.casks = [
-    "1password"
     "1password-cli"
+    "1password"
     "android-studio"
     "apparency"
     "brave-browser"

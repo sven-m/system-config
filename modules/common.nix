@@ -14,11 +14,11 @@ Configuration for all systems (nixOS and macOS)
   programs.bash.completion.enable = true;
 
   environment.systemPackages = with pkgs; [
-    git
     btop
     coreutils
     diff-so-fancy # used in gitconfig
     fzf
+    git
     git-lfs # needed for some projects
     gnused
     ideviceinstaller

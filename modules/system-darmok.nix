@@ -54,7 +54,7 @@ Configuration for darmok (macOS)
     "/System/Applications/Launchpad.app"
     "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-16.3.0.app"
+    "/Applications/Xcode-16.4.0.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

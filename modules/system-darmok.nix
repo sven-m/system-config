@@ -15,10 +15,13 @@ Configuration for darmok (macOS)
 
   environment.systemPackages = [
     pkgs.transmission_3
+    pkgs.uv
+    pkgs.pass
+    pkgs.gnupg
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "darwin-rebuild switch --flake $CFG_HOME#darmok";
+    rebuild-cfg = "sudo darwin-rebuild switch --flake $CFG_HOME#darmok";
   };
 
   homebrew.casks = [
@@ -28,12 +31,14 @@ Configuration for darmok (macOS)
     "electrum"
     "google-drive"
     "ledger-live"
+    "nextcloud-vfs"
     "nordvpn"
     "obsidian"
     "raspberry-pi-imager"
     "utm"
     "vagrant-vmware-utility"
     "vagrant"
+    "vivaldi"
     "vmware-fusion"
     "whatsapp"
   ];

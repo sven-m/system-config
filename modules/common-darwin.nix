@@ -12,6 +12,7 @@ Configuration for all macOS systems
 
 {
   system.stateVersion = 4;
+  system.primaryUser = username;
 
   nix.enable = false; # using determinate systems nix
 
@@ -19,6 +20,7 @@ Configuration for all macOS systems
     betterdisplay
     bundler
     xcodes
+    betterdisplay
   ];
 
   environment.shellAliases = {
@@ -37,6 +39,7 @@ Configuration for all macOS systems
     "ansible"
     "aria2"
     "ideviceinstaller"
+    "openssh"
   ];
   homebrew.taps = [
   ];

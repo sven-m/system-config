@@ -52,7 +52,7 @@ Configuration for darmok (macOS)
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Launchpad.app"
-    "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
+    "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
     "/Applications/Xcode-16.4.0.app"
     "/System/Applications/App Store.app"

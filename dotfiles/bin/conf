@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+main() {
+  local script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")" )"
+  local cfg_home="$(realpath "${script_dir}/../..")"
+  cd "$cfg_home"
+
+  if [ "$#" = "0" ]
+  then
+    local commands=(stow rebuild) 
+  else
+    local commands=("$@")
+  fi
+
+  for current_command in "${commands[@]}"
+  do
+    "$current_command"
+  done
+}
+
+edit() {
+  "$EDITOR" .
+}
+
+lazygit() {
+  command lazygit
+}
+
+rebuild() {
+  git_author
+
+  if [ -z "${CFG_NAME:-}" ]
+  then
+    read -p "Configuration name: " CFG_NAME
+  fi
+
+  echo "Applying configuration for $CFG_NAME"
+  sudo -i nix run "$PWD#rebuild" -- switch --flake "$PWD#$CFG_NAME"
+}
+
+rebuild-wait() {
+  wait() {
+    echo
+    read -p "Press any key to close." -n 1
+  }
+  trap wait EXIT
+
+  rebuild 
+}
+
+git_author() {
+  local git_config_author_email_command=(
+    nix run .#git -- config --file ~/.config/git/config.local user.email
+  )
+
+  if ! "${git_config_author_email_command[@]}" > /dev/null
+  then
+    echo "⚠️ No git author configured yet."
+    read -p "Enter git author email addres (leave empty to skip): " email
+
+    if [ -n "$email" ]
+    then
+      "${git_config_author_email_command[@]}" "$email"
+    fi
+  fi
+}
+
+stow() {
+  nix run .#stow -- .
+}
+
+main "$@"

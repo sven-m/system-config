@@ -91,7 +91,7 @@ Configuration for all macOS systems
     mru-spaces = false;
     orientation = "left";
     showhidden = true;
-    expose-animation-duration = 0.3;
+    expose-animation-duration = 0.1;
   };
   system.defaults.menuExtraClock.ShowSeconds = true;
   system.defaults.menuExtraClock.ShowDayOfWeek = true;

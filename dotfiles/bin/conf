@@ -68,7 +68,7 @@ git_author() {
 }
 
 stow() {
-  nix run .#stow -- .
+  nix run .#stow -- --restow .
 }
 
 main "$@"

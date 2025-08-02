@@ -1,4 +1,5 @@
 --target "$HOME"
---dir "$CFG_HOME/dotfiles"
+--dir=dotfiles
 --no-folding
 --ignore='.DS_Store'
+--verbose

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")" )"
+cfg_home="$(realpath "${script_dir}/../..")"
+
+"$EDITOR" "$cfg_home"

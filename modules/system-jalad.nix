@@ -21,6 +21,10 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     ./system-jalad-disko.nix
   ];
 
+  environment.sessionVariables = {
+    CFG_NAME = "jalad";
+  };
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Use the systemd-boot EFI boot loader.
@@ -128,7 +132,6 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "sudo nixos-rebuild switch --flake $CFG_HOME#jalad";
   };
 
   home-manager.users.${username} = {

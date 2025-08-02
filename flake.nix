@@ -30,8 +30,16 @@
     };
   in
   {
-    packages.${darwin64-system}.stow = darwin-pkgs.stow;
-    packages.${linux64-system}.stow = linux-pkgs.stow;
+    packages.${darwin64-system} = with darwin-pkgs; {
+      inherit stow;
+      inherit git;
+      rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
+    };
+    packages.${linux64-system} = with linux-pkgs; {
+      inherit stow;
+      inherit git;
+      rebuild = linux-pkgs.nixos-rebuild;
+    };
 
     darwinConfigurations.darmok = darwin.lib.darwinSystem {
       system = darwin64-system;

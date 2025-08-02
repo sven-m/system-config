@@ -14,13 +14,16 @@ Configuration for tanagra (macOS)
 {
   users.users.${username}.home = "/Users/${username}";
 
+  environment.variables = {
+    CFG_NAME = "tanagra";
+  };
+
   environment.systemPackages = [
     pkgs.typescript
     pkgs.jetbrains.idea-ultimate
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "sudo darwin-rebuild switch --flake $CFG_HOME#tanagra";
   };
 
 

@@ -13,6 +13,10 @@ Configuration for darmok (macOS)
 {
   users.users.${username}.home = "/Users/${username}";
 
+  environment.variables = {
+    CFG_NAME = "darmok";
+  };
+
   environment.systemPackages = [
     pkgs.transmission_3
     pkgs.uv
@@ -21,7 +25,6 @@ Configuration for darmok (macOS)
   ];
 
   environment.shellAliases = {
-    rebuild-cfg = "sudo darwin-rebuild switch --flake $CFG_HOME#darmok";
   };
 
   homebrew.casks = [

@@ -40,7 +40,6 @@ Configuration for all systems (nixOS and macOS)
   ];
 
   environment.variables = {
-    BASH_ENV = "$HOME/.bash_env";
     ANDROID_HOME = "$HOME/Library/Android/sdk";
     THEOS = "$HOME/theos";
 
@@ -56,7 +55,6 @@ Configuration for all systems (nixOS and macOS)
     gs = "git status";
     gl = "git lg1";
     gll = "git lg2";
-    modify-cfg = "$EDITOR \"$CFG_HOME\"";
   };
 
   fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
@@ -111,31 +109,5 @@ Configuration for all systems (nixOS and macOS)
       cmp-path
       cmp-buffer
     ];
-
-    home.activation.cfgEnvironment = let 
-      configHomeEnvFile = "$HOME/.config/cfg_home_env";
-      gitConfigLocalFile = "$HOME/.config/git/config.local";
-      gitConfigCommand = /* sh */ "${pkgs.git}/bin/git config --file ${gitConfigLocalFile} user.email";
-    in
-    home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
-    set -euo pipefail
-
-    if ! ${gitConfigCommand}
-    then
-      echo "⚠️ No git author configured yet."
-      echo
-      echo "▶️ Run the following command to set your git author:"
-      echo
-      echo "(echo -n 'Git author email: '; read email; ${gitConfigCommand} \$email)"
-      fi
-
-    echo "Loading CFG_HOME from ~/.config/cfg_home_env..."
-    source "$HOME/.config/cfg_home_env" 
-
-    pushd "$CFG_HOME/dotfiles"
-    ${pkgs.stow}/bin/stow --verbose .
-    popd
-
-    '';
   };
 }

@@ -24,7 +24,6 @@ Configuration for all macOS systems
   ];
 
   environment.shellAliases = {
-    xcopen = "open -a $(xcode-select -p)/../..";
   };
 
   homebrew.enable = true;

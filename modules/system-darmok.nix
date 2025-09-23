@@ -22,10 +22,17 @@ Configuration for darmok (macOS)
     pkgs.uv
     pkgs.pass
     pkgs.gnupg
+    pkgs.code-cursor
   ];
 
   environment.shellAliases = {
   };
+
+  homebrew.brews = [
+    "swiftformat"
+    "xcbeautify"
+    "xcode-build-server"
+  ];
 
   homebrew.casks = [
     "balenaetcher"
@@ -54,10 +61,10 @@ Configuration for darmok (macOS)
   };
 
   system.defaults.dock.persistent-apps = [
-    "/System/Applications/Launchpad.app"
+    "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-16.4.0.app"
+    "/Applications/Xcode-26.0.1.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

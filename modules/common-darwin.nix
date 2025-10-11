@@ -21,6 +21,7 @@ Configuration for all macOS systems
     bundler
     xcodes
     betterdisplay
+    rustup
   ];
 
   environment.shellAliases = {
@@ -55,6 +56,7 @@ Configuration for all macOS systems
     "ghostty"
     "google-chrome"
     "mac-mouse-fix"
+    "proxyman"
     "qlmarkdown"
     "sf-symbols"
     "spotify"

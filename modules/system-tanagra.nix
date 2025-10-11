@@ -35,10 +35,10 @@ Configuration for tanagra (macOS)
   };
 
   system.defaults.dock.persistent-apps = [
-    "/System/Applications/Launchpad.app"
+    "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-16.4.0.app"
+    "/Applications/Xcode-26.0.0.app"
     "/Applications/Slack.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"

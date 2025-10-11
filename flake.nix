@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    #nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     #home-manager-unstable.url = "github:nix-community/home-manager/master";
@@ -14,7 +14,7 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {self, nixpkgs, home-manager, darwin, disko, ... }@inputs:
+  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, disko, ... }@inputs:
   let
     darwin64-system = "aarch64-darwin";
     linux64-system = "x86_64-linux";
@@ -24,7 +24,17 @@
       config.allowUnfree = true;
     };
 
+    darwin-pkgs-unstable = import nixpkgs-unstable {
+      system = darwin64-system;
+      config.allowUnfree = true;
+    };
+
     linux-pkgs = import nixpkgs {
+      system = linux64-system;
+      config.allowUnfree = true;
+    };
+
+    linux-pkgs-unstable = import nixpkgs-unstable {
       system = linux64-system;
       config.allowUnfree = true;
     };
@@ -44,7 +54,11 @@
     darwinConfigurations.darmok = darwin.lib.darwinSystem {
       system = darwin64-system;
       pkgs = darwin-pkgs;
-      specialArgs = { username = "sven"; inherit home-manager; };
+      specialArgs = {
+        username = "sven";
+        inherit home-manager;
+        pkgs-unstable = darwin-pkgs-unstable;
+      };
       modules = [
         home-manager.darwinModules.home-manager
         ./modules/common.nix
@@ -56,7 +70,11 @@
     nixosConfigurations.jalad = nixpkgs.lib.nixosSystem {
       system = linux64-system;
       pkgs = linux-pkgs;
-      specialArgs = { username = "sven"; inherit home-manager; };
+      specialArgs = {
+        username = "sven";
+        inherit home-manager;
+        pkgs-unstable = linux-pkgs-unstable;
+      };
       modules = [
         home-manager.nixosModules.home-manager
         disko.nixosModules.disko
@@ -68,7 +86,11 @@
     darwinConfigurations.tanagra = darwin.lib.darwinSystem {
       system = darwin64-system;
       pkgs = darwin-pkgs;
-      specialArgs = { username = "sven"; inherit home-manager; };
+      specialArgs = {
+        username = "sven";
+        inherit home-manager;
+        pkgs-unstable = darwin-pkgs-unstable;
+      };
       modules = [
         home-manager.darwinModules.home-manager
         ./modules/common.nix

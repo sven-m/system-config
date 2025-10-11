@@ -7,7 +7,7 @@ Configuration for all systems (nixOS and macOS)
 - home-manager: tmux plugins, bat, eza, neovim plugins
 */
 
-{ config, lib, pkgs, home-manager, username, ... }:
+{ config, lib, pkgs, pkgs-unstable, home-manager, username, ... }:
 
 {
   environment.shells = [ pkgs.bashInteractive ];

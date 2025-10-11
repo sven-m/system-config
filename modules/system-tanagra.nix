@@ -38,7 +38,7 @@ Configuration for tanagra (macOS)
     "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.0.0.app"
+    "/Applications/Xcode-26.0.1.app"
     "/Applications/Slack.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"

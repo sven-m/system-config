@@ -62,8 +62,8 @@ Configuration for all macOS systems
     "spotify"
     "sublime-text"
     "transmit"
-    "wireshark"
-    "xcodes"
+    "wireshark-app"
+    "xcodes-app"
   ];
   homebrew.masApps = {
     "1Password for Safari" = 1569813296;

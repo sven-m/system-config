@@ -24,6 +24,7 @@ Configuration for all systems (nixOS and macOS)
     ideviceinstaller
     ipatool
     iperf2
+    jekyll
     kubernetes-helm
     lazygit
     less
@@ -97,17 +98,31 @@ Configuration for all systems (nixOS and macOS)
 
     programs.neovim.enable = true;
     programs.neovim.plugins = with pkgs.vimPlugins; [
-      vim-nix
-      nvim-tree-lua
-      vim-startify
-      nvim-treesitter.withAllGrammars
-      vimwiki
       catppuccin-nvim
-      nvim-lspconfig
-      nvim-cmp
+      cmp-buffer
       cmp-nvim-lsp
       cmp-path
-      cmp-buffer
+      gitsigns-nvim
+      nvim-cmp
+      nvim-lspconfig
+      nvim-tree-lua
+      nvim-treesitter.withAllGrammars
+      vim-nix
+      vim-startify
+      #vimwiki
+
+      (
+        pkgs.vimUtils.buildVimPlugin {
+          pname = "vimwiki-wikilinks";
+          version = "v2024.01.24-wikilinks";
+          src = pkgs.fetchFromGitHub {
+            owner = "sven-m";
+            repo = "vimwiki";
+            rev= "405a758772153ee114e3e83c36e97c9a701c4fad";
+            hash = "sha256-gN4WNYW4apQfVW5KNr6zptT7qpenaHdMGDIjLv4HvTg=";
+          };
+        }
+      )
     ];
   };
 }

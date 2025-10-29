@@ -37,7 +37,7 @@ Configuration for darmok (macOS)
   homebrew.casks = [
     "balenaetcher"
     "bitcoin-core"
-    "docker"
+    "docker-desktop"
     "electrum"
     "google-drive"
     "ledger-live"

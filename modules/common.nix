@@ -118,8 +118,8 @@ Configuration for all systems (nixOS and macOS)
           src = pkgs.fetchFromGitHub {
             owner = "sven-m";
             repo = "vimwiki";
-            rev= "405a758772153ee114e3e83c36e97c9a701c4fad";
-            hash = "sha256-gN4WNYW4apQfVW5KNr6zptT7qpenaHdMGDIjLv4HvTg=";
+            rev= "602920c7dc66badb58540b91ba0be872bf430375";
+            hash = "sha256-jHR0Q3XLEdn2Og5AzTNXIFEvVpz9SCjUb2ms5V7YjSY=";
           };
         }
       )

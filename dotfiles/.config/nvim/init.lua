@@ -1,25 +1,20 @@
 vim.cmd.colorscheme "catppuccin-mocha"
-
-vim.opt.compatible = false
-
 vim.opt.breakindent = true
-
+vim.opt.compatible = false
 vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-
 vim.opt.hlsearch = true
 vim.opt.incsearch = true
-
+vim.opt.lazyredraw = true
 vim.opt.list = true
-
 vim.opt.number = true
 vim.opt.relativenumber = true
-
-vim.opt.lazyredraw = true
-vim.opt.wrap = true
+vim.opt.shiftwidth = 2
 vim.opt.showcmd = true
 vim.opt.showmatch = true
+vim.opt.tabstop = 2
+vim.opt.wrap = true
+vim.o.wildmenu = true
+vim.o.wildmode = "longest:full,full"
 
 -- startify
 
@@ -31,10 +26,34 @@ vim.g.vimwiki_list = {
   {
     path = "~/Documents/vimwiki/",
     syntax = "markdown",
-    ext = ".md"
+    ext = ".md",
+    auto_diary_index = 1
+  },
+  {
+    path = "~/Documents/vimwiki2/",
+    syntax = "default",
+    ext = ".wiki",
+    auto_diary_index = 1
   }
 }
 vim.g.vimwiki_auto_header = 1
+vim.g.vimwiki_markdown_link_ext = 1
+vim.g.vimwiki_links_header = "All Files"
+-- vim.g.generated_links_caption = 1
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "vimwiki",
+  callback = function()
+    vim.api.nvim_buf_create_user_command(0, "VimwikiGenerateLinksWikistyle", function()
+      vim.cmd("VimwikiGenerateLinks")
+      vim.cmd([===[silent! %s/\[\([^]]\+\)\](\1\.md)/[[\1]]/g]===])
+    end, {})
+  end,
+})
+
+-- gitsigns
+
+require("gitsigns").setup()
 
 -- nvim-tree
 
@@ -130,7 +149,8 @@ cmp.setup({
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
 vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
 vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
-vim.keymap.set('', '<C-b>', '<C-w>w')
+-- vim.keymap.set('', '<C-b>', '<C-w>w')
+vim.keymap.set('', '<Leader>w<Leader>l', '<cmd>VimwikiGenerateLinks<CR>')
 
 vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })

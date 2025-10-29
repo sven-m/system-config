@@ -9,7 +9,7 @@ main() {
 
   if [ "$#" = "0" ]
   then
-    local commands=(stow rebuild) 
+    local commands=(stow switch) 
   else
     local commands=("$@")
   fi
@@ -28,7 +28,17 @@ lazygit() {
   command lazygit
 }
 
-rebuild() {
+build() {
+  if [ -z "${CFG_NAME:-}" ]
+  then
+    read -p "Configuration name: " CFG_NAME
+  fi
+
+  echo "Building configuration for $CFG_NAME"
+  sudo -i nix run "$PWD#rebuild" -- build --flake "$PWD#$CFG_NAME"
+}
+
+switch() {
   git_author
 
   if [ -z "${CFG_NAME:-}" ]
@@ -40,14 +50,14 @@ rebuild() {
   sudo -i nix run "$PWD#rebuild" -- switch --flake "$PWD#$CFG_NAME"
 }
 
-rebuild-wait() {
+switch-wait() {
   wait() {
     echo
     read -p "Press any key to close." -n 1
   }
   trap wait EXIT
 
-  rebuild 
+  switch 
 }
 
 git_author() {

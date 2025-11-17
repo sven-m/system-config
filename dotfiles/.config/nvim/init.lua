@@ -16,6 +16,11 @@ vim.opt.wrap = true
 vim.o.wildmenu = true
 vim.o.wildmode = "longest:full,full"
 
+vim.opt.textwidth = 120
+vim.opt.wrapmargin = 0
+vim.opt.formatoptions:append("t")
+vim.opt.linebreak = true
+
 -- startify
 
 vim.g.startify_change_to_vcs_root = 0
@@ -33,7 +38,8 @@ vim.g.vimwiki_list = {
     path = "~/Documents/vimwiki2/",
     syntax = "default",
     ext = ".wiki",
-    auto_diary_index = 1
+    auto_diary_index = 1,
+    auto_generate_links = 1
   }
 }
 vim.g.vimwiki_auto_header = 1
@@ -41,15 +47,6 @@ vim.g.vimwiki_markdown_link_ext = 1
 vim.g.vimwiki_links_header = "All Files"
 -- vim.g.generated_links_caption = 1
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "vimwiki",
-  callback = function()
-    vim.api.nvim_buf_create_user_command(0, "VimwikiGenerateLinksWikistyle", function()
-      vim.cmd("VimwikiGenerateLinks")
-      vim.cmd([===[silent! %s/\[\([^]]\+\)\](\1\.md)/[[\1]]/g]===])
-    end, {})
-  end,
-})
 
 -- gitsigns
 
@@ -149,8 +146,13 @@ cmp.setup({
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
 vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
 vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
--- vim.keymap.set('', '<C-b>', '<C-w>w')
+
 vim.keymap.set('', '<Leader>w<Leader>l', '<cmd>VimwikiGenerateLinks<CR>')
+
+vim.keymap.set('', '<M-Down>', '<cmd>VimwikiDiaryPrevDay<CR>')
+vim.keymap.set('', '<M-Up>', '<cmd>VimwikiDiaryNextDay<CR>')
+vim.keymap.set('', '<M-j>', '<cmd>VimwikiDiaryPrevDay<CR>')
+vim.keymap.set('', '<M-k>', '<cmd>VimwikiDiaryNextDay<CR>')
 
 vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })

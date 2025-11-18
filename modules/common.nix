@@ -14,6 +14,8 @@ Configuration for all systems (nixOS and macOS)
   programs.bash.completion.enable = true;
 
   environment.systemPackages = with pkgs; [
+    bruno
+    bruno-cli
     btop
     coreutils
     diff-so-fancy # used in gitconfig

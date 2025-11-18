@@ -1,27 +1,5 @@
 local M = {}
 
-vim.api.nvim_create_autocmd("BufNewFile", {
-  pattern = { vim.fn.expand("$HOME") .. "/Documents/vimwiki/diary/[0-9]*.md" },
-  callback = function()
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, {})
-
-    local filename = vim.fn.expand("%:t:r")  -- e.g. "2025-10-31"
-
-    local cmd
-    if vim.fn.has("mac") == 1 then
-      cmd = string.format([===[date -j -f "%%Y-%%m-%%d" "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
-    else
-      cmd = string.format([===[date -d "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
-    end
-
-    local header = vim.fn.system(cmd)
-
-    vim.schedule(function()
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, { header:gsub("\n$", ""), "" })
-    end)
-  end,
-})
-
 if vim.env.NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED ~= "1" then
   return M
 end

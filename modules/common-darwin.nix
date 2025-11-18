@@ -30,8 +30,6 @@ Configuration for all macOS systems
   homebrew.enable = true;
   homebrew.onActivation = {
     cleanup = "zap";
-    autoUpdate = true;
-    upgrade = true;
   };
   homebrew.brews = [
     "mas"

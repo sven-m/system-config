@@ -6,6 +6,7 @@ export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:$PATH"
 export PATH="${ANDROID_HOME}/build-tools/35.0.0-rc3/:$PATH"
 export PATH="${ANDROID_HOME}/platform-tools:$PATH"
 export PATH="${ANDROID_HOME}/emulator:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
 # Runs command and all arguments and resets cursor back to vertical bar

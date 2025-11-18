@@ -22,6 +22,10 @@ vim.api.nvim_create_autocmd("BufNewFile", {
   end,
 })
 
+if vim.env.NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED ~= "1" then
+  return M
+end
+
 -- Write lines to a temp file and return its path
 local function write_temp(lines)
   local tmp = vim.fn.tempname()

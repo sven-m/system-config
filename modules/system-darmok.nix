@@ -15,6 +15,7 @@ Configuration for darmok (macOS)
 
   environment.variables = {
     CFG_NAME = "darmok";
+    NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED = "1";
   };
 
   environment.systemPackages = [

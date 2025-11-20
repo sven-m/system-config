@@ -32,20 +32,14 @@ vim.g.vimwiki_list = {
     path = "~/Documents/vimwiki/",
     syntax = "markdown",
     ext = ".md",
-    auto_diary_index = 1
-  },
-  {
-    path = "~/Documents/vimwiki2/",
-    syntax = "default",
-    ext = ".wiki",
     auto_diary_index = 1,
-    auto_generate_links = 1
+    auto_generate_links = 1,
+    generated_links_caption = 1,
+    listsyms = ' x'
   }
 }
 vim.g.vimwiki_auto_header = 1
-vim.g.vimwiki_markdown_link_ext = 1
 vim.g.vimwiki_links_header = "All Files"
--- vim.g.generated_links_caption = 1
 
 vim.api.nvim_create_autocmd("BufNewFile", {
   pattern = { vim.fn.expand("$HOME") .. "/Documents/vimwiki/diary/[0-9]*.md" },

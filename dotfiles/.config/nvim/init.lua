@@ -50,17 +50,11 @@ vim.g.vimwiki_links_header = "All Files"
 vim.api.nvim_create_autocmd("BufNewFile", {
   pattern = { vim.fn.expand("$HOME") .. "/Documents/vimwiki/diary/[0-9]*.md" },
   callback = function()
-    vim.notify("BufNewFile yay", vim.log.levels.WARN)
     vim.api.nvim_buf_set_lines(0, 0, -1, false, {})
 
     local filename = vim.fn.expand("%:t:r")  -- e.g. "2025-10-31"
 
-    local cmd
-    if vim.fn.has("mac") == 1 then
-      cmd = string.format([===[date -j -f "%%Y-%%m-%%d" "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
-    else
-      cmd = string.format([===[date -d "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
-    end
+    local cmd = string.format([===[date -d "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
 
     local header = vim.fn.system(cmd)
 

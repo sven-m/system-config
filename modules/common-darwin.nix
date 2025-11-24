@@ -20,7 +20,6 @@ Configuration for all macOS systems
     betterdisplay
     bundler
     xcodes
-    betterdisplay
     rustup
   ];
 
@@ -32,12 +31,15 @@ Configuration for all macOS systems
     cleanup = "zap";
   };
   homebrew.brews = [
-    "mas"
-    "libimobiledevice"
     "ansible"
     "aria2"
     "ideviceinstaller"
+    "libimobiledevice"
+    "mas"
     "openssh"
+    "swiftformat"
+    "xcbeautify"
+    "xcode-build-server"
   ];
   homebrew.taps = [
   ];

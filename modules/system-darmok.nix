@@ -30,9 +30,6 @@ Configuration for darmok (macOS)
   };
 
   homebrew.brews = [
-    "swiftformat"
-    "xcbeautify"
-    "xcode-build-server"
   ];
 
   homebrew.casks = [

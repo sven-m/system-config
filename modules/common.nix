@@ -38,6 +38,7 @@ Configuration for all systems (nixOS and macOS)
     stow # used for dotfiles
     tmux
     tree
+    universal-ctags
     vscode
     yamllint
   ];
@@ -107,12 +108,12 @@ Configuration for all systems (nixOS and macOS)
       gitsigns-nvim
       nvim-cmp
       nvim-lspconfig
+      nvim-lsp-file-operations
       nvim-tree-lua
       nvim-treesitter.withAllGrammars
+      vim-gutentags
       vim-nix
       vim-startify
-      #vimwiki
-
       (
         pkgs.vimUtils.buildVimPlugin {
           pname = "vimwiki-wikilinks";

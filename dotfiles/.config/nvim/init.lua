@@ -42,21 +42,31 @@ vim.g.vimwiki_auto_header = 1
 vim.g.vimwiki_links_header = "All Files"
 
 vim.api.nvim_create_autocmd("BufNewFile", {
-  pattern = { vim.fn.expand("$HOME") .. "/Documents/vimwiki/diary/[0-9]*.md" },
+  pattern = "*/diary/[0-9]*.md",
   callback = function()
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, {})
-
-    local filename = vim.fn.expand("%:t:r")  -- e.g. "2025-10-31"
-
-    local cmd = string.format([===[date -d "%s" "+# %%a, %%b %%-d, %%Y"]===], filename)
-
-    local header = vim.fn.system(cmd)
-
     vim.schedule(function()
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, { header:gsub("\n$", ""), "" })
+      vim.cmd("silent! %!vimwiki-diary-template '%'")
+      vim.cmd("normal! G")
     end)
   end,
 })
+
+-- gutentags
+vim.g.gutentags_enabled = 1
+vim.g.gutentags_ctags_executable = "ctags"
+vim.g.gutentags_add_default_project_roots = 0
+vim.g.gutentags_project_root = {
+  ".git",
+}
+
+vim.g.gutentags_cache_dir = vim.fn.expand("~/.cache/gutentags")
+vim.g.gutentags_verbose = 1
+
+vim.g.gutentags_ctags_extra_args = {
+  "--fields=+l",  -- include language info
+  "--extras=+q",  -- include qualified tags
+  "--kinds-all=*" -- include function prototypes, properties etc.
+}
 
 -- gitsigns
 
@@ -95,17 +105,36 @@ require('nvim-treesitter.configs').setup({
   },
 })
 
--- lspconfig
 
-require('lspconfig').sourcekit.setup {
-  capabilities = {
-    workspace = {
-      didChangeWatchedFiles = {
-        dynamicRegistration = true,
-      },
-    },
-  },
-  root_dir = require('lspconfig.util').root_pattern('Package.swift', '.git'),
+-- lsp for iOS development
+
+require("lspconfig").sourcekit.setup {
+  cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" }, -- Path to sourcekit-lsp
+  filetypes = { "swift", "objective-c", "objective-cpp" },
+  root_dir = require('lspconfig.util').root_pattern('Package.swift', '.git', '*.xcodeproj'),
+  capabilities = require("cmp_nvim_lsp").default_capabilities(),
+  on_attach = function(_, bufnr)
+    local opts = { noremap = true, silent = true }
+    opts.buffer = bufnr
+
+    -- Show line diagnostics
+    opts.desc = "Show line diagnostics"
+    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+
+    -- Show documentation for symbol under cursor
+    opts.desc = "Show documentation under cursor"
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+
+    -- Go to next diagnostic
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+
+    -- Show signature help (function args)
+    vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
+  end,
 }
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -159,10 +188,11 @@ vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
 
 vim.keymap.set('', '<Leader>w<Leader>l', '<cmd>VimwikiGenerateLinks<CR>')
 
-vim.keymap.set('', '<M-Down>', '<cmd>VimwikiDiaryPrevDay<CR>')
-vim.keymap.set('', '<M-Up>', '<cmd>VimwikiDiaryNextDay<CR>')
-vim.keymap.set('', '<M-j>', '<cmd>VimwikiDiaryPrevDay<CR>')
-vim.keymap.set('', '<M-k>', '<cmd>VimwikiDiaryNextDay<CR>')
+vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
+vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
+vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
+vim.keymap.set('n', '<Leader>wl', ':VimwikiSplitLink<CR>')
+vim.keymap.set('n', '<Leader>wv', ':VimwikiVSplitLink<CR>')
 
 vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })

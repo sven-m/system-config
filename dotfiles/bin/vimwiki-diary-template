@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+date -d "$(basename ${1%.md})" "+# %a, %b %-d, %Y"
+echo
+echo
+

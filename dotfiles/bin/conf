@@ -16,19 +16,19 @@ main() {
 
   for current_command in "${commands[@]}"
   do
-    "$current_command"
+    "${current_command}-command"
   done
 }
 
-edit() {
+edit-command() {
   "$EDITOR" .
 }
 
-lazygit() {
+lazygit-command() {
   command lazygit
 }
 
-build() {
+build-command() {
   if [ -z "${CFG_NAME:-}" ]
   then
     read -p "Configuration name: " CFG_NAME
@@ -38,7 +38,7 @@ build() {
   sudo -i nix run "$PWD#rebuild" -- build --flake "$PWD#$CFG_NAME"
 }
 
-switch() {
+switch-command() {
   git_author
 
   if [ -z "${CFG_NAME:-}" ]
@@ -50,14 +50,12 @@ switch() {
   sudo -i nix run "$PWD#rebuild" -- switch --flake "$PWD#$CFG_NAME"
 }
 
-switch-wait() {
-  wait() {
+wait-command() {
+  perform-wait() {
     echo
     read -p "Press any key to close." -n 1
   }
-  trap wait EXIT
-
-  switch 
+  trap perform-wait EXIT
 }
 
 git_author() {
@@ -77,8 +75,13 @@ git_author() {
   fi
 }
 
-stow() {
+stow-command() {
   nix run .#stow -- --restow .
+}
+
+apply-command() {
+  switch-command
+  stow-command
 }
 
 main "$@"

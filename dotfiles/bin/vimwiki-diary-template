@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-date -d "$(basename ${1%.md})" "+# %a, %b %-d, %Y"
-echo
-echo
+if [ -f "$2" ]
+then
+  template="$2"
+else
+  template=/dev/null
+fi
 
+cat - "$template" <<EOF
+# $(date -d "$(basename ${1%.md})" "+%a, %b %-d, %Y")
+
+EOF

@@ -45,7 +45,7 @@ vim.api.nvim_create_autocmd("BufNewFile", {
   pattern = "*/diary/[0-9]*.md",
   callback = function()
     vim.schedule(function()
-      vim.cmd("silent! %!vimwiki-diary-template '%'")
+      vim.cmd("silent! %!vimwiki-diary-template '%' '%:h/template.md'")
       vim.cmd("normal! G")
     end)
   end,

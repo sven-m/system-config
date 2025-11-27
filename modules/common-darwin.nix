@@ -55,6 +55,7 @@ Configuration for all macOS systems
     "drawio"
     "ghostty"
     "google-chrome"
+    "leader-key"
     "mac-mouse-fix"
     "proxyman"
     "qlmarkdown"

@@ -1,0 +1,11 @@
+macos-option-as-alt = left
+
+quit-after-last-window-closed = true
+
+<<<<<<< HEAD
+=======
+auto-update = off
+
+>>>>>>> 89bca2b (already done)
+theme = Catppuccin Mocha
+font-size = 15

@@ -19,11 +19,12 @@ Configuration for darmok (macOS)
   };
 
   environment.systemPackages = [
+    pkgs.code-cursor
+    pkgs.gnupg
+    pkgs.ollama
+    pkgs.pass
     pkgs.transmission_3
     pkgs.uv
-    pkgs.pass
-    pkgs.gnupg
-    pkgs.code-cursor
   ];
 
   environment.shellAliases = {
@@ -44,10 +45,8 @@ Configuration for darmok (macOS)
     "obsidian"
     "raspberry-pi-imager"
     "utm"
-    "vagrant-vmware-utility"
     "vagrant"
     "vivaldi"
-    "vmware-fusion"
     "whatsapp"
   ];
 
@@ -62,7 +61,7 @@ Configuration for darmok (macOS)
     "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.0.1.app"
+    "/Applications/Xcode-26.2.0.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

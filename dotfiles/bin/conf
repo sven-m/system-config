@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 main() {
   local script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")" )"
   local cfg_home="$(realpath "${script_dir}/../..")"
@@ -16,7 +14,7 @@ main() {
 
   for current_command in "${commands[@]}"
   do
-    "${current_command}-command"
+    "${current_command}-command" || exit 1
   done
 }
 
@@ -80,8 +78,7 @@ stow-command() {
 }
 
 apply-command() {
-  switch-command
-  stow-command
+  switch-command && stow-command
 }
 
 main "$@"

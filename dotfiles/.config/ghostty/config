@@ -2,7 +2,5 @@ macos-option-as-alt = left
 
 quit-after-last-window-closed = true
 
-auto-update = off
-
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 font-size = 15

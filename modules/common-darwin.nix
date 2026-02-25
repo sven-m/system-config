@@ -58,7 +58,6 @@ Configuration for all macOS systems
     "leader-key"
     "mac-mouse-fix"
     "proxyman"
-    "qlmarkdown"
     "sf-symbols"
     "spotify"
     "sublime-text"

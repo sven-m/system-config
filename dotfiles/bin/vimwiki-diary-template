@@ -7,7 +7,10 @@ else
   template=/dev/null
 fi
 
+short_date="$(basename ${1%.md})"
+date_format="+%a, %b %-d, %Y"
+
 cat - "$template" <<EOF
-# $(date -d "$(basename ${1%.md})" "+%a, %b %-d, %Y")
+# $(date -d "$short_date" "$date_format")
 
 EOF

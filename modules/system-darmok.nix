@@ -24,7 +24,6 @@ Configuration for darmok (macOS)
     pkgs.ollama
     pkgs.pass
     pkgs.supabase-cli
-    pkgs.transmission_3
     pkgs.uv
   ];
 

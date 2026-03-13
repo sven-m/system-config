@@ -62,7 +62,7 @@ Configuration for darmok (macOS)
     "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.2.0.app"
+    "/Applications/Xcode-26.3.0.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

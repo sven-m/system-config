@@ -23,7 +23,6 @@ Configuration for all systems (nixOS and macOS)
     git
     git-lfs # needed for some projects
     gnused
-    ideviceinstaller
     ipatool
     iperf2
     jekyll

@@ -109,40 +109,27 @@ require('nvim-treesitter.configs').setup({
 
 -- lsp for iOS development
 
-require("lspconfig").sourcekit.setup {
-  cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" }, -- Path to sourcekit-lsp
+vim.lsp.config('sourcekit', {
+  cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
   filetypes = { "swift", "objective-c", "objective-cpp" },
-  root_dir = require('lspconfig.util').root_pattern('Package.swift', '.git', '*.xcodeproj'),
+  root_markers = { 'Package.swift', '.git' },
   capabilities = require("cmp_nvim_lsp").default_capabilities(),
-  on_attach = function(_, bufnr)
-    local opts = { noremap = true, silent = true }
-    opts.buffer = bufnr
+})
 
-    -- Show line diagnostics
-    opts.desc = "Show line diagnostics"
-    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-
-    -- Show documentation for symbol under cursor
-    opts.desc = "Show documentation under cursor"
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-
-    -- Go to next diagnostic
-    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-
-    -- Show signature help (function args)
-    vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
-  end,
-}
+vim.lsp.enable('sourcekit')
 
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP Actions',
   callback = function(args)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {noremap = true, silent = true})
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {noremap = true, silent = true})
+    local opts = { noremap = true, silent = true, buffer = args.buf }
+
+    -- Show line diagnostics
+    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+
+    -- Show documentation for symbol under cursor
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
 
     -- Go to next diagnostic

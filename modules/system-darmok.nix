@@ -8,10 +8,12 @@ Configuration for darmok (macOS)
 
 */
 
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, pkgs-unstable, username, ... }:
 
 {
   users.users.${username}.home = "/Users/${username}";
+
+  services.tailscale.enable = true;
 
   environment.variables = {
     CFG_NAME = "darmok";
@@ -20,11 +22,13 @@ Configuration for darmok (macOS)
 
   environment.systemPackages = [
     pkgs.code-cursor
+    pkgs.claude-code
     pkgs.gnupg
     pkgs.ollama
     pkgs.pass
     pkgs.supabase-cli
     pkgs.uv
+    pkgs.winbox4
   ];
 
   environment.shellAliases = {
@@ -36,6 +40,7 @@ Configuration for darmok (macOS)
   homebrew.casks = [
     "balenaetcher"
     "bitcoin-core"
+    "claude"
     "docker-desktop"
     "electrum"
     "google-drive"
@@ -43,6 +48,9 @@ Configuration for darmok (macOS)
     "nextcloud-vfs"
     "nordvpn"
     "obsidian"
+    "proton-mail-bridge"
+    "proton-mail"
+    "proton-pass"
     "raspberry-pi-imager"
     "utm"
     "vagrant"
@@ -61,7 +69,7 @@ Configuration for darmok (macOS)
     "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.3.0.app"
+    "/Applications/Xcode-26.4.0.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

@@ -43,6 +43,7 @@
     packages.${darwin64-system} = with darwin-pkgs; {
       inherit stow;
       inherit git;
+      inherit dockutil;
       rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
     };
     packages.${linux64-system} = with linux-pkgs; {

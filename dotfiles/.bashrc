@@ -16,7 +16,6 @@ prepend_path "${ANDROID_HOME}/build-tools/35.0.0-rc3/"
 prepend_path "${ANDROID_HOME}/platform-tools"
 prepend_path "${ANDROID_HOME}/emulator"
 prepend_path "$HOME/.local/bin"
-prepend_path "$HOME/bin"
 
 # Runs command and all arguments and resets cursor back to vertical bar
 command_and_reset_cursor() {

@@ -2,12 +2,12 @@
 
 main() {
   local script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")" )"
-  local cfg_home="$(realpath "${script_dir}/../..")"
+  local cfg_home="$(realpath "${script_dir}/../../..")"
   cd "$cfg_home"
 
   if [ "$#" = "0" ]
   then
-    local commands=(stow switch) 
+    local commands=(wait build) 
   else
     local commands=("$@")
   fi
@@ -33,7 +33,7 @@ build-command() {
   fi
 
   echo "Building configuration for $CFG_NAME"
-  sudo -i nix run "$PWD#rebuild" -- build --flake "$PWD#$CFG_NAME"
+  nix run "$PWD#rebuild" -- build --flake "$PWD#$CFG_NAME"
 }
 
 switch-command() {

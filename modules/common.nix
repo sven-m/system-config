@@ -30,11 +30,12 @@ Configuration for all systems (nixOS and macOS)
     lazygit
     less
     mitmproxy
-    nodePackages.nodejs
+    nodejs
     s3cmd
     sshpass
     starship # prompt for shell
     stow # used for dotfiles
+    syncthing
     tmux
     tree
     universal-ctags
@@ -98,8 +99,9 @@ Configuration for all systems (nixOS and macOS)
     programs.eza.git = true;
     programs.eza.icons = "auto";
 
-
     programs.neovim.enable = true;
+    programs.neovim.withRuby = true;
+    programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
       cmp-buffer
@@ -107,7 +109,6 @@ Configuration for all systems (nixOS and macOS)
       cmp-path
       gitsigns-nvim
       nvim-cmp
-      nvim-lspconfig
       nvim-lsp-file-operations
       nvim-tree-lua
       nvim-treesitter.withAllGrammars

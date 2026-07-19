@@ -21,8 +21,10 @@ Configuration for darmok (macOS)
   };
 
   environment.systemPackages = [
+    pkgs.certbot-full
     pkgs.code-cursor
     pkgs.claude-code
+    pkgs.ghidra
     pkgs.gnupg
     pkgs.ollama
     pkgs.pass
@@ -35,6 +37,7 @@ Configuration for darmok (macOS)
   };
 
   homebrew.brews = [
+    "libssh"
   ];
 
   homebrew.casks = [
@@ -44,7 +47,9 @@ Configuration for darmok (macOS)
     "docker-desktop"
     "electrum"
     "google-drive"
-    "ledger-live"
+    "ledger-wallet"
+    "iloader"
+    "ios-app-signer"
     "nextcloud-vfs"
     "nordvpn"
     "obsidian"
@@ -59,17 +64,27 @@ Configuration for darmok (macOS)
   ];
 
   homebrew.masApps = {
-    "Pages" = 409201541;
-    "Numbers" = 409203825;
-    "Keynote" = 409183694;
+    #"Pages" = 409201541;
+    #"Numbers" = 409203825;
+    #"Keynote" = 409183694;
     "Hush" = 1544743900;
+    "BioPassFIDO2" = 1456584103;
+    "MindNode Next" = 6446116532;
+    "Proton Pass for Safari" = 6502835663;
+    "Sketch" = 1667260533;
+    "Solitaire Epic" = 972224785;
+    "TestFlight" = 899247664;
+    "Bitwarden" = 1352778147;
+    "Prime Video" = 545519333;
   };
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Apps.app"
-    "/Applications/Brave Browser.app"
+    "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.4.0.app"
+    "/Applications/Xcode-26.5.0.app"
+    "/Applications/Nix Apps/WinBox.app"
+    "/Applications/Claude.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
   ];

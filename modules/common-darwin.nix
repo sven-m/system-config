@@ -31,8 +31,8 @@ Configuration for all macOS systems
     cleanup = "zap";
   };
   homebrew.brews = [
-    "ansible"
     "aria2"
+    "container"
     "ideviceinstaller"
     "libimobiledevice"
     "mas"
@@ -106,6 +106,8 @@ Configuration for all macOS systems
   };
 
   home-manager.users.${username} = {
+    services.syncthing.enable = true;
+
     home.activation.xcodeCatppuccinTheme = let 
       catppuccin-xcode = pkgs.fetchFromGitHub {
         owner = "catppuccin";

@@ -25,23 +25,6 @@ vim.opt.linebreak = true
 
 vim.g.startify_change_to_vcs_root = 0
 
--- vimwiki
-
-vim.g.vimwiki_list = {
-  {
-    path = "~/Documents/vimwiki/",
-    syntax = "markdown",
-    ext = ".md",
-    auto_diary_index = 1,
-    auto_generate_links = 1,
-    generated_links_caption = 1,
-    listsyms = ' x',
-    diary_frequency = "daily"
-  }
-}
-vim.g.vimwiki_auto_header = 1
-vim.g.vimwiki_links_header = "All Files"
-
 vim.api.nvim_create_autocmd("BufNewFile", {
   pattern = "*/diary/[0-9]*.md",
   callback = function()
@@ -96,16 +79,6 @@ require("nvim-tree").setup({
     update_root = true,
   },
 })
-
--- nvim-treesitter
-
-require('nvim-treesitter.configs').setup({
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-})
-
 
 -- lsp for iOS development
 

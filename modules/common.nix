@@ -45,6 +45,7 @@ Configuration for all systems (nixOS and macOS)
   environment.variables = {
     ANDROID_HOME = "$HOME/Library/Android/sdk";
     THEOS = "$HOME/theos";
+    ANSIBLE_VAULT_PASSWORD_FILE = "$HOME/.local/bin/personal-ansible-vault-pass";
 
     EDITOR = "nvim";
     PAGER = "less";

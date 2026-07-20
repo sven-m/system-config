@@ -13,6 +13,20 @@ Configuration for all systems (nixOS and macOS)
   environment.shells = [ pkgs.bashInteractive ];
   programs.bash.completion.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    coreutils
+    diff-so-fancy
+    fzf
+    git
+    git-lfs
+    gnused
+    lazygit
+    less
+    starship
+    stow
+    tmux
+    tree
+  ];
 
   environment.variables = {
     ANDROID_HOME = "$HOME/Library/Android/sdk";

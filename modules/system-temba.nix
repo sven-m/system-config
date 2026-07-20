@@ -36,9 +36,6 @@
     extraGroups = [ "wheel" ];
     packages = with pkgs; [
       claude-code
-      git
-      neovim
-      tmux
     ];
   };
 

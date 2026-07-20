@@ -74,6 +74,7 @@
       modules = [
         home-manager.darwinModules.home-manager
         ./modules/common.nix
+        ./modules/common-packages.nix
         ./modules/common-darwin.nix
         ./modules/system-darmok.nix
       ];
@@ -91,6 +92,7 @@
         home-manager.nixosModules.home-manager
         disko.nixosModules.disko
         ./modules/common.nix
+        ./modules/common-packages.nix
         ./modules/system-jalad.nix
       ];
     };
@@ -121,6 +123,7 @@
       modules = [
         home-manager.darwinModules.home-manager
         ./modules/common.nix
+        ./modules/common-packages.nix
         ./modules/common-darwin.nix
         ./modules/system-tanagra.nix
       ];

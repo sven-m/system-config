@@ -13,35 +13,6 @@ Configuration for all systems (nixOS and macOS)
   environment.shells = [ pkgs.bashInteractive ];
   programs.bash.completion.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    bruno
-    bruno-cli
-    btop
-    coreutils
-    diff-so-fancy # used in gitconfig
-    fzf
-    git
-    git-lfs # needed for some projects
-    gnused
-    ipatool
-    iperf2
-    jekyll
-    kubernetes-helm
-    lazygit
-    less
-    mitmproxy
-    nodejs
-    s3cmd
-    sshpass
-    starship # prompt for shell
-    stow # used for dotfiles
-    syncthing
-    tmux
-    tree
-    universal-ctags
-    vscode
-    yamllint
-  ];
 
   environment.variables = {
     ANDROID_HOME = "$HOME/Library/Android/sdk";

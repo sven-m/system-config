@@ -17,7 +17,8 @@
   outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, disko, ... }@inputs:
   let
     darwin64-system = "aarch64-darwin";
-    linux64-system = "x86_64-linux";
+    linux-x86_64-system = "x86_64-linux";
+    linux-aarch64-system = "aarch64-linux";
 
     darwin-pkgs = import nixpkgs {
       system = darwin64-system;
@@ -30,12 +31,22 @@
     };
 
     linux-pkgs = import nixpkgs {
-      system = linux64-system;
+      system = linux-x86_64-system;
       config.allowUnfree = true;
     };
 
     linux-pkgs-unstable = import nixpkgs-unstable {
-      system = linux64-system;
+      system = linux-x86_64-system;
+      config.allowUnfree = true;
+    };
+
+    linux-aarch64-pkgs = import nixpkgs {
+      system = linux-aarch64-system;
+      config.allowUnfree = true;
+    };
+
+    linux-aarch64-pkgs-unstable = import nixpkgs-unstable {
+      system = linux-aarch64-system;
       config.allowUnfree = true;
     };
   in
@@ -46,7 +57,7 @@
       inherit dockutil;
       rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
     };
-    packages.${linux64-system} = with linux-pkgs; {
+    packages.${linux-x86_64-system} = with linux-pkgs; {
       inherit stow;
       inherit git;
       rebuild = linux-pkgs.nixos-rebuild;
@@ -69,7 +80,7 @@
     };
 
     nixosConfigurations.jalad = nixpkgs.lib.nixosSystem {
-      system = linux64-system;
+      system = linux-x86_64-system;
       pkgs = linux-pkgs;
       specialArgs = {
         username = "sven";
@@ -81,6 +92,21 @@
         disko.nixosModules.disko
         ./modules/common.nix
         ./modules/system-jalad.nix
+      ];
+    };
+
+    nixosConfigurations.temba = nixpkgs.lib.nixosSystem {
+      system = linux-aarch64-system;
+      pkgs = linux-aarch64-pkgs;
+      specialArgs = {
+        username = "sven";
+        inherit home-manager;
+        pkgs-unstable = linux-aarch64-pkgs-unstable;
+      };
+      modules = [
+        home-manager.nixosModules.home-manager
+        ./modules/common.nix
+        ./modules/system-temba.nix
       ];
     };
 

@@ -26,6 +26,7 @@ Configuration for all systems (nixOS and macOS)
     stow
     tmux
     tree
+    universal-ctags
   ];
 
   environment.variables = {

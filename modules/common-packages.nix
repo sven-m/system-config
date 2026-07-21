@@ -26,7 +26,6 @@
     syncthing
     tmux
     tree
-    universal-ctags
     vscode
     yamllint
   ];

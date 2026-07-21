@@ -60,7 +60,12 @@
     packages.${linux-x86_64-system} = with linux-pkgs; {
       inherit stow;
       inherit git;
-      rebuild = linux-pkgs.nixos-rebuild;
+      rebuild = nixos-rebuild;
+    };
+    packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
+      inherit stow;
+      inherit git;
+      rebuild = nixos-rebuild;
     };
 
     darwinConfigurations.darmok = darwin.lib.darwinSystem {

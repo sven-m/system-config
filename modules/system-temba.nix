@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 { config, lib, pkgs, username, home-manager, ... }:
 
 {
@@ -31,33 +27,63 @@
     ];
   };
 
-  services.kmscon = {
-    enable = true;
-    hwRender = false;
-    extraConfig = ''
-      term=xterm-256color
-      font-name=monospace
-      font-size=28
-      palette=custom
-      palette-black=69,71,90
-      palette-red=243,139,168
-      palette-green=166,227,161
-      palette-yellow=249,226,175
-      palette-blue=137,180,250
-      palette-magenta=245,194,231
-      palette-cyan=148,226,213
-      palette-light-grey=186,194,222
-      palette-dark-grey=88,91,112
-      palette-light-red=243,139,168
-      palette-light-green=166,227,161
-      palette-light-yellow=249,226,175
-      palette-light-blue=137,180,250
-      palette-light-magenta=245,194,231
-      palette-light-cyan=148,226,213
-      palette-white=166,173,200
-      palette-foreground=205,214,244
-      palette-background=30,30,46
-    '';
+  systemd.services."serial-getty@ttyAMA0".environment = {
+    TERM = "xterm-256color";
+  };
+
+  fonts.enableDefaultPackages = true;
+  fonts.packages = with pkgs; [ nerd-fonts.jetbrains-mono nerd-fonts.symbols-only ];
+
+  services.xserver.enable = true;
+  services.xserver.dpi = 192;
+  services.xserver.windowManager.i3.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
+  services.displayManager.autoLogin = { enable = true; user = username; };
+  services.displayManager.defaultSession = "none+i3";
+
+  services.spice-vdagentd.enable = true;
+
+  home-manager.users.${username} = {
+    xsession.windowManager.i3 = {
+      enable = true;
+      config = {
+        modifier = "Mod4";
+        terminal = "urxvt";
+        startup = [
+          { command = "spice-vdagent"; notification = false; }
+        ];
+        bars = [{
+          fonts = {
+            names = [ "JetBrainsMono Nerd Font" "monospace" ];
+            size = 24.0;
+          };
+        }];
+      };
+    };
+
+    xresources.properties = {
+      "URxvt.font"      = "xft:JetBrainsMono Nerd Font:size=24,xft:Symbols Nerd Font Mono:size=24";
+      "URxvt.scrollBar" = "false";
+      # Catppuccin Mocha
+      "*.foreground" = "#CDD6F4";
+      "*.background" = "#1E1E2E";
+      "*.color0"     = "#45475A";
+      "*.color1"     = "#F38BA8";
+      "*.color2"     = "#A6E3A1";
+      "*.color3"     = "#F9E2AF";
+      "*.color4"     = "#89B4FA";
+      "*.color5"     = "#F5C2E7";
+      "*.color6"     = "#94E2D5";
+      "*.color7"     = "#BAC2DE";
+      "*.color8"     = "#585B70";
+      "*.color9"     = "#F38BA8";
+      "*.color10"    = "#A6E3A1";
+      "*.color11"    = "#F9E2AF";
+      "*.color12"    = "#89B4FA";
+      "*.color13"    = "#F5C2E7";
+      "*.color14"    = "#94E2D5";
+      "*.color15"    = "#A6ADC8";
+    };
   };
 
   users.users.${username} = {
@@ -65,8 +91,7 @@
     extraGroups = [ "wheel" ];
     packages = with pkgs; [
       claude-code
-      fbset
-      libdrm
+      rxvt-unicode
     ];
   };
 
@@ -77,4 +102,3 @@
 
   system.stateVersion = "26.05";
 }
-

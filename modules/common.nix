@@ -27,6 +27,9 @@ Configuration for all systems (nixOS and macOS)
     tmux
     tree
     universal-ctags
+    uv
+    vscode
+    yamllint
   ];
 
   environment.variables = {

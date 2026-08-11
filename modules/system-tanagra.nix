@@ -21,6 +21,7 @@ Configuration for tanagra (macOS)
   environment.systemPackages = [
     pkgs.typescript
     pkgs.jetbrains.idea-ultimate
+    pkgs.lynx
   ];
 
   environment.shellAliases = {
@@ -28,19 +29,23 @@ Configuration for tanagra (macOS)
 
 
   homebrew.casks = [
+    "github-copilot-for-xcode"
     "zoom"
   ];
 
   homebrew.masApps = {
+    "Slack for Desktop" = 803453959;
   };
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Apps.app"
     "/Applications/Brave Browser.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.2.0.app"
+    "/Applications/Xcode-26.5.0.app"
+    "/Applications/GitHub Copilot for Xcode.app"
     "/Applications/Slack.app"
     "/System/Applications/App Store.app"
     "/System/Applications/System Settings.app"
+    "/Applications/Admin By Request.app"
   ];
 }

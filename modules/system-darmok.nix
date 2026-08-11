@@ -29,8 +29,8 @@ Configuration for darmok (macOS)
     pkgs.ollama
     pkgs.pass
     pkgs.supabase-cli
-    pkgs.uv
     pkgs.winbox4
+    pkgs.transmission_3
   ];
 
   environment.shellAliases = {
@@ -38,6 +38,7 @@ Configuration for darmok (macOS)
 
   homebrew.brews = [
     "libssh"
+    "openssh"
   ];
 
   homebrew.casks = [

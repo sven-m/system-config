@@ -36,7 +36,6 @@ Configuration for all macOS systems
     "ideviceinstaller"
     "libimobiledevice"
     "mas"
-    "openssh"
     "swiftformat"
     "xcbeautify"
     "xcode-build-server"
@@ -68,6 +67,7 @@ Configuration for all macOS systems
   homebrew.masApps = {
     "1Password for Safari" = 1569813296;
     "Apple Configurator" = 1037126344;
+    "Hush Nag Blocker" = 1544743900;
     "Things" = 904280696;
   };
 

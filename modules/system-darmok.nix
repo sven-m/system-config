@@ -58,6 +58,7 @@ Configuration for darmok (macOS)
     "proton-mail"
     "proton-pass"
     "raspberry-pi-imager"
+    "tuna"
     "utm"
     "vagrant"
     "vivaldi"

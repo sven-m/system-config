@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
-if [ -f "$2" ]
-then
-  template="$2"
-else
-  template=/dev/null
-fi
-
 short_date="$(basename ${1%.md})"
-date_format="+%a, %b %-d, %Y"
+dow=$(date -d "$short_date" +%u)  # 1=Mon .. 7=Sun
+monday=$(date -d "$short_date - $((dow - 1)) days" +%Y-%m-%d)
+week=$(date -d "$monday" +%V)
+year=$(date -d "$monday" +%Y)
 
-cat - "$template" <<EOF
-# $(date -d "$short_date" "$date_format")
+echo "# Week $week ($year)"
+echo ""
 
-EOF
+for i in 0 1 2 3 4 5 6; do
+  echo "## $(date -d "$monday + $i days" +"%a %-d %b")"
+done

@@ -56,9 +56,14 @@ wait-command() {
   trap perform-wait EXIT
 }
 
+if ! command -v git &>/dev/null
+then
+  alias git="nix run $PWD#git --"
+fi
+
 git_author() {
   local git_config_author_email_command=(
-    nix run .#git -- config --file ~/.config/git/config.local user.email
+    git config --file ~/.config/git/config.local user.email
   )
 
   if ! "${git_config_author_email_command[@]}" > /dev/null
@@ -73,8 +78,13 @@ git_author() {
   fi
 }
 
+if ! command -v stow &>/dev/null
+then
+  alias stow="nix run $PWD#stow --"
+fi
+
 stow-command() {
-  nix run .#stow -- --restow .
+  stow --restow .
 }
 
 apply-command() {

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -x
+
+rm -rf ~/Library/Developer/Xcode/DerivedData
+rm -rf ~/Library/Caches/com.apple.dt.Xcode
+rm -rf ~/Library/Caches/org.swift.swiftpm
+/usr/libexec/PlistBuddy -c "Delete DVTSourceControlAccountDefaultsKey" ~/Library/Preferences/com.apple.dt.Xcode.plist
+/usr/libexec/PlistBuddy -c "Delete IDESwiftPackageAdditionAssistantRecentlyUsedPackages" ~/Library/Preferences/com.apple.dt.Xcode.plist
+

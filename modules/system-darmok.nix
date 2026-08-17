@@ -30,7 +30,6 @@ Configuration for darmok (macOS)
     pkgs.pass
     pkgs.supabase-cli
     pkgs.winbox4
-    pkgs.transmission_3
   ];
 
   environment.shellAliases = {

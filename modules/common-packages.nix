@@ -5,7 +5,6 @@
     bruno
     bruno-cli
     btop
-    coreutils
     diff-so-fancy # used in gitconfig
     fzf
     git

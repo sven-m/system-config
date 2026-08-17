@@ -20,7 +20,7 @@ Configuration for tanagra (macOS)
 
   environment.systemPackages = [
     pkgs.typescript
-    pkgs.jetbrains.idea-ultimate
+    pkgs.jetbrains.idea
     pkgs.lynx
   ];
 

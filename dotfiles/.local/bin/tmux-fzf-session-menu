@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+fd_cmd="fd --hidden '^\.git$' --exec project-line-for-fzf \;"
+
+FZF_DEFAULT_COMMAND="$fd_cmd $HOME/src" \
+  fzf \
+  --ansi \
+  --bind "ctrl-h:reload-sync($fd_cmd $HOME)" \
+  --bind "ctrl-s:reload-sync($fd_cmd $HOME/src)" \
+  --bind "tab:up" \
+  --bind "shift-tab:down"

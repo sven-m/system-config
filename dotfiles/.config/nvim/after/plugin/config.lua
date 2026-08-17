@@ -83,8 +83,8 @@ require("nvim-tree").setup({
 -- lsp for iOS development
 
 vim.lsp.config('sourcekit', {
-  cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
-  filetypes = { "swift", "objective-c", "objective-cpp" },
+  cmd = { vim.fn.trim(vim.fn.system('xcrun --find sourcekit-lsp 2>/dev/null')) },
+  filetypes = { "swift", "objc", "objcpp" },
   root_markers = { 'Package.swift', '.git' },
   capabilities = require("cmp_nvim_lsp").default_capabilities(),
 })
@@ -143,11 +143,46 @@ cmp.setup({
   }),
 })
 
+-- telescope
+
+local telescope = require('telescope')
+local builtin = require('telescope.builtin')
+
+telescope.setup({
+  pickers = {
+    find_files = {
+      find_command = { 'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git' },
+    },
+    live_grep = {
+      additional_args = { '--hidden' },
+    },
+  },
+  extensions = {
+    fzf = {
+      fuzzy = true,
+      override_generic_sorter = true,
+      override_file_sorter = true,
+    },
+  },
+})
+
+telescope.load_extension('fzf')
+
+vim.keymap.set('n', '<leader>ff', builtin.find_files)
+vim.keymap.set('n', '<leader>fg', builtin.live_grep)
+vim.keymap.set('n', '<leader>fb', builtin.buffers)
+vim.keymap.set('n', '<leader>fh', builtin.help_tags)
+vim.keymap.set('n', '<leader>fr', builtin.oldfiles)
+vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols)
+vim.keymap.set('n', '<leader>fS', builtin.lsp_dynamic_workspace_symbols)
+vim.keymap.set('n', '<leader>fd', builtin.diagnostics)
+vim.keymap.set('n', '<leader>fR', builtin.lsp_references)
+vim.keymap.set('n', '<leader>fD', builtin.lsp_definitions)
+vim.keymap.set('n', '<leader>fi', builtin.lsp_implementations)
+
 vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
 vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
 vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
-
-vim.keymap.set('', '<Leader>w<Leader>l', '<cmd>VimwikiGenerateLinks<CR>')
 
 vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
 vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')

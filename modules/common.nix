@@ -16,12 +16,14 @@ Configuration for all systems (nixOS and macOS)
   environment.systemPackages = with pkgs; [
     coreutils
     diff-so-fancy
+    fd
     fzf
     git
     git-lfs
     gnused
     lazygit
     less
+    ripgrep
     starship
     stow
     tmux
@@ -101,6 +103,8 @@ Configuration for all systems (nixOS and macOS)
       nvim-lsp-file-operations
       nvim-tree-lua
       nvim-treesitter.withAllGrammars
+      telescope-fzf-native-nvim
+      telescope-nvim
       vim-gutentags
       vim-nix
       vim-startify

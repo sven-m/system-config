@@ -38,4 +38,14 @@ tmux() {
     command_and_reset_cursor tmux "$@"
 }
 
-eval "$(starship init bash)"
+if command -v fzf &>/dev/null
+then
+  export FZF_CTRL_R_OPTS="--reverse"
+  eval "$(fzf --bash)"
+fi
+
+if command -v starship &>/dev/null
+then
+  eval "$(starship init bash)"
+fi
+

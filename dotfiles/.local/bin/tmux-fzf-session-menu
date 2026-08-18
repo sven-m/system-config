@@ -2,10 +2,20 @@
 
 fd_cmd="fd --hidden '^\.git$' --exec project-line-for-fzf \;"
 
-FZF_DEFAULT_COMMAND="$fd_cmd $HOME/src" \
-  fzf \
-  --ansi \
-  --bind "ctrl-h:reload-sync($fd_cmd $HOME)" \
-  --bind "ctrl-s:reload-sync($fd_cmd $HOME/src)" \
-  --bind "tab:up" \
-  --bind "shift-tab:down"
+selection=$(
+  FZF_DEFAULT_COMMAND="$fd_cmd $HOME/src" \
+    fzf-tmux \
+    --ansi \
+    --accept-nth=1 \
+    --delimiter='\t' \
+    --bind "tab:up" \
+    --bind "shift-tab:down" \
+    "$@"
+) || exit 1
+
+read -p "Session name: " session_name
+
+resolved_session_name="${session_name:-$(basename $selection)}"
+
+tmux new-session -Ad -c "$selection" -s "$resolved_session_name" lazygit
+tmux switch-client -t "$resolved_session_name"

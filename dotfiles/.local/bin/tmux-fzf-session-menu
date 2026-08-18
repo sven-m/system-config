@@ -1,21 +1,16 @@
 #!/usr/bin/env bash
 
-fd_cmd="fd --hidden '^\.git$' --exec project-line-for-fzf \;"
+fd_cmd="fd --hidden '^\.git$' --exec project-line-for-fzf \; $HOME/src"
+new_session_cmd='tmux command-prompt -p "Session: " "new-session -Ad -s %1; switch-client -t %1"'
 
 selection=$(
-  FZF_DEFAULT_COMMAND="$fd_cmd $HOME/src" \
-    fzf-tmux \
+  FZF_DEFAULT_COMMAND="$fd_cmd" \
+    fzf \
     --ansi \
     --accept-nth=1 \
     --delimiter='\t' \
+    --bind 'enter:become(tmux command-prompt -p "Session name for {1}: " "new-session -Ad -s %1 -c {1}; switch-client -t %1")' \
     --bind "tab:up" \
     --bind "shift-tab:down" \
     "$@"
-) || exit 1
-
-read -p "Session name: " session_name
-
-resolved_session_name="${session_name:-$(basename $selection)}"
-
-tmux new-session -Ad -c "$selection" -s "$resolved_session_name" lazygit
-tmux switch-client -t "$resolved_session_name"
+)

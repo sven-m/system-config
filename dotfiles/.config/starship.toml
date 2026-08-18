@@ -1,4 +1,5 @@
 format = "$directory$username$status"
+add_newline = false
 
 # Status module: shows previous command status
 [status]

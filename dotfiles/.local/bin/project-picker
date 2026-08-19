@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+menu() {
+  FZF_DEFAULT_COMMAND="fd --hidden '^\.git$' --exec project-picker line \; $HOME/src"\
+    fzf \
+    --ansi \
+    --delimiter='\t' \
+    --bind 'enter:become(project-picker pick {1})' \
+    "$@"
+}
+
+line() {
+  teal=$'\033[38;2;148;226;213m'
+  yellow=$'\033[38;2;249;226;175m'
+  reset=$'\033[0m'
+
+  dir=$(dirname "$1")
+  branch=$(git -C "$dir" symbolic-ref-or-commit)
+  session=$(tmux list-sessions -F "#{session_name}" -f "#{==:#{session_path},$dir}" 2>/dev/null)
+
+  printf "%s\t%s%s%s\t%s%s%s\n" "$dir" "$teal" "$branch" "$reset" "$yellow" "$session" "$reset"
+}
+
+pick() {
+  tmux command-prompt -p "Session name for $1: " "new-session -Ad -s %1 -c $1; switch-client -t %1"
+}
+
+
+usage() {
+  echo "usage: project-picker [menu [args] | line | pick]" >&2
+  exit 1
+}
+
+cmd="${1:-menu}"
+shift
+
+case "$cmd" in
+  line|pick|menu) "$cmd" "$@" ;;
+  *) usage ;;
+esac

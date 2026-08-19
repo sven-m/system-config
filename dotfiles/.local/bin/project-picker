@@ -27,11 +27,11 @@ pick() {
 
 
 usage() {
-  echo "usage: project-picker [menu [args] | line | pick]" >&2
+  echo "usage: $(basename $0) menu [args] | line | pick" >&2
   exit 1
 }
 
-cmd="${1:-menu}"
+cmd="$1"
 shift
 
 case "$cmd" in

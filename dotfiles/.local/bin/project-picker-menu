@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-fd_cmd="fd --hidden '^\.git$' --exec project-line-for-fzf \; $HOME/src"
+fd_cmd="fd --hidden '^\.git$' --exec project-picker-line \; $HOME/src"
 
 selection=$(
   FZF_DEFAULT_COMMAND="$fd_cmd" \

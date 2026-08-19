@@ -61,6 +61,7 @@ Configuration for all macOS systems
     "spotify"
     "sublime-text"
     "transmit"
+    "tuna"
     "wireshark-app"
     "xcodes-app"
   ];

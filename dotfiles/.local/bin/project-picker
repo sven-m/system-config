@@ -22,7 +22,8 @@ line() {
 }
 
 pick() {
-  tmux command-prompt -p "Session name for $1: " "new-session -Ad -s %1 -c $1; switch-client -t %1"
+  tmux command-prompt -p "Session name for $1: " \
+    "new-session -Ad -s %1 -c $1 lazygit; switch-client -t %1"
 }
 
 

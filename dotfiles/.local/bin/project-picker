@@ -22,13 +22,14 @@ line() {
 }
 
 pick() {
-  tmux command-prompt -p "Session name for $1: " \
-    "new-session -Ad -s %1 -c $1 lazygit; switch-client -t %1"
+  tmux attach-session -c "$1"
+  cd "$1"
+  tmux new-window lazygit
 }
 
 
 usage() {
-  echo "usage: $(basename $0) menu [args] | line | pick" >&2
+  echo "usage: $(basename $0) menu [fzf-args] | line <dir> | pick <dir>" >&2
   exit 1
 }
 

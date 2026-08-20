@@ -207,6 +207,9 @@ vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
 vim.keymap.set('n', '<Leader>wl', ':VimwikiSplitLink<CR>')
 vim.keymap.set('n', '<Leader>wv', ':VimwikiVSplitLink<CR>')
 
+vim.keymap.set("n", "<M-h>", "<cmd>tabp<CR>", { silent = true })
+vim.keymap.set("n", "<M-l>", "<cmd>tabn<CR>", { silent = true })
+
 vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })

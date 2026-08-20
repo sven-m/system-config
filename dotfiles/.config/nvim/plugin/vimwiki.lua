@@ -12,6 +12,8 @@ vim.g.vimwiki_list = {
 }
 vim.g.vimwiki_auto_header = 1
 vim.g.vimwiki_links_header = "All Files"
+vim.g.vimwiki_global_ext = 0
+vim.g.vimwiki_folding = 'expr'
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = vim.fn.expand("~") .. "/Documents/vimwiki/**",

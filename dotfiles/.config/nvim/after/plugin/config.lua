@@ -21,6 +21,23 @@ vim.opt.wrapmargin = 0
 vim.opt.formatoptions:append("t")
 vim.opt.linebreak = true
 
+vim.treesitter.language.register("markdown", "vimwiki")
+
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldenable = false
+vim.opt.viewoptions = "folds,cursor"
+
+vim.api.nvim_create_autocmd("BufWinLeave", {
+  pattern = { "*.md", "*.wiki" },
+  callback = function() vim.cmd("silent! mkview") end,
+})
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  pattern = { "*.md", "*.wiki" },
+  callback = function() vim.cmd("silent! loadview") end,
+})
+
 -- startify
 
 vim.g.startify_change_to_vcs_root = 0

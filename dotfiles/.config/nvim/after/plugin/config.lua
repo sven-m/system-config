@@ -170,6 +170,9 @@ local telescope = require('telescope')
 local builtin = require('telescope.builtin')
 
 telescope.setup({
+  defaults = {
+    path_display = { "truncate", "filename_first" },
+  },
   pickers = {
     find_files = {
       find_command = { 'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git' },

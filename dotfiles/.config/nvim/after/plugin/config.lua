@@ -97,6 +97,10 @@ require("nvim-tree").setup({
   },
 })
 
+-- xcodebuild
+
+require("xcodebuild").setup({})
+
 -- lsp for iOS development
 
 vim.lsp.config('sourcekit', {

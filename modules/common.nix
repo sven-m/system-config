@@ -23,6 +23,7 @@ Configuration for all systems (nixOS and macOS)
     gnused
     lazygit
     less
+    jq
     ripgrep
     starship
     stow
@@ -100,14 +101,36 @@ Configuration for all systems (nixOS and macOS)
       cmp-path
       gitsigns-nvim
       nvim-cmp
+      nvim-dap
+      nvim-dap-ui
       nvim-lsp-file-operations
       nvim-tree-lua
       nvim-treesitter.withAllGrammars
+      nui-nvim
+      snacks-nvim
       telescope-fzf-native-nvim
       telescope-nvim
       vim-gutentags
       vim-nix
       vim-startify
+      (
+        pkgs.vimUtils.buildVimPlugin {
+          pname = "xcodebuild-nvim";
+          version = "unstable";
+          nvimSkipModules = [
+            "xcodebuild.integrations.fzf-lua"
+            "xcodebuild.integrations.telescope-nvim"
+            "xcodebuild.integrations.snacks-picker"
+            "xcodebuild.code_coverage.report"
+          ];
+          src = pkgs.fetchFromGitHub {
+            owner = "wojciech-kulik";
+            repo = "xcodebuild.nvim";
+            rev = "633eb71c0b354581837025581b7261dbe5361226";
+            hash = "sha256-8Ooyiq9ECBTr3o2hn6cPesA8YZ2hmcCBWAVL3FciBRU=";
+          };
+        }
+      )
       (
         pkgs.vimUtils.buildVimPlugin {
           pname = "vimwiki-wikilinks";

@@ -39,6 +39,7 @@ Configuration for all macOS systems
     "swiftformat"
     "xcbeautify"
     "xcode-build-server"
+    "xcp"
   ];
   homebrew.taps = [
   ];

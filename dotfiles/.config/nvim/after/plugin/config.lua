@@ -53,11 +53,21 @@ vim.api.nvim_create_autocmd("BufNewFile", {
 })
 
 -- gutentags
-vim.g.gutentags_enabled = 1
+vim.g.gutentags_init_user_func = "IsVimwikiDir"
+
+vim.cmd([[
+function! IsVimwikiDir(path)
+  let l:result = a:path =~ expand('~/Documents/vimwiki')
+  call v:lua.vim.notify("gutentags IsVimwikiDir: " . a:path . " -> " . l:result)
+  return l:result
+endfunction
+]])
+
 vim.g.gutentags_ctags_executable = "ctags"
 vim.g.gutentags_add_default_project_roots = 0
 vim.g.gutentags_project_root = {
   ".git",
+  ".gutentags-root-marker",
 }
 
 vim.g.gutentags_cache_dir = vim.fn.expand("~/.cache/gutentags")

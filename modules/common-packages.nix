@@ -10,6 +10,7 @@
     jekyll
     kubernetes-helm
     mitmproxy
+    ncdu
     nodejs
     s3cmd
     sshpass

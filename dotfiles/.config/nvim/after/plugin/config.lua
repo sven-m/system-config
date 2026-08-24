@@ -57,9 +57,7 @@ vim.g.gutentags_init_user_func = "IsVimwikiDir"
 
 vim.cmd([[
 function! IsVimwikiDir(path)
-  let l:result = a:path =~ expand('~/Documents/vimwiki')
-  call v:lua.vim.notify("gutentags IsVimwikiDir: " . a:path . " -> " . l:result)
-  return l:result
+  return a:path =~ expand('~/Documents/vimwiki')
 endfunction
 ]])
 
@@ -109,7 +107,11 @@ require("nvim-tree").setup({
 
 -- xcodebuild
 
-require("xcodebuild").setup({})
+require("xcodebuild").setup({
+  project_config = {
+    store_in_project_dir = false,
+  },
+})
 
 vim.keymap.set("n", "<leader>X", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })
 vim.keymap.set("n", "<leader>xf", "<cmd>XcodebuildProjectManager<cr>", { desc = "Show Project Manager Actions" })

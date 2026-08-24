@@ -1,0 +1,7 @@
+style:
+  selected-row:
+    text-color: "#1e1e2e"
+    background-color: "#b4befe"
+  marked:
+    text-color: "#1e1e2e"
+    background-color: "#fab387"

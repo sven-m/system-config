@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -10,8 +10,8 @@
     jekyll
     kubernetes-helm
     mitmproxy
-    ncdu
     nodejs
+    pkgs-unstable.gdu
     s3cmd
     sshpass
     syncthing

@@ -100,6 +100,7 @@ Configuration for all systems (nixOS and macOS)
       cmp-nvim-lsp
       cmp-path
       gitsigns-nvim
+      lualine-nvim
       nvim-cmp
       nvim-dap
       nvim-dap-ui

@@ -167,6 +167,7 @@ end
 
 require("lualine").setup({
   sections = {
+    lualine_b = {'diff', 'diagnostics'},
     lualine_x = {
       { "' ' .. vim.g.xcodebuild_scheme .. ' ' .. vim.g.xcodebuild_last_status", color = { fg = "Gray" } },
       { "'󰙨 ' .. vim.g.xcodebuild_test_plan", color = { fg = "#a6e3a1", bg = "#161622" } },

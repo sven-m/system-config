@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 menu() {
-  FZF_DEFAULT_COMMAND="fd --hidden '^\.git$' --exec project-picker line \; $HOME/src"\
+  tmux rename-window "$(basename $0)"
+  FZF_DEFAULT_COMMAND="fd --hidden '^\.git$' --exec session-dir-picker line \; $HOME/src"\
     fzf \
     --ansi \
     --delimiter='\t' \
-    --bind 'enter:become(project-picker pick {1})' \
+    --bind 'enter:become(session-dir-picker pick {1})' \
     "$@"
 }
 
@@ -22,6 +23,7 @@ line() {
 }
 
 pick() {
+  tmux rename-session "$(basename $1)"
   tmux attach-session -c "$1"
   cd "$1"
   tmux new-window lazygit
@@ -29,11 +31,11 @@ pick() {
 
 
 usage() {
-  echo "usage: $(basename $0) menu [fzf-args] | line <dir> | pick <dir>" >&2
+  echo "usage: $(basename $0) [ menu [fzf-args] | line <dir> | pick <dir> ]" >&2
   exit 1
 }
 
-cmd="$1"
+cmd="${1:-menu}"
 shift
 
 case "$cmd" in

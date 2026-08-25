@@ -68,14 +68,6 @@ Configuration for all systems (nixOS and macOS)
           path = "${catppuccin}/share/tmux-plugins/catppuccin";
         }
         {
-          name = "cpu";
-          path = "${cpu}/share/tmux-plugins/cpu";
-        }
-        {
-          name = "battery";
-          path = "${battery}/share/tmux-plugins/battery";
-        }
-        {
           name = "resurrect";
           path = "${resurrect}/share/tmux-plugins/resurrect";
         }
@@ -108,6 +100,7 @@ Configuration for all systems (nixOS and macOS)
       nvim-tree-lua
       nvim-treesitter.withAllGrammars
       nui-nvim
+      lualine-nvim
       snacks-nvim
       telescope-fzf-native-nvim
       telescope-nvim

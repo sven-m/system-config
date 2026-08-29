@@ -61,7 +61,6 @@ Configuration for darmok (macOS)
     "utm"
     "vagrant"
     "vivaldi"
-    "whatsapp"
   ];
 
   homebrew.masApps = {
@@ -77,6 +76,7 @@ Configuration for darmok (macOS)
     "TestFlight" = 899247664;
     "Bitwarden" = 1352778147;
     "Prime Video" = 545519333;
+    "Whatsapp" = 310633997;
   };
 
   system.defaults.dock.persistent-apps = [

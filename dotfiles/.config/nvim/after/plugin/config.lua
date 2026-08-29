@@ -13,8 +13,10 @@ vim.opt.showcmd = true
 vim.opt.showmatch = true
 vim.opt.tabstop = 2
 vim.opt.wrap = true
+vim.opt.path:append("**")
 vim.o.wildmenu = true
 vim.o.wildmode = "longest:full,full"
+vim.opt.wildoptions:append("fuzzy")
 
 vim.opt.textwidth = 120
 vim.opt.wrapmargin = 0

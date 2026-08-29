@@ -83,6 +83,61 @@ vim.g.gutentags_ctags_extra_args = {
 
 require("gitsigns").setup()
 
+-- pill tabline
+
+vim.keymap.set("n", "<leader>tt", function()
+  if vim.o.showtabline == 2 then
+    vim.o.showtabline = 0
+  else
+    vim.o.showtabline = 2
+  end
+end, { desc = "Toggle [t]abs" })
+
+vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = "#666666" })
+vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
+
+vim.api.nvim_set_hl(0, "TabLinePillActiveLeft", { fg = "#ca9ee6", bg = "#1e1e2e" })
+vim.api.nvim_set_hl(0, "TabLinePillActiveIndex", { fg = "#1e1e2e", bg = "#ca9ee6", bold = true })
+vim.api.nvim_set_hl(0, "TabLinePillActiveName", { fg = "#cdd6f4", bg = "#45475a" })
+vim.api.nvim_set_hl(0, "TabLinePillActiveRight", { fg = "#45475a", bg = "#1e1e2e" })
+
+vim.api.nvim_set_hl(0, "TabLinePillInactiveLeft", { fg = "#9399b2", bg = "#1e1e2e" })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveIndex", { fg = "#1e1e2e", bg = "#9399b2" })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveName", { fg = "#cdd6f4", bg = "#313244" })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveRight", { fg = "#313244", bg = "#1e1e2e" })
+
+vim.o.tabline = "%!v:lua.PillTabline()"
+
+function _G.PillTabline()
+  local s = ""
+  local tabs = vim.api.nvim_list_tabpages()
+  local current = vim.api.nvim_get_current_tabpage()
+
+  for i, tab in ipairs(tabs) do
+    local is_active = (tab == current)
+
+    local win = vim.api.nvim_tabpage_get_win(tab)
+    local buf = vim.api.nvim_win_get_buf(win)
+    local name = vim.api.nvim_buf_get_name(buf)
+    name = name ~= "" and vim.fn.pathshorten(vim.fn.fnamemodify(name, ":~:.")) or "[No Name]"
+
+    local hl_left = is_active and "%#TabLinePillActiveLeft#" or "%#TabLinePillInactiveLeft#"
+    local hl_index = is_active and "%#TabLinePillActiveIndex#" or "%#TabLinePillInactiveIndex#"
+    local hl_name = is_active and "%#TabLinePillActiveName#" or "%#TabLinePillInactiveName#"
+    local hl_right = is_active and "%#TabLinePillActiveRight#" or "%#TabLinePillInactiveRight#"
+
+    s = s .. "%" .. i .. "T"
+    s = s .. hl_left .. "\u{e0b6}"
+    s = s .. hl_index .. i .. " "
+    s = s .. hl_name .. " " .. name
+    s = s .. "%T"
+    s = s .. hl_right .. "\u{e0b4}"
+    s = s .. "%#TabLine# "
+  end
+
+  return s
+end
+
 -- nvim-tree
 
 require("nvim-tree").setup({

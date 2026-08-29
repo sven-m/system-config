@@ -52,7 +52,6 @@ Configuration for all macOS systems
     "caffeine"
     "charles"
     "daisydisk"
-    "drawio"
     "ghostty"
     "google-chrome"
     "leader-key"

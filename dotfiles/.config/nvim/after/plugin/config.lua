@@ -40,10 +40,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
   callback = function() vim.cmd("silent! loadview") end,
 })
 
--- startify
-
-vim.g.startify_change_to_vcs_root = 0
-
 vim.api.nvim_create_autocmd("BufNewFile", {
   pattern = "*/diary/[0-9]*.md",
   callback = function()

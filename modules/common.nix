@@ -106,7 +106,6 @@ Configuration for all systems (nixOS and macOS)
       telescope-nvim
       vim-gutentags
       vim-nix
-      vim-startify
       (
         pkgs.vimUtils.buildVimPlugin {
           pname = "xcodebuild-nvim";

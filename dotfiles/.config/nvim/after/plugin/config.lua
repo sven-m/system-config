@@ -83,14 +83,6 @@ require("gitsigns").setup()
 
 -- pill tabline
 
-vim.keymap.set("n", "<leader>tt", function()
-  if vim.o.showtabline == 2 then
-    vim.o.showtabline = 0
-  else
-    vim.o.showtabline = 2
-  end
-end, { desc = "Toggle [t]abs" })
-
 vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = "#666666" })
 vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
 
@@ -139,6 +131,18 @@ end
 -- nvim-tree
 
 require("nvim-tree").setup({
+  hijack_unnamed_buffer_when_opening = true,
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
+  prefer_startup_root = true,
+  root_dirs = { "~/src" },
+  actions = {
+    change_dir = {
+      enable = false,
+    },
+  },
   sort = {
     folders_first = false,
   },
@@ -334,9 +338,9 @@ vim.keymap.set('n', '<leader>fR', builtin.lsp_references)
 vim.keymap.set('n', '<leader>fD', builtin.lsp_definitions)
 vim.keymap.set('n', '<leader>fi', builtin.lsp_implementations)
 
-vim.keymap.set('', '<Leader>tt', '<cmd>NvimTreeToggle<CR>')
-vim.keymap.set('', '<Leader>tr', '<cmd>NvimTreeRefresh<CR>')
-vim.keymap.set('', '<Leader>tf', '<cmd>NvimTreeFocus<CR>')
+vim.keymap.set('', '<Leader>t', function()
+  require('nvim-tree.api').tree.toggle({ current_window = true })
+end)
 
 vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
 vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')

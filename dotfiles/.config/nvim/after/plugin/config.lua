@@ -353,11 +353,11 @@ vim.keymap.set('', '<Leader>t', function()
   require('nvim-tree.api').tree.toggle({ current_window = true })
 end)
 
+-- vimwiki
+
 vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
 vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
 vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
-vim.keymap.set('n', '<Leader>wl', ':VimwikiSplitLink<CR>')
-vim.keymap.set('n', '<Leader>wv', ':VimwikiVSplitLink<CR>')
 
 vim.keymap.set("n", "z;", "zMzr", { silent = true })
 vim.keymap.set("n", "<M-h>", "<cmd>tabp<CR>", { silent = true })
@@ -370,3 +370,6 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
 
 vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { silent = true })
 vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { silent = true })
+
+vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { silent = true })
+vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })

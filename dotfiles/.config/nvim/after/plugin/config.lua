@@ -71,7 +71,6 @@ vim.g.gutentags_project_root = {
 }
 
 vim.g.gutentags_cache_dir = vim.fn.expand("~/.cache/gutentags")
-vim.g.gutentags_verbose = 1
 
 vim.g.gutentags_ctags_extra_args = {
   "--fields=+l",  -- include language info

@@ -1,5 +1,15 @@
 local M = {}
 
+do
+  local filename = vim.api.nvim_buf_get_name(0)
+  if vim.fn.filereadable(filename) == 0 and filename:match("/diary/%d.*%.md$") then
+    vim.schedule(function()
+      vim.cmd("silent! %!vimwiki-diary-template '%'")
+      vim.cmd("normal! G")
+    end)
+  end
+end
+
 if vim.env.NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED ~= "1" then
   return M
 end

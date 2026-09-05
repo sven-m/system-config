@@ -32,6 +32,8 @@ vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = false
 vim.opt.viewoptions = "folds,cursor"
 
+-- remember fold state 
+
 vim.api.nvim_create_autocmd("BufWinLeave", {
   pattern = { "*.md", "*.wiki" },
   callback = function() vim.cmd("silent! mkview") end,

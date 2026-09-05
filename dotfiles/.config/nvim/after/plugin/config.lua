@@ -131,7 +131,17 @@ end
 
 -- nvim-tree
 
+local function nvim_tree_on_attach(bufnr)
+  local api = require("nvim-tree.api")
+  api.config.mappings.default_on_attach(bufnr)
+
+  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
+  vim.keymap.set("n", "<CR>", api.node.open.replace_tree_buffer, opts)
+  vim.keymap.set("n", "o", api.node.open.replace_tree_buffer, opts)
+end
+
 require("nvim-tree").setup({
+  on_attach = nvim_tree_on_attach,
   hijack_unnamed_buffer_when_opening = true,
   hijack_directories = {
     enable = true,

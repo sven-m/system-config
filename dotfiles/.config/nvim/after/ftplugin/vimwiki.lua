@@ -10,6 +10,18 @@ do
   end
 end
 
+vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+  buffer = 0,
+  callback = function(args)
+    if vim.bo.modified then
+      vim.cmd("update")
+      -- if vim.env.TMUX then
+        -- vim.fn.system({ "tmux", "display-message", "autosaved (" .. args.event .. ")" })
+      -- end
+    end
+  end,
+})
+
 if vim.env.NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED ~= "1" then
   return M
 end

@@ -7,6 +7,7 @@ vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.lazyredraw = true
+vim.opt.updatetime = 1000
 vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true

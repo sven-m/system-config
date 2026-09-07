@@ -232,6 +232,15 @@ require("lualine").setup({
     lualine_x = {
       { "' ' .. vim.g.xcodebuild_scheme .. ' ' .. vim.g.xcodebuild_last_status", color = { fg = "Gray" } },
       { "'󰙨 ' .. vim.g.xcodebuild_test_plan", color = { fg = "#a6e3a1", bg = "#161622" } },
+      {
+        function()
+           if vim.b.suppress_autosave then
+             return "\u{e654} auto-saving disabled, conflicting changes on disk"
+           end
+           return ""
+        end,
+        color = { fg = "#f38ba8" },
+      },
       { xcodebuild_device, color = { fg = "#f9e2af", bg = "#161622" } },
     },
   },

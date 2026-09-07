@@ -14,6 +14,7 @@ Configuration for all systems (nixOS and macOS)
   programs.bash.completion.enable = true;
 
   environment.systemPackages = with pkgs; [
+    claude-code
     coreutils
     diff-so-fancy
     fd

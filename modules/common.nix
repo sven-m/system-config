@@ -92,6 +92,7 @@ Configuration for all systems (nixOS and macOS)
       cmp-buffer
       cmp-nvim-lsp
       cmp-path
+      fzf-lua
       gitsigns-nvim
       lualine-nvim
       nvim-cmp

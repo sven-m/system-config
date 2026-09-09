@@ -104,8 +104,6 @@ Configuration for all systems (nixOS and macOS)
       nui-nvim
       lualine-nvim
       snacks-nvim
-      telescope-fzf-native-nvim
-      telescope-nvim
       vim-gutentags
       vim-nix
       (

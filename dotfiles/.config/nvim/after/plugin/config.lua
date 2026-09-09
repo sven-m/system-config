@@ -198,7 +198,6 @@ vim.keymap.set("n", "<leader>x<cr>", "<cmd>XcodebuildPreviewToggle<cr>", { desc 
 vim.keymap.set("n", "<leader>xd", "<cmd>XcodebuildSelectDevice<cr>", { desc = "Select Device" })
 vim.keymap.set("n", "<leader>xm", "<cmd>XcodebuildSelectScheme<cr>", { desc = "Select Scheme" })
 vim.keymap.set("n", "<leader>xp", "<cmd>XcodebuildSelectTestPlan<cr>", { desc = "Select Test Plan" })
-vim.keymap.set("n", "<leader>xq", "<cmd>Telescope quickfix<cr>", { desc = "Show QuickFix List" })
 
 vim.keymap.set("n", "<leader>xx", "<cmd>XcodebuildQuickfixLine<cr>", { desc = "Quickfix Line" })
 vim.keymap.set("n", "<leader>xa", "<cmd>XcodebuildCodeActions<cr>", { desc = "Show Code Actions" })
@@ -309,45 +308,6 @@ cmp.setup({
   }),
 })
 
--- telescope
-
-local telescope = require('telescope')
-local builtin = require('telescope.builtin')
-
-telescope.setup({
-  defaults = {
-    path_display = { "truncate", "filename_first" },
-  },
-  pickers = {
-    find_files = {
-      find_command = { 'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git' },
-    },
-    live_grep = {
-      additional_args = { '--hidden' },
-    },
-  },
-  extensions = {
-    fzf = {
-      fuzzy = true,
-      override_generic_sorter = true,
-      override_file_sorter = true,
-    },
-  },
-})
-
-telescope.load_extension('fzf')
-
-vim.keymap.set('n', '<leader>ff', builtin.find_files)
-vim.keymap.set('n', '<leader>fg', builtin.live_grep)
-vim.keymap.set('n', '<leader>fb', builtin.buffers)
-vim.keymap.set('n', '<leader>fh', builtin.help_tags)
-vim.keymap.set('n', '<leader>fr', builtin.oldfiles)
-vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols)
-vim.keymap.set('n', '<leader>fS', builtin.lsp_dynamic_workspace_symbols)
-vim.keymap.set('n', '<leader>fd', builtin.diagnostics)
-vim.keymap.set('n', '<leader>fR', builtin.lsp_references)
-vim.keymap.set('n', '<leader>fD', builtin.lsp_definitions)
-vim.keymap.set('n', '<leader>fi', builtin.lsp_implementations)
 
 -- fzf-lua
 
@@ -371,6 +331,7 @@ vim.keymap.set('n', '<leader>zs', fzf_lua.lsp_document_symbols)
 vim.keymap.set('n', '<leader>ze', fzf_lua.diagnostics_workspace)
 vim.keymap.set('n', '<leader>zr', fzf_lua.lsp_references)
 vim.keymap.set('n', '<leader>zd', fzf_lua.lsp_definitions)
+vim.keymap.set('n', '<leader>zq', fzf_lua.quickfix)
 
 vim.keymap.set('', '<Leader>t', function()
   require('nvim-tree.api').tree.toggle({ current_window = true })

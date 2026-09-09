@@ -353,6 +353,7 @@ vim.keymap.set('n', '<leader>fi', builtin.lsp_implementations)
 
 require('fzf-lua').setup({})
 
+vim.keymap.set('n', '<leader>z', require('fzf-lua').builtin)
 vim.keymap.set('n', '<leader>zf', require('fzf-lua').files)
 vim.keymap.set('n', '<leader>zg', require('fzf-lua').live_grep)
 vim.keymap.set('n', '<leader>zG', require('fzf-lua').live_grep_glob)

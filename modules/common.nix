@@ -89,13 +89,9 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
-      cmp-buffer
-      cmp-nvim-lsp
-      cmp-path
       fzf-lua
       gitsigns-nvim
       lualine-nvim
-      nvim-cmp
       nvim-dap
       nvim-dap-ui
       nvim-lsp-file-operations

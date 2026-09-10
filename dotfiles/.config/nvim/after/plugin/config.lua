@@ -251,7 +251,6 @@ vim.lsp.config('sourcekit', {
   cmd = { vim.fn.trim(vim.fn.system('xcrun --find sourcekit-lsp 2>/dev/null')) },
   filetypes = { "swift", "objc", "objcpp" },
   root_markers = { 'Package.swift', '.git' },
-  capabilities = require("cmp_nvim_lsp").default_capabilities(),
 })
 
 vim.lsp.enable('sourcekit')
@@ -276,37 +275,34 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     -- Show signature help (function args)
     vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
+
+    vim.lsp.completion.enable(true, args.data.client_id, args.buf, { autotrigger = true })
   end,
 })
 
--- nvim-cmp and friends
+-- native completion and snippets
 
-local cmp = require('cmp')
+vim.opt.completeopt = { "menuone", "noselect", "popup" }
 
-cmp.setup({
-  mapping = cmp.mapping.preset.insert({
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-    ["<S-Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-  }),
-  sources = cmp.config.sources({
-    { name = "nvim_lsp" },
-    { name = "buffer" },
-    { name = "path" },
-  }),
-})
+vim.keymap.set('i', '<Tab>', function()
+  if vim.fn.pumvisible() == 1 then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
+  elseif vim.snippet.active({ direction = 1 }) then
+    vim.snippet.jump(1)
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', true)
+  end
+end)
+
+vim.keymap.set('i', '<S-Tab>', function()
+  if vim.fn.pumvisible() == 1 then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
+  elseif vim.snippet.active({ direction = -1 }) then
+    vim.snippet.jump(-1)
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<S-Tab>', true, true, true), 'n', true)
+  end
+end)
 
 
 -- fzf-lua

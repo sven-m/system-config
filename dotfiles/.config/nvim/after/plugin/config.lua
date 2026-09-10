@@ -98,7 +98,18 @@ vim.g.gutentags_ctags_extra_args = {
 
 -- gitsigns
 
-require("gitsigns").setup()
+require("gitsigns").setup({
+  on_attach = function(bufnr)
+    local gs = require("gitsigns")
+    local opts = { buffer = bufnr }
+
+    vim.keymap.set("n", "]c", function() gs.nav_hunk("next") end, opts)
+    vim.keymap.set("n", "[c", function() gs.nav_hunk("prev") end, opts)
+
+    vim.keymap.set("n", "<leader>gh", gs.preview_hunk_inline, opts)
+    vim.keymap.set("n", "<leader>gb", gs.blame_line, opts)
+  end,
+})
 
 -- pill tabline
 
@@ -229,6 +240,33 @@ vim.keymap.set("n", "<leader>xp", "<cmd>XcodebuildSelectTestPlan<cr>", { desc = 
 vim.keymap.set("n", "<leader>xx", "<cmd>XcodebuildQuickfixLine<cr>", { desc = "Quickfix Line" })
 vim.keymap.set("n", "<leader>xa", "<cmd>XcodebuildCodeActions<cr>", { desc = "Show Code Actions" })
 
+-- dap (debugging, via xcodebuild's lldb integration)
+
+local dap = require("dap")
+local dapui = require("dapui")
+local xcodebuild_dap = require("xcodebuild.integrations.dap")
+
+xcodebuild_dap.setup()
+dapui.setup()
+
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
+
+vim.keymap.set("n", "<leader>dd", xcodebuild_dap.build_and_debug, { desc = "Build & Debug" })
+vim.keymap.set("n", "<leader>dr", xcodebuild_dap.debug_without_build, { desc = "Debug Without Building" })
+vim.keymap.set("n", "<leader>dt", xcodebuild_dap.debug_tests, { desc = "Debug Tests" })
+vim.keymap.set("n", "<leader>dT", xcodebuild_dap.debug_class_tests, { desc = "Debug Class Tests" })
+vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+vim.keymap.set("n", "<leader>B", xcodebuild_dap.toggle_message_breakpoint, { desc = "Toggle Message Breakpoint" })
+vim.keymap.set("n", "<leader>dx", xcodebuild_dap.terminate_session, { desc = "Terminate Debugger" })
+
 -- lualine
 
 local function xcodebuild_device()
@@ -282,6 +320,14 @@ vim.lsp.config('sourcekit', {
 
 vim.lsp.enable('sourcekit')
 
+function _G.__lsp_format_operator()
+  local start_mark = vim.api.nvim_buf_get_mark(0, '[')
+  local end_mark = vim.api.nvim_buf_get_mark(0, ']')
+  vim.lsp.buf.format({
+    range = { start = start_mark, ['end'] = end_mark },
+  })
+end
+
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP Actions',
   callback = function(args)
@@ -303,8 +349,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- Show signature help (function args)
     vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
 
-    -- Format buffer (normal mode) or selection (visual mode)
-    vim.keymap.set({ 'n', 'v' }, '<leader>cf', vim.lsp.buf.format, opts)
+    -- Format buffer (normal mode), selection (visual mode), or as an
+    -- operator taking a motion/textobject (e.g. <leader>cfi()
+    vim.keymap.set('v', '<leader>cf', vim.lsp.buf.format, opts)
+    vim.keymap.set('n', '<leader>cf', function()
+      vim.go.operatorfunc = 'v:lua.__lsp_format_operator'
+      return 'g@'
+    end, vim.tbl_extend('force', opts, { expr = true }))
 
     vim.lsp.completion.enable(true, args.data.client_id, args.buf, { autotrigger = true })
   end,

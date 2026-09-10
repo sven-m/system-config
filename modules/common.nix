@@ -97,6 +97,7 @@ Configuration for all systems (nixOS and macOS)
       nvim-lsp-file-operations
       nvim-tree-lua
       nvim-treesitter.withAllGrammars
+      nvim-treesitter-textobjects
       nui-nvim
       lualine-nvim
       snacks-nvim

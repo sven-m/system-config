@@ -33,6 +33,33 @@ vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = false
 vim.opt.viewoptions = "folds,cursor"
 
+-- treesitter textobjects
+
+require("nvim-treesitter-textobjects").setup({
+  select = { lookahead = true },
+  move = { set_jumps = true },
+})
+
+local ts_select = require("nvim-treesitter-textobjects.select")
+local ts_move = require("nvim-treesitter-textobjects.move")
+
+vim.keymap.set({ "x", "o" }, "af", function() ts_select.select_textobject("@function.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "if", function() ts_select.select_textobject("@function.inner", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ac", function() ts_select.select_textobject("@class.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ic", function() ts_select.select_textobject("@class.inner", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "aa", function() ts_select.select_textobject("@parameter.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ia", function() ts_select.select_textobject("@parameter.inner", "textobjects") end)
+
+vim.keymap.set("n", "<leader>a", function() require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner") end)
+vim.keymap.set("n", "<leader>A", function() require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.inner") end)
+
+vim.keymap.set({ "n", "x", "o" }, "]m", function() ts_move.goto_next_start("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "]]", function() ts_move.goto_next_start("@class.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "]M", function() ts_move.goto_next_end("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[m", function() ts_move.goto_previous_start("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[[", function() ts_move.goto_previous_start("@class.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@function.outer", "textobjects") end)
+
 -- remember fold state 
 
 vim.api.nvim_create_autocmd("BufWinLeave", {
@@ -276,6 +303,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- Show signature help (function args)
     vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
 
+    -- Format buffer (normal mode) or selection (visual mode)
+    vim.keymap.set({ 'n', 'v' }, '<leader>cf', vim.lsp.buf.format, opts)
+
     vim.lsp.completion.enable(true, args.data.client_id, args.buf, { autotrigger = true })
   end,
 })
@@ -283,27 +313,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- native completion and snippets
 
 vim.opt.completeopt = { "menuone", "noselect", "popup" }
-
-vim.keymap.set('i', '<Tab>', function()
-  if vim.fn.pumvisible() == 1 then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
-  elseif vim.snippet.active({ direction = 1 }) then
-    vim.snippet.jump(1)
-  else
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', true)
-  end
-end)
-
-vim.keymap.set('i', '<S-Tab>', function()
-  if vim.fn.pumvisible() == 1 then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
-  elseif vim.snippet.active({ direction = -1 }) then
-    vim.snippet.jump(-1)
-  else
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<S-Tab>', true, true, true), 'n', true)
-  end
-end)
-
 
 -- fzf-lua
 
@@ -325,6 +334,7 @@ vim.keymap.set('n', '<leader>fe', fzf_lua.diagnostics_workspace)
 vim.keymap.set('n', '<leader>fr', fzf_lua.lsp_references)
 vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
 vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
+vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 vim.keymap.set('', '<Leader>t', function()
   require('nvim-tree.api').tree.toggle({ current_window = true })

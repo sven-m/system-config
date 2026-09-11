@@ -99,6 +99,7 @@ vim.g.gutentags_ctags_extra_args = {
 -- gitsigns
 
 require("gitsigns").setup({
+  base = "HEAD",
   on_attach = function(bufnr)
     local gs = require("gitsigns")
     local opts = { buffer = bufnr }

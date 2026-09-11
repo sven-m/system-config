@@ -1,11 +1,20 @@
-vim.cmd.colorscheme "catppuccin-mocha"
+-- general keymap
 
-vim.opt.updatetime = 1000
+vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
 
-vim.opt.breakindent = true
+vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { silent = true })
+vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { silent = true })
+
+vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { silent = true })
+vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })
 
 -- ui
-vim.opt.list = true -- show non-printable chars
+vim.opt.updatetime = 1000
+vim.cmd.colorscheme "catppuccin-mocha"
+vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 
@@ -20,8 +29,9 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- rendering text
-vim.opt.showmatch = true -- show matching bracket when typing close bracket
+vim.opt.showmatch = true 
 vim.opt.linebreak = true
+vim.opt.breakindent = true
 
 -- folding
 vim.opt.foldmethod = "expr"
@@ -33,10 +43,109 @@ vim.opt.viewoptions = "folds,cursor"
 vim.opt.path:append("**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
+vim.opt.completeopt = { "menuone", "noselect", "popup" }
+
+
+-- vimwiki
+
+vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
+vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
+vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
+
+
+-- fzf-lua
+
+local fzf_lua = require('fzf-lua')
+
+fzf_lua.setup({
+  fzf_opts = { ["--layout"] = "default" },
+})
+
+vim.keymap.set('n', '<leader>F', fzf_lua.builtin)
+vim.keymap.set('n', '<leader>ff', fzf_lua.files)
+vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep)
+vim.keymap.set('n', '<leader>fp', fzf_lua.grep_project)
+vim.keymap.set('n', '<leader>fb', fzf_lua.buffers)
+vim.keymap.set('n', '<leader>fh', fzf_lua.help_tags)
+vim.keymap.set('n', '<leader>fR', fzf_lua.oldfiles)
+vim.keymap.set('n', '<leader>fs', fzf_lua.lsp_document_symbols)
+vim.keymap.set('n', '<leader>fe', fzf_lua.diagnostics_workspace)
+vim.keymap.set('n', '<leader>fr', fzf_lua.lsp_references)
+vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
+vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
+vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
+
+
+-- nvim-tree
+
+local function nvim_tree_on_attach(bufnr)
+  local api = require("nvim-tree.api")
+  api.config.mappings.default_on_attach(bufnr)
+
+  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
+  vim.keymap.set("n", "<CR>", api.node.open.replace_tree_buffer, opts)
+  vim.keymap.set("n", "o", api.node.open.replace_tree_buffer, opts)
+end
+
+require("nvim-tree").setup({
+  on_attach = nvim_tree_on_attach,
+  hijack_unnamed_buffer_when_opening = true,
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
+  prefer_startup_root = true,
+  root_dirs = { "~/src" },
+  actions = {
+    change_dir = {
+      enable = false,
+    },
+  },
+  sort = {
+    folders_first = false,
+  },
+  git = {
+    enable = true,
+    ignore = false,
+  },
+  renderer = {
+    highlight_git = true,
+    icons = {
+      show = {
+        git = true,
+      },
+    },
+  },
+  update_focused_file = {
+    enable = true,
+    update_root = true,
+  },
+})
+
+vim.keymap.set('', '<leader>t', function()
+  require('nvim-tree.api').tree.toggle({ current_window = true })
+end)
+
+
+-- gitsigns
+
+require("gitsigns").setup({
+  base = "HEAD",
+  on_attach = function(bufnr)
+    local gs = require("gitsigns")
+    local opts = { buffer = bufnr }
+
+    vim.keymap.set("n", "]c", function() gs.nav_hunk("next") end, opts)
+    vim.keymap.set("n", "[c", function() gs.nav_hunk("prev") end, opts)
+
+    vim.keymap.set("n", "<leader>gh", gs.preview_hunk_inline, opts)
+    vim.keymap.set("n", "<leader>gb", gs.blame_line, opts)
+  end,
+})
+
 
 -- treesitter
 vim.treesitter.language.register("markdown", "vimwiki")
-
 
 -- treesitter textobjects
 
@@ -65,21 +174,6 @@ vim.keymap.set({ "n", "x", "o" }, "[m", function() ts_move.goto_previous_start("
 vim.keymap.set({ "n", "x", "o" }, "[[", function() ts_move.goto_previous_start("@class.outer", "textobjects") end)
 vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@function.outer", "textobjects") end)
 
--- gitsigns
-
-require("gitsigns").setup({
-  base = "HEAD",
-  on_attach = function(bufnr)
-    local gs = require("gitsigns")
-    local opts = { buffer = bufnr }
-
-    vim.keymap.set("n", "]c", function() gs.nav_hunk("next") end, opts)
-    vim.keymap.set("n", "[c", function() gs.nav_hunk("prev") end, opts)
-
-    vim.keymap.set("n", "<leader>gh", gs.preview_hunk_inline, opts)
-    vim.keymap.set("n", "<leader>gb", gs.blame_line, opts)
-  end,
-})
 
 -- pill tabline
 
@@ -128,51 +222,6 @@ function _G.PillTabline()
   return s
 end
 
--- nvim-tree
-
-local function nvim_tree_on_attach(bufnr)
-  local api = require("nvim-tree.api")
-  api.config.mappings.default_on_attach(bufnr)
-
-  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
-  vim.keymap.set("n", "<CR>", api.node.open.replace_tree_buffer, opts)
-  vim.keymap.set("n", "o", api.node.open.replace_tree_buffer, opts)
-end
-
-require("nvim-tree").setup({
-  on_attach = nvim_tree_on_attach,
-  hijack_unnamed_buffer_when_opening = true,
-  hijack_directories = {
-    enable = true,
-    auto_open = true,
-  },
-  prefer_startup_root = true,
-  root_dirs = { "~/src" },
-  actions = {
-    change_dir = {
-      enable = false,
-    },
-  },
-  sort = {
-    folders_first = false,
-  },
-  git = {
-    enable = true,
-    ignore = false,
-  },
-  renderer = {
-    highlight_git = true,
-    icons = {
-      show = {
-        git = true,
-      },
-    },
-  },
-  update_focused_file = {
-    enable = true,
-    update_root = true,
-  },
-})
 
 -- xcodebuild
 
@@ -210,6 +259,7 @@ vim.keymap.set("n", "<leader>xp", "<cmd>XcodebuildSelectTestPlan<cr>", { desc = 
 vim.keymap.set("n", "<leader>xx", "<cmd>XcodebuildQuickfixLine<cr>", { desc = "Quickfix Line" })
 vim.keymap.set("n", "<leader>xa", "<cmd>XcodebuildCodeActions<cr>", { desc = "Show Code Actions" })
 
+
 -- dap (debugging, via xcodebuild's lldb integration)
 
 local dap = require("dap")
@@ -242,48 +292,6 @@ vim.keymap.set("n", "<leader>ds", dap.step_over, { desc = "Debugger: Step Over" 
 vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Debugger: Step Into" })
 vim.keymap.set("n", "<leader>do", dap.step_out, { desc = "Debugger: Step Out" })
 
--- lualine
-
-local function xcodebuild_device()
-  if vim.g.xcodebuild_platform == "macOS" then
-    return " macOS"
-  end
-
-  local deviceIcon = ""
-  if vim.g.xcodebuild_platform:match("watch") then
-    deviceIcon = "􀟤"
-  elseif vim.g.xcodebuild_platform:match("tv") then
-    deviceIcon = "􀡴 "
-  elseif vim.g.xcodebuild_platform:match("vision") then
-    deviceIcon = "􁎖 "
-  end
-
-  if vim.g.xcodebuild_os then
-    return deviceIcon .. " " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")"
-  end
-
-  return deviceIcon .. " " .. vim.g.xcodebuild_device_name
-end
-
-require("lualine").setup({
-  sections = {
-    lualine_b = {'diff', 'diagnostics'},
-    lualine_x = {
-      { "' ' .. vim.g.xcodebuild_scheme .. ' ' .. vim.g.xcodebuild_last_status", color = { fg = "Gray" } },
-      { "'󰙨 ' .. vim.g.xcodebuild_test_plan", color = { fg = "#a6e3a1", bg = "#161622" } },
-      {
-        function()
-           if vim.b.suppress_autosave then
-             return "\u{e654} auto-saving disabled, conflicting changes on disk"
-           end
-           return ""
-        end,
-        color = { fg = "#f38ba8" },
-      },
-      { xcodebuild_device, color = { fg = "#f9e2af", bg = "#161622" } },
-    },
-  },
-})
 
 -- lsp for iOS development
 
@@ -336,53 +344,47 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- native completion and snippets
 
-vim.opt.completeopt = { "menuone", "noselect", "popup" }
+-- lualine
 
--- fzf-lua
+local function xcodebuild_device()
+  if vim.g.xcodebuild_platform == "macOS" then
+    return " macOS"
+  end
 
-local fzf_lua = require('fzf-lua')
+  local deviceIcon = ""
+  if vim.g.xcodebuild_platform:match("watch") then
+    deviceIcon = "􀟤"
+  elseif vim.g.xcodebuild_platform:match("tv") then
+    deviceIcon = "􀡴 "
+  elseif vim.g.xcodebuild_platform:match("vision") then
+    deviceIcon = "􁎖 "
+  end
 
-fzf_lua.setup({
-  fzf_opts = { ["--layout"] = "default" },
+  if vim.g.xcodebuild_os then
+    return deviceIcon .. " " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")"
+  end
+
+  return deviceIcon .. " " .. vim.g.xcodebuild_device_name
+end
+
+require("lualine").setup({
+  sections = {
+    lualine_b = {'diff', 'diagnostics'},
+    lualine_x = {
+      { "' ' .. vim.g.xcodebuild_scheme .. ' ' .. vim.g.xcodebuild_last_status", color = { fg = "Gray" } },
+      { "'󰙨 ' .. vim.g.xcodebuild_test_plan", color = { fg = "#a6e3a1", bg = "#161622" } },
+      {
+        function()
+           if vim.b.suppress_autosave then
+             return "\u{e654} auto-saving disabled, conflicting changes on disk"
+           end
+           return ""
+        end,
+        color = { fg = "#f38ba8" },
+      },
+      { xcodebuild_device, color = { fg = "#f9e2af", bg = "#161622" } },
+    },
+  },
 })
 
-vim.keymap.set('n', '<leader>F', fzf_lua.builtin)
-vim.keymap.set('n', '<leader>ff', fzf_lua.files)
-vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep)
-vim.keymap.set('n', '<leader>fp', fzf_lua.grep_project)
-vim.keymap.set('n', '<leader>fb', fzf_lua.buffers)
-vim.keymap.set('n', '<leader>fh', fzf_lua.help_tags)
-vim.keymap.set('n', '<leader>fR', fzf_lua.oldfiles)
-vim.keymap.set('n', '<leader>fs', fzf_lua.lsp_document_symbols)
-vim.keymap.set('n', '<leader>fe', fzf_lua.diagnostics_workspace)
-vim.keymap.set('n', '<leader>fr', fzf_lua.lsp_references)
-vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
-vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
-vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
-
-vim.keymap.set('', '<leader>t', function()
-  require('nvim-tree.api').tree.toggle({ current_window = true })
-end)
-
--- vimwiki
-
-vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
-vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
-vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
-
-vim.keymap.set("n", "z;", "zMzr", { silent = true })
-vim.keymap.set("n", "<M-h>", "<cmd>tabp<CR>", { silent = true })
-vim.keymap.set("n", "<M-l>", "<cmd>tabn<CR>", { silent = true })
-
-vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
-
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { silent = true })
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { silent = true })
-
-vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { silent = true })
-vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })

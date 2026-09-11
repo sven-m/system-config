@@ -1,37 +1,42 @@
 vim.cmd.colorscheme "catppuccin-mocha"
-vim.opt.breakindent = true
-vim.opt.compatible = false
-vim.opt.expandtab = true
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.lazyredraw = true
+
 vim.opt.updatetime = 1000
-vim.opt.list = true
+
+vim.opt.breakindent = true
+
+-- ui
+vim.opt.list = true -- show non-printable chars
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.shiftwidth = 2
-vim.opt.showcmd = true
-vim.opt.showmatch = true
-vim.opt.tabstop = 2
-vim.opt.wrap = true
-vim.opt.path:append("**")
-vim.o.wildmenu = true
-vim.o.wildmode = "longest:full,full"
-vim.opt.wildoptions:append("fuzzy")
 
+-- indentation, formatting
+vim.opt.expandtab = true
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.textwidth = 120
-vim.opt.wrapmargin = 0
-vim.opt.formatoptions:append("t")
+
+-- search
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
+-- rendering text
+vim.opt.showmatch = true -- show matching bracket when typing close bracket
 vim.opt.linebreak = true
 
-vim.treesitter.language.register("markdown", "vimwiki")
-
+-- folding
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = false
 vim.opt.viewoptions = "folds,cursor"
+
+-- completion
+vim.opt.path:append("**")
+vim.o.wildmode = "longest:full,full"
+vim.opt.wildoptions:append("fuzzy")
+
+-- treesitter
+vim.treesitter.language.register("markdown", "vimwiki")
+
 
 -- treesitter textobjects
 
@@ -59,42 +64,6 @@ vim.keymap.set({ "n", "x", "o" }, "]M", function() ts_move.goto_next_end("@funct
 vim.keymap.set({ "n", "x", "o" }, "[m", function() ts_move.goto_previous_start("@function.outer", "textobjects") end)
 vim.keymap.set({ "n", "x", "o" }, "[[", function() ts_move.goto_previous_start("@class.outer", "textobjects") end)
 vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@function.outer", "textobjects") end)
-
--- remember fold state 
-
-vim.api.nvim_create_autocmd("BufWinLeave", {
-  pattern = { "*.md", "*.wiki" },
-  callback = function() vim.cmd("silent! mkview") end,
-})
-
-vim.api.nvim_create_autocmd("BufWinEnter", {
-  pattern = { "*.md", "*.wiki" },
-  callback = function() vim.cmd("silent! loadview") end,
-})
-
--- gutentags
-vim.g.gutentags_init_user_func = "IsVimwikiDir"
-
-vim.cmd([[
-function! IsVimwikiDir(path)
-  return a:path =~ expand('~/Documents/vimwiki')
-endfunction
-]])
-
-vim.g.gutentags_ctags_executable = "ctags"
-vim.g.gutentags_add_default_project_roots = 0
-vim.g.gutentags_project_root = {
-  ".git",
-  ".gutentags-root-marker",
-}
-
-vim.g.gutentags_cache_dir = vim.fn.expand("~/.cache/gutentags")
-
-vim.g.gutentags_ctags_extra_args = {
-  "--fields=+l",  -- include language info
-  "--extras=+q",  -- include qualified tags
-  "--kinds-all=*" -- include function prototypes, properties etc.
-}
 
 -- gitsigns
 

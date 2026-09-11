@@ -102,7 +102,6 @@ Configuration for all systems (nixOS and macOS)
       nui-nvim
       lualine-nvim
       snacks-nvim
-      vim-gutentags
       vim-nix
       (
         pkgs.vimUtils.buildVimPlugin {

@@ -362,7 +362,7 @@ vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
 vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
-vim.keymap.set('', '<Leader>t', function()
+vim.keymap.set('', '<leader>t', function()
   require('nvim-tree.api').tree.toggle({ current_window = true })
 end)
 

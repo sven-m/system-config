@@ -13,6 +13,14 @@ vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })
 
 -- ui
 vim.opt.updatetime = 1000
+require("catppuccin").setup({
+  integrations = {
+    vimwiki = true,
+    lualine = true,
+    gitsigns = true,
+    fzf = true,
+  },
+})
 vim.cmd.colorscheme "catppuccin-mocha"
 vim.opt.list = true
 vim.opt.number = true
@@ -316,9 +324,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(args)
     local opts = { noremap = true, silent = true, buffer = args.buf }
 
-    -- Show line diagnostics
-    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-
     -- Show documentation for symbol under cursor
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
@@ -347,44 +352,52 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- lualine
 
-local function xcodebuild_device()
-  if vim.g.xcodebuild_platform == "macOS" then
-    return " macOS"
-  end
-
-  local deviceIcon = ""
-  if vim.g.xcodebuild_platform:match("watch") then
-    deviceIcon = "􀟤"
-  elseif vim.g.xcodebuild_platform:match("tv") then
-    deviceIcon = "􀡴 "
-  elseif vim.g.xcodebuild_platform:match("vision") then
-    deviceIcon = "􁎖 "
-  end
-
-  if vim.g.xcodebuild_os then
-    return deviceIcon .. " " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")"
-  end
-
-  return deviceIcon .. " " .. vim.g.xcodebuild_device_name
-end
-
 require("lualine").setup({
+  options = {
+    globalstatus = false,
+    section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' }
+  },
   sections = {
-    lualine_b = {'diff', 'diagnostics'},
+    lualine_b = {'diagnostics'},
     lualine_x = {
-      { "' ' .. vim.g.xcodebuild_scheme .. ' ' .. vim.g.xcodebuild_last_status", color = { fg = "Gray" } },
-      { "'󰙨 ' .. vim.g.xcodebuild_test_plan", color = { fg = "#a6e3a1", bg = "#161622" } },
       {
         function()
-           if vim.b.suppress_autosave then
-             return "\u{e654} auto-saving disabled, conflicting changes on disk"
-           end
-           return ""
+          if vim.b.suppress_autosave then
+            return "\u{e654} auto-saving disabled, conflicting changes on disk"
+          end
+          return ""
         end,
         color = { fg = "#f38ba8" },
       },
-      { xcodebuild_device, color = { fg = "#f9e2af", bg = "#161622" } },
+      {
+        function()
+          return vim.g.xcodebuild_scheme and (' ' .. vim.g.xcodebuild_scheme) or ''
+        end,
+        color = { fg = "Gray" },
+        separator = '',
+      },
+      {
+        function()
+          return vim.g.xcodebuild_test_plan and ('󰙨 ' .. vim.g.xcodebuild_test_plan) or ''
+        end,
+        color = { fg = "#a6e3a1" },
+        separator = '',
+      },
+      {
+        function()
+          return vim.g.xcodebuild_device_name and (vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")") or ''
+        end,
+        color = { fg = "#f9e2af" }
+      },
+      {
+        'lsp_status',
+        color = { fg = "Gray" },
+      },
+      {
+        'filetype',
+        color = { fg = "Gray" },
+      },
     },
   },
 })
-

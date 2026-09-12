@@ -25,6 +25,7 @@ vim.cmd.colorscheme "catppuccin-mocha"
 vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.showmode = false
 
 -- indentation, formatting
 vim.opt.expandtab = true

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# tmux-gen-restore.sh: scrape the live tmux server and print a .tmux script
+# (plain tmux commands, meant to be `tmux source-file`'d) that recreates
+# every session. Idempotent per session via a brace-grouped `if-shell`:
+# a session that already exists is left completely untouched.
+#
+# Usage:
+#   tmux-gen-restore.sh > restore.tmux
+#   tmux source-file restore.tmux     # any time -- safe to re-run
+#
+# Each generated line is built by tmux's own -F/-f, not by bash: a single
+# `list-panes -f/-F` call IS the split-window lines for a window's panes
+# 1..N (one call, one line per matching pane, no bash loop over panes at
+# all); pane-level formats can see their enclosing window/session, so the
+# only bash variable threaded through is $session:$widx, needed to target
+# each `-t`. Bash still loops over sessions and windows themselves, since
+# their *count* varies and nothing in tmux's command language can do that.
+#
+# Only #{pane_start_command} is captured per pane (empty = plain shell).
+# It's emitted UNQUOTED on purpose: tmux's own config-file parser then
+# word-splits it into separate arguments, matching how it was originally
+# launched (`nvim --clean file`, not `"nvim --clean file"`) -- quoting it
+# would make tmux treat it as one opaque shell string instead.
+set -euo pipefail
+
+tmux list-sessions >/dev/null 2>&1 || { echo "# no tmux server running"; exit 0; }
+
+while IFS= read -r session; do
+  echo "if-shell \"! tmux has-session -t $session 2>/dev/null\" {"
+  echo "  new-session -d -s \"$session\""
+
+  while IFS= read -r widx; do
+    tmux list-panes -t "$session:$widx" -f '#{==:#{pane_index},0}' \
+      -F "  new-window -t \"$session:$widx\" -k -n \"#{window_name}\" -c \"#{pane_current_path}\" #{pane_start_command}"
+
+    tmux list-panes -t "$session:$widx" -f '#{!=:#{pane_index},0}' \
+      -F "  split-window -t \"$session:$widx\" -c \"#{pane_current_path}\" #{pane_start_command}"
+
+    tmux display-message -p -t "$session:$widx" \
+      "  select-layout -t \"$session:$widx\" \"#{window_layout}\""
+  done < <(tmux list-windows -t "$session" -F '#{window_index}')
+
+  tmux display-message -p -t "$session" "  select-window -t \"$session:#{window_index}\""
+  echo "}"
+  echo
+done < <(tmux list-sessions -F '#{session_name}')

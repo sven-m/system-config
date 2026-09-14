@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 # tmux-save: scrape the live tmux server and write a .tmux script (plain
-# tmux commands, meant to be `tmux source-file`'d) to the XDG state
-# location that recreates every session. Idempotent per session via a
-# brace-grouped `if-shell`: a session that already exists is left
-# completely untouched on re-source.
+# tmux commands, meant to be `tmux source-file`'d) to
+# $HOME/.local/state/tmux that recreates every session. Idempotent per
+# session via a brace-grouped `if-shell`: a session that already exists is
+# left completely untouched on re-source.
 #
 # Each generated line is built by tmux's own -F/-f, not by bash: a single
 # `list-panes -f/-F` call IS the split-window lines for a window's panes
 # 1..N (one call, one line per matching pane, no bash loop over panes at
-# all). $session/$widx are only needed to target each `-t` on the tmux
-# commands run here (list-panes, display-message) -- inside the generated
-# text itself, pane-level formats can already see their enclosing
-# window/session, so it's #{session_name}/#{window_index} there, not bash
-# variables. Bash still loops over sessions and windows themselves, since
-# their *count* varies and nothing in tmux's command language can do that.
+# all). $session_name/$window_index are only needed to target each `-t` on
+# the tmux commands run here (list-panes, display-message) -- inside the
+# generated text itself, pane-level formats can already see their
+# enclosing window/session, so it's #{session_name}/#{window_index} there,
+# not bash variables. Bash still loops over sessions and windows
+# themselves, since their *count* varies and nothing in tmux's command
+# language can do that.
 # The first pane in a window is whichever has #{pane-base-index} (usually
 # 0 or 1, whatever pane-base-index is set to), not a hardcoded 0.
 #
@@ -36,29 +37,31 @@ set -euo pipefail
 IFS=$'\n'
 set -f
 
-mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/tmux"
-exec > "${XDG_STATE_HOME:-$HOME/.local/state}/tmux/restore-sessions.tmux"
+mkdir -p "$HOME/.local/state/tmux"
+exec > "$HOME/.local/state/tmux/restore-sessions.tmux"
 
 tmux list-sessions >/dev/null 2>&1 || { echo "# no tmux server running"; exit 0; }
 
-for session in $(tmux list-sessions -F '#{session_name}')
+for session_name in $(tmux list-sessions -F '#{session_name}')
 do
-  echo "if-shell \"! tmux has-session -t $session 2>/dev/null\" {"
-  echo "  new-session -d -s \"$session\""
+  echo "if-shell \"! tmux has-session -t $session_name 2>/dev/null\" {"
+  echo "  new-session -d -s \"$session_name\""
 
-  for widx in $(tmux list-windows -t "$session" -F '#{window_index}')
+  for window_index in $(tmux list-windows -t "$session_name" -F '#{window_index}')
   do
-    tmux list-panes -t "$session:$widx" -f '#{==:#{pane_index},#{pane-base-index}}' \
+    target_window="$session_name:$window_index"
+
+    tmux list-panes -t "$target_window" -f '#{==:#{pane_index},#{pane-base-index}}' \
       -F "  new-window -t \"#{session_name}:#{window_index}\" -k -n \"#{window_name}\" -c \"#{pane_current_path}\" #{pane_start_command}"
 
-    tmux list-panes -t "$session:$widx" -f '#{!=:#{pane_index},#{pane-base-index}}' \
+    tmux list-panes -t "$target_window" -f '#{!=:#{pane_index},#{pane-base-index}}' \
       -F "  split-window -t \"#{session_name}:#{window_index}\" -c \"#{pane_current_path}\" #{pane_start_command}"
 
-    tmux display-message -p -t "$session:$widx" \
+    tmux display-message -p -t "$target_window" \
       "  select-layout -t \"#{session_name}:#{window_index}\" '#{window_layout}'"
   done
 
-  tmux display-message -p -t "$session" "  select-window -t \"#{session_name}:#{window_index}\""
+  tmux display-message -p -t "$session_name" "  select-window -t \"#{session_name}:#{window_index}\""
   echo "}"
   echo
 done

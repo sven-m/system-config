@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# tmux-save: scrape the live tmux server and write a .tmux script (plain
-# tmux commands, meant to be `tmux source-file`'d) to
-# $HOME/.local/state/tmux that recreates every session. Idempotent per
-# session via a brace-grouped `if-shell`: a session that already exists is
-# left completely untouched on re-source.
+# tmux-save: scrape the live tmux server and print a .tmux script (plain
+# tmux commands, meant to be `tmux source-file`'d) to stdout that
+# recreates every session. Idempotent per session via a brace-grouped
+# `if-shell`: a session that already exists is left completely untouched
+# on re-source.
+#
+# Usage:
+#   tmux-save > restore-sessions.tmux
+#   tmux source-file restore-sessions.tmux     # any time -- safe to re-run
 #
 # Each generated line is built by tmux's own -F/-f, not by bash: a single
 # `list-panes -f/-F` call IS the split-window lines for a window's panes
@@ -36,9 +40,6 @@ set -euo pipefail
 # expanded against files in the current directory).
 IFS=$'\n'
 set -f
-
-mkdir -p "$HOME/.local/state/tmux"
-exec > "$HOME/.local/state/tmux/restore-sessions.tmux"
 
 tmux list-sessions >/dev/null 2>&1 || { echo "# no tmux server running"; exit 0; }
 

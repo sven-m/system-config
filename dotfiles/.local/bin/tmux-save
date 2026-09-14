@@ -1,8 +1,61 @@
 #!/usr/bin/env bash
-# tmux-save: run generate-tmux-restore and write its output to the XDG
-# state location, creating the directory if needed.
+# tmux-save: scrape the live tmux server and write a .tmux script (plain
+# tmux commands, meant to be `tmux source-file`'d) to the XDG state
+# location that recreates every session. Idempotent per session via a
+# brace-grouped `if-shell`: a session that already exists is left
+# completely untouched on re-source.
+#
+# Each generated line is built by tmux's own -F/-f, not by bash: a single
+# `list-panes -f/-F` call IS the split-window lines for a window's panes
+# 1..N (one call, one line per matching pane, no bash loop over panes at
+# all); pane-level formats can see their enclosing window/session, so the
+# only bash variable threaded through is $session:$widx, needed to target
+# each `-t`. Bash still loops over sessions and windows themselves, since
+# their *count* varies and nothing in tmux's command language can do that.
+# The first pane in a window is whichever has #{pane-base-index} (usually
+# 0 or 1, whatever pane-base-index is set to), not a hardcoded 0.
+#
+# #{window_layout} is single-quoted, not double-quoted: on tmux 3.8+ it's a
+# JSON-subset string containing literal double quotes, which would
+# otherwise terminate the argument early when this file is re-sourced.
+#
+# Only #{pane_start_command} is captured per pane (empty = plain shell).
+# It's emitted UNQUOTED on purpose: tmux's own config-file parser then
+# word-splits it into separate arguments, matching how it was originally
+# launched (`nvim --clean file`, not `"nvim --clean file"`) -- quoting it
+# would make tmux treat it as one opaque shell string instead.
 set -euo pipefail
+
+# `for x in $(cmd)` splits cmd's output on $IFS and then glob-expands each
+# resulting word. IFS=$'\n' limits splitting to newlines (so a session or
+# window name containing a space stays one word); `set -f` turns off the
+# glob-expansion step (so a session literally named e.g. "test*" isn't
+# expanded against files in the current directory).
+IFS=$'\n'
+set -f
 
 dir="${XDG_STATE_HOME:-$HOME/.local/state}/tmux"
 mkdir -p "$dir"
-generate-tmux-restore > "$dir/restore.tmux"
+exec > "$dir/restore-sessions.tmux"
+
+tmux list-sessions >/dev/null 2>&1 || { echo "# no tmux server running"; exit 0; }
+
+for session in $(tmux list-sessions -F '#{session_name}'); do
+  echo "if-shell \"! tmux has-session -t $session 2>/dev/null\" {"
+  echo "  new-session -d -s \"$session\""
+
+  for widx in $(tmux list-windows -t "$session" -F '#{window_index}'); do
+    tmux list-panes -t "$session:$widx" -f '#{==:#{pane_index},#{pane-base-index}}' \
+      -F "  new-window -t \"$session:$widx\" -k -n \"#{window_name}\" -c \"#{pane_current_path}\" #{pane_start_command}"
+
+    tmux list-panes -t "$session:$widx" -f '#{!=:#{pane_index},#{pane-base-index}}' \
+      -F "  split-window -t \"$session:$widx\" -c \"#{pane_current_path}\" #{pane_start_command}"
+
+    tmux display-message -p -t "$session:$widx" \
+      "  select-layout -t \"$session:$widx\" '#{window_layout}'"
+  done
+
+  tmux display-message -p -t "$session" "  select-window -t \"$session:#{window_index}\""
+  echo "}"
+  echo
+done

@@ -52,8 +52,6 @@ vim.opt.completeopt = { "menuone", "noselect", "popup" }
 
 -- vimwiki
 
-vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
-vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
 vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
 
 

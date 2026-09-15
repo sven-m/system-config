@@ -43,11 +43,6 @@ vim.opt.wildoptions:append("fuzzy")
 vim.opt.completeopt = { "menuone", "noselect", "popup" }
 
 
--- vimwiki
-
-vim.keymap.set('n', '<C-M-i>', '<Tab>', { noremap = true})
-
-
 -- fzf-lua
 
 local fzf_lua = require('fzf-lua')

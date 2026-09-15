@@ -235,10 +235,10 @@ vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Tog
 vim.keymap.set("n", "<leader>B", xcodebuild_dap.toggle_message_breakpoint, { desc = "Toggle Message Breakpoint" })
 vim.keymap.set("n", "<leader>dx", xcodebuild_dap.terminate_session, { desc = "Terminate Debugger" })
 
-vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Debugger: Continue" })
-vim.keymap.set("n", "<leader>ds", dap.step_over, { desc = "Debugger: Step Over" })
-vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Debugger: Step Into" })
-vim.keymap.set("n", "<leader>do", dap.step_out, { desc = "Debugger: Step Out" })
+vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debugger: Continue" })
+vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
+vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
+vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
 
 
 -- lsp for iOS development

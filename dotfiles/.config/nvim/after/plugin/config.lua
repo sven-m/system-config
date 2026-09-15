@@ -1,11 +1,3 @@
--- general keymap
-
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { silent = true })
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { silent = true })
-
-vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { silent = true })
-vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })
-
 -- ui
 vim.opt.updatetime = 1000
 require("catppuccin").setup({
@@ -324,10 +316,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-
-    -- Go to next diagnostic
-    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 
     -- Show signature help (function args)
     vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)

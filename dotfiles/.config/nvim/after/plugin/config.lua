@@ -69,6 +69,7 @@ vim.keymap.set('n', '<leader>fr', fzf_lua.lsp_references)
 vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
 vim.keymap.set('n', '<leader>fi', fzf_lua.lsp_implementations)
 vim.keymap.set('n', '<leader>ft', fzf_lua.lsp_typedefs)
+vim.keymap.set('n', '<leader>fl', fzf_lua.lsp_finder)
 vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 

@@ -55,7 +55,7 @@ fzf_lua.setup({
   fzf_opts = { ["--layout"] = "default" },
 })
 
-vim.keymap.set('n', '<leader>F', fzf_lua.builtin)
+vim.keymap.set('n', '<leader>f', fzf_lua.builtin)
 vim.keymap.set('n', '<leader>ff', fzf_lua.files)
 vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep)
 vim.keymap.set('n', '<leader>fp', fzf_lua.grep_project)

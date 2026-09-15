@@ -1,5 +1,6 @@
 -- ui
 vim.opt.updatetime = 1000
+vim.opt.timeoutlen = 300
 require("catppuccin").setup({
   integrations = {
     vimwiki = true,
@@ -40,11 +41,6 @@ vim.opt.path:append("**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
 vim.opt.completeopt = { "menuone", "noselect", "popup" }
-
-
--- vimwiki
-
-vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
 
 
 -- fzf-lua

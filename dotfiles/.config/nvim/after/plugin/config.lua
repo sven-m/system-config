@@ -1,16 +1,3 @@
--- general keymap
-
-vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
-
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { silent = true })
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { silent = true })
-
-vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { silent = true })
-vim.keymap.set("n", "[l", "<cmd>lprevious<CR>", { silent = true })
-
 -- ui
 vim.opt.updatetime = 1000
 require("catppuccin").setup({
@@ -57,8 +44,6 @@ vim.opt.completeopt = { "menuone", "noselect", "popup" }
 
 -- vimwiki
 
-vim.keymap.set('', '<M-j>', '<Plug>VimwikiDiaryPrevDay<CR>')
-vim.keymap.set('', '<M-k>', '<Plug>VimwikiDiaryNextDay<CR>')
 vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
 
 
@@ -70,7 +55,7 @@ fzf_lua.setup({
   fzf_opts = { ["--layout"] = "default" },
 })
 
-vim.keymap.set('n', '<leader>F', fzf_lua.builtin)
+vim.keymap.set('n', '<leader>f', fzf_lua.builtin)
 vim.keymap.set('n', '<leader>ff', fzf_lua.files)
 vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep)
 vim.keymap.set('n', '<leader>fp', fzf_lua.grep_project)
@@ -78,9 +63,11 @@ vim.keymap.set('n', '<leader>fb', fzf_lua.buffers)
 vim.keymap.set('n', '<leader>fh', fzf_lua.help_tags)
 vim.keymap.set('n', '<leader>fo', fzf_lua.oldfiles)
 vim.keymap.set('n', '<leader>fs', fzf_lua.lsp_document_symbols)
+vim.keymap.set('n', '<leader>fws', fzf_lua.lsp_workspace_symbols)
 vim.keymap.set('n', '<leader>fe', fzf_lua.diagnostics_workspace)
 vim.keymap.set('n', '<leader>fr', fzf_lua.lsp_references)
 vim.keymap.set('n', '<leader>fd', fzf_lua.lsp_definitions)
+vim.keymap.set('n', '<leader>fl', fzf_lua.lsp_finder)
 vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
@@ -331,10 +318,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-
-    -- Go to next diagnostic
-    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 
     -- Show signature help (function args)
     vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)

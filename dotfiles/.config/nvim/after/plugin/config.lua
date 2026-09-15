@@ -45,7 +45,7 @@ vim.opt.completeopt = { "menuone", "noselect", "popup" }
 
 -- vimwiki
 
-vim.keymap.set('n', '<C-M-o>', '<Tab>', { noremap = true})
+vim.keymap.set('n', '<C-M-i>', '<Tab>', { noremap = true})
 
 
 -- fzf-lua

@@ -28,7 +28,6 @@ Configuration for all systems (nixOS and macOS)
     ripgrep
     starship
     stow
-    tmux
     tree
     universal-ctags
     uv

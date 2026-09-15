@@ -36,6 +36,10 @@ Configuration for all macOS systems
     "ideviceinstaller"
     "libimobiledevice"
     "mas"
+    {
+      name = "tmux";
+      args = [ "HEAD" ];
+    }
     "swiftformat"
     "xcbeautify"
     "xcode-build-server"

@@ -102,6 +102,7 @@ Configuration for all systems (nixOS and macOS)
       lualine-nvim
       snacks-nvim
       vim-nix
+      vim-vinegar
       (
         pkgs.vimUtils.buildVimPlugin {
           pname = "xcodebuild-nvim";

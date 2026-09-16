@@ -68,15 +68,11 @@ vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 
--- netrw
+-- netrw (using vinegar)
 
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
-
--- browse the directory of the current file
-vim.keymap.set('n', '-', '<cmd>Explore<cr>')
-
 
 -- gitsigns
 

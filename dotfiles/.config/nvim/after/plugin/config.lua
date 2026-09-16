@@ -127,18 +127,20 @@ vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@f
 
 -- pill tabline
 
-vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = "#666666" })
+local C = require("catppuccin.palettes").get_palette("mocha")
+
+vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = C.overlay0 })
 vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
 
-vim.api.nvim_set_hl(0, "TabLinePillActiveLeft", { fg = "#ca9ee6", bg = "#1e1e2e" })
-vim.api.nvim_set_hl(0, "TabLinePillActiveIndex", { fg = "#1e1e2e", bg = "#ca9ee6", bold = true })
-vim.api.nvim_set_hl(0, "TabLinePillActiveName", { fg = "#cdd6f4", bg = "#45475a" })
-vim.api.nvim_set_hl(0, "TabLinePillActiveRight", { fg = "#45475a", bg = "#1e1e2e" })
+vim.api.nvim_set_hl(0, "TabLinePillActiveLeft", { fg = C.mauve, bg = C.base })
+vim.api.nvim_set_hl(0, "TabLinePillActiveIndex", { fg = C.base, bg = C.mauve, bold = true })
+vim.api.nvim_set_hl(0, "TabLinePillActiveName", { fg = C.text, bg = C.surface1 })
+vim.api.nvim_set_hl(0, "TabLinePillActiveRight", { fg = C.surface1, bg = C.base })
 
-vim.api.nvim_set_hl(0, "TabLinePillInactiveLeft", { fg = "#9399b2", bg = "#1e1e2e" })
-vim.api.nvim_set_hl(0, "TabLinePillInactiveIndex", { fg = "#1e1e2e", bg = "#9399b2" })
-vim.api.nvim_set_hl(0, "TabLinePillInactiveName", { fg = "#cdd6f4", bg = "#313244" })
-vim.api.nvim_set_hl(0, "TabLinePillInactiveRight", { fg = "#313244", bg = "#1e1e2e" })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveLeft", { fg = C.overlay2, bg = C.base })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveIndex", { fg = C.base, bg = C.overlay2 })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveName", { fg = C.text, bg = C.surface0 })
+vim.api.nvim_set_hl(0, "TabLinePillInactiveRight", { fg = C.surface0, bg = C.base })
 
 vim.o.tabline = "%!v:lua.PillTabline()"
 

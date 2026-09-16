@@ -96,7 +96,6 @@ Configuration for all systems (nixOS and macOS)
       nvim-dap-ui
       nvim-nio
       nvim-lsp-file-operations
-      nvim-tree-lua
       nvim-treesitter.withAllGrammars
       nvim-treesitter-textobjects
       nui-nvim

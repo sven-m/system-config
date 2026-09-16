@@ -68,73 +68,20 @@ vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 
--- nvim-tree
+-- netrw
 
-local function nvim_tree_on_attach(bufnr)
-  local api = require("nvim-tree.api")
-  api.config.mappings.default_on_attach(bufnr)
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
+vim.g.netrw_winsize = 25
+vim.g.netrw_browse_split = 4
 
-  -- Only replace the tree buffer in place when the tree is the sole window
-  -- (i.e. it hijacked the current window via current_window = true below).
-  -- With other splits present, the tree lives in its own dedicated window,
-  -- so open files the normal way and leave the tree open as a sidebar.
-  local function open_file()
-    if #vim.api.nvim_tabpage_list_wins(0) == 1 then
-      api.node.open.replace_tree_buffer()
-    else
-      api.node.open.edit()
-    end
-  end
-
-  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
-  vim.keymap.set("n", "<CR>", open_file, opts)
-  vim.keymap.set("n", "o", open_file, opts)
-end
-
-require("nvim-tree").setup({
-  on_attach = nvim_tree_on_attach,
-  hijack_unnamed_buffer_when_opening = true,
-  hijack_directories = {
-    enable = true,
-    auto_open = true,
-  },
-  prefer_startup_root = true,
-  root_dirs = { "~/src" },
-  actions = {
-    change_dir = {
-      enable = false,
-    },
-  },
-  sort = {
-    folders_first = false,
-  },
-  git = {
-    enable = true,
-    ignore = false,
-  },
-  renderer = {
-    highlight_git = true,
-    icons = {
-      show = {
-        git = true,
-      },
-    },
-  },
-  update_focused_file = {
-    enable = true,
-    update_root = true,
-  },
-})
-
-vim.keymap.set('', '<leader>t', function()
-  -- Hijacking the current window (current_window = true) is only safe when
-  -- it's the only window: nvim-tree's close() always closes that window
-  -- outright rather than restoring its previous buffer, which would wipe
-  -- out a real split. With other splits open, let nvim-tree manage its own
-  -- dedicated window instead, so toggling/opening a file never closes yours.
-  local only_window = #vim.api.nvim_tabpage_list_wins(0) == 1
-  require('nvim-tree.api').tree.toggle({ current_window = only_window })
+-- reset the tree to cwd
+vim.keymap.set('n', '<leader>t', function()
+  vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
+
+-- browse the directory of the current file
+vim.keymap.set('n', '-', '<cmd>Explore<cr>')
 
 
 -- gitsigns

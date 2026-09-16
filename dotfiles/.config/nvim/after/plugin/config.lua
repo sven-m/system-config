@@ -70,11 +70,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 -- netrw
 
-vim.g.netrw_banner = 0
-vim.g.netrw_liststyle = 3
-vim.g.netrw_winsize = 25
-vim.g.netrw_browse_split = 4
-
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)

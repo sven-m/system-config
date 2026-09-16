@@ -74,9 +74,21 @@ local function nvim_tree_on_attach(bufnr)
   local api = require("nvim-tree.api")
   api.config.mappings.default_on_attach(bufnr)
 
+  -- Only replace the tree buffer in place when the tree is the sole window
+  -- (i.e. it hijacked the current window via current_window = true below).
+  -- With other splits present, the tree lives in its own dedicated window,
+  -- so open files the normal way and leave the tree open as a sidebar.
+  local function open_file()
+    if #vim.api.nvim_tabpage_list_wins(0) == 1 then
+      api.node.open.replace_tree_buffer()
+    else
+      api.node.open.edit()
+    end
+  end
+
   local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
-  vim.keymap.set("n", "<CR>", api.node.open.replace_tree_buffer, opts)
-  vim.keymap.set("n", "o", api.node.open.replace_tree_buffer, opts)
+  vim.keymap.set("n", "<CR>", open_file, opts)
+  vim.keymap.set("n", "o", open_file, opts)
 end
 
 require("nvim-tree").setup({
@@ -115,7 +127,13 @@ require("nvim-tree").setup({
 })
 
 vim.keymap.set('', '<leader>t', function()
-  require('nvim-tree.api').tree.toggle({ current_window = true })
+  -- Hijacking the current window (current_window = true) is only safe when
+  -- it's the only window: nvim-tree's close() always closes that window
+  -- outright rather than restoring its previous buffer, which would wipe
+  -- out a real split. With other splits open, let nvim-tree manage its own
+  -- dedicated window instead, so toggling/opening a file never closes yours.
+  local only_window = #vim.api.nvim_tabpage_list_wins(0) == 1
+  require('nvim-tree.api').tree.toggle({ current_window = only_window })
 end)
 
 

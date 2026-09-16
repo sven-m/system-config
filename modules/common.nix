@@ -68,10 +68,6 @@ Configuration for all systems (nixOS and macOS)
           name = "catppuccin";
           path = "${catppuccin}/share/tmux-plugins/catppuccin";
         }
-        {
-          name = "resurrect";
-          path = "${resurrect}/share/tmux-plugins/resurrect";
-        }
       ];
     in {
       source = tmuxPlugins;

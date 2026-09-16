@@ -7,6 +7,8 @@ require("catppuccin").setup({
     lualine = true,
     gitsigns = true,
     fzf = true,
+    dap = true,
+    dap_ui = true,
   },
 })
 vim.cmd.colorscheme "catppuccin-mocha"
@@ -38,6 +40,7 @@ vim.opt.viewoptions = "folds,cursor"
 
 -- completion
 vim.opt.path:append("**")
+vim.opt.path:append("*/.config/**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
 vim.opt.completeopt = { "menuone", "noselect", "popup" }
@@ -215,27 +218,118 @@ local dapui = require("dapui")
 local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
 xcodebuild_dap.setup()
-dapui.setup()
 
+-- Docked: `scopes` (plus `stacks`, since the interesting Swift frame is rarely
+-- the top one) in a sidebar, and one of two output panels along the bottom.
+--
+-- The output panels are fed by unrelated paths and can't be merged: xcodebuild
+-- writes the app's own stdout straight into the `console` buffer, while lldb's
+-- logpoint messages arrive as DAP output events, which nvim-dap appends to the
+-- `repl`. Both are declared as bottom layouts and only one is opened at a time,
+-- so each gets full width -- see show_bottom() below.
+local LAYOUT_SIDEBAR, LAYOUT_CONSOLE, LAYOUT_REPL = 1, 2, 3
+
+dapui.setup({
+  layouts = {
+    [LAYOUT_SIDEBAR] = {
+      elements = {
+        { id = "scopes", size = 0.65 },
+        { id = "stacks", size = 0.35 },
+      },
+      size = 50,
+      position = "left",
+    },
+    [LAYOUT_CONSOLE] = {
+      elements = { "console" },
+      size = 15,
+      position = "bottom",
+    },
+    [LAYOUT_REPL] = {
+      elements = { "repl" },
+      size = 15,
+      position = "bottom",
+    },
+  },
+  controls = { element = "console" },
+})
+
+-- Closing the other panel first is load-bearing: dapui.open({layout = n})
+-- reopens every lower-indexed layout afterwards to preserve geometry, so a
+-- console left open would come straight back and stack under the repl.
+local function show_bottom(i)
+  dapui.close({ layout = i == LAYOUT_CONSOLE and LAYOUT_REPL or LAYOUT_CONSOLE })
+  dapui.open({ layout = i })
+end
+
+require("nvim-dap-virtual-text").setup({
+  -- inline values get long in Swift; keep them out of the code itself
+  virt_text_pos = "eol",
+  clear_on_continue = true,
+})
+
+-- Colors come from catppuccin's `dap` integration, which defines the highlight
+-- groups but deliberately leaves the glyphs to us.
+vim.fn.sign_define("DapBreakpoint", { text = "\u{25cf}", texthl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "\u{25c6}", texthl = "DapBreakpointCondition" })
+vim.fn.sign_define("DapLogPoint", { text = "\u{25c7}", texthl = "DapLogPoint" })
+vim.fn.sign_define("DapBreakpointRejected", { text = "\u{25cb}", texthl = "DapBreakpointRejected" })
+vim.fn.sign_define("DapStopped", { text = "\u{25b6}", texthl = "DapStopped", linehl = "DapStoppedLine" })
+vim.api.nvim_set_hl(0, "DapStoppedLine", { bg = "#313244" })
+
+-- Opened on session start, but never auto-closed: the console holds the app's
+-- logs and crash symbolication, which you mostly want to read *after* it exits.
+-- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
-end
-dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
+  dapui.open({ layout = LAYOUT_SIDEBAR })
+  show_bottom(LAYOUT_CONSOLE)
 end
 
 vim.keymap.set("n", "<leader>dd", xcodebuild_dap.build_and_debug, { desc = "Build & Debug" })
 vim.keymap.set("n", "<leader>dr", xcodebuild_dap.debug_without_build, { desc = "Debug Without Building" })
-vim.keymap.set("n", "<leader>dt", xcodebuild_dap.debug_tests, { desc = "Debug Tests" })
-vim.keymap.set("n", "<leader>dT", xcodebuild_dap.debug_class_tests, { desc = "Debug Class Tests" })
-vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
-vim.keymap.set("n", "<leader>B", xcodebuild_dap.toggle_message_breakpoint, { desc = "Toggle Message Breakpoint" })
+vim.keymap.set("n", "<leader>da", xcodebuild_dap.attach_and_debug, { desc = "Attach Debugger" })
 vim.keymap.set("n", "<leader>dx", xcodebuild_dap.terminate_session, { desc = "Terminate Debugger" })
 
-vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debugger: Continue" })
+-- Breakpoints go through xcodebuild so they persist to breakpoints.json and are
+-- restored on BufReadPost for *.swift.
+vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+vim.keymap.set("n", "<leader>B", xcodebuild_dap.toggle_message_breakpoint, { desc = "Toggle Message Breakpoint" })
+vim.keymap.set("n", "<leader>dB", function()
+  dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+  xcodebuild_dap.save_breakpoints()
+end, { desc = "Set Conditional Breakpoint" })
+
+-- dap-ui: docked layouts, on-demand floats, and evaluation
+vim.keymap.set("n", "<leader>du", function()
+  dapui.toggle({ layout = LAYOUT_SIDEBAR })
+end, { desc = "Toggle Scopes & Stacks" })
+vim.keymap.set("n", "<leader>dc", function()
+  show_bottom(LAYOUT_CONSOLE)
+end, { desc = "Show App Console" })
+vim.keymap.set("n", "<leader>dp", function()
+  show_bottom(LAYOUT_REPL)
+end, { desc = "Show REPL" })
+
+vim.keymap.set({ "n", "v" }, "<leader>de", dapui.eval, { desc = "Evaluate Expression" })
+vim.keymap.set("n", "<leader>dw", function()
+  dapui.float_element("watches", { enter = true })
+end, { desc = "Float Watches" })
+vim.keymap.set("n", "<leader>dl", function()
+  dapui.float_element("breakpoints", { enter = true })
+end, { desc = "Float Breakpoint List" })
+vim.keymap.set("n", "<leader>dC", function()
+  xcodebuild_dap.clear_console(true)
+end, { desc = "Clear App Console" })
+
+-- F5 follows VS Code: start a session when there is none, continue when paused.
+-- Without the guard, dap.continue() would fall through to the attach-only Swift
+-- configuration and poll ps for 10s before failing.
+vim.keymap.set("n", "<F5>", function()
+  if dap.session() then
+    dap.continue()
+  else
+    xcodebuild_dap.build_and_debug()
+  end
+end, { desc = "Debugger: Start / Continue" })
 vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
 vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
 vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })

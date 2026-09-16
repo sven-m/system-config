@@ -94,6 +94,7 @@ Configuration for all systems (nixOS and macOS)
       lualine-nvim
       nvim-dap
       nvim-dap-ui
+      nvim-dap-virtual-text
       nvim-nio
       nvim-lsp-file-operations
       nvim-treesitter.withAllGrammars

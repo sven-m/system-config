@@ -68,55 +68,14 @@ vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
 vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 
--- nvim-tree
+-- netrw
 
-local function nvim_tree_on_attach(bufnr)
-  local api = require("nvim-tree.api")
-  api.config.mappings.default_on_attach(bufnr)
-
-  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true }
-  vim.keymap.set("n", "<CR>", api.node.open.replace_tree_buffer, opts)
-  vim.keymap.set("n", "o", api.node.open.replace_tree_buffer, opts)
-end
-
-require("nvim-tree").setup({
-  on_attach = nvim_tree_on_attach,
-  hijack_unnamed_buffer_when_opening = true,
-  hijack_directories = {
-    enable = true,
-    auto_open = true,
-  },
-  prefer_startup_root = true,
-  root_dirs = { "~/src" },
-  actions = {
-    change_dir = {
-      enable = false,
-    },
-  },
-  sort = {
-    folders_first = false,
-  },
-  git = {
-    enable = true,
-    ignore = false,
-  },
-  renderer = {
-    highlight_git = true,
-    icons = {
-      show = {
-        git = true,
-      },
-    },
-  },
-  update_focused_file = {
-    enable = true,
-    update_root = true,
-  },
-})
-
-vim.keymap.set('', '<leader>t', function()
-  require('nvim-tree.api').tree.toggle({ current_window = true })
+vim.keymap.set('n', '<leader>t', function()
+  vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
+
+-- browse the directory of the current file
+vim.keymap.set('n', '-', '<cmd>Explore<cr>')
 
 
 -- gitsigns

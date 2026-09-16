@@ -75,7 +75,6 @@ vim.g.netrw_liststyle = 3
 vim.g.netrw_winsize = 25
 vim.g.netrw_browse_split = 4
 
--- reset the tree to cwd
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)

@@ -73,8 +73,23 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 -- netrw (using vinegar)
 
+-- netrw tracks the directory it is displaying (b:netrw_curdir) separately from
+-- vim's cwd, and by default lets the two drift apart as soon as you browse
+-- anywhere else. Marking and copying then resolve paths against the wrong
+-- directory: `:MF *.lua` silently marks nothing, and mc/mm fail with
+-- "tried using g:netrw_localcopycmd<cp>; it doesn't work!". Keeping them in
+-- step costs nothing here -- netrw uses :lcd, so it is window-local.
+vim.g.netrw_keepdir = 0
+
+-- Copying a directory needs `cp -R`. netrw keeps the -R in
+-- g:netrw_localcopydircmdopt but, before v184, never passes it to the shell, so
+-- fold it into the command itself; harmless on versions that do pass it.
+vim.g.netrw_localcopydircmd = "cp -r"
+
+-- Anchored to the *global* cwd: with netrw_keepdir = 0, plain getcwd() follows
+-- whatever directory this window last browsed to.
 vim.keymap.set('n', '<leader>t', function()
-  vim.cmd('Ntree ' .. vim.fn.getcwd())
+  vim.cmd('Ntree ' .. vim.fn.getcwd(-1, -1))
 end)
 
 -- gitsigns

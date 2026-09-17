@@ -12,6 +12,9 @@ require("catppuccin").setup({
   },
 })
 vim.cmd.colorscheme "catppuccin-mocha"
+
+local C = require("catppuccin.palettes").get_palette("mocha")
+
 vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -73,9 +76,17 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 -- netrw (using vinegar)
 
+-- Override vinegar's default, I like the banner
+vim.g.netrw_banner = 1
+
+-- workaround for netrw bug where copying a file and a dir together fails
+vim.g.netrw_localcopycmdopt = "-R"
+
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
+
+vim.api.nvim_set_hl(0, "netrwMarkFile", { fg = C.base, bg = C.peach, bold = true })
 
 -- gitsigns
 
@@ -126,8 +137,6 @@ vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@f
 
 
 -- pill tabline
-
-local C = require("catppuccin.palettes").get_palette("mocha")
 
 vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = C.overlay0 })
 vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })

@@ -86,11 +86,6 @@ vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
 
--- netrw has no colour of its own for marked files -- it links netrwMarkFile to
--- TabLineSel, a tabline group that has nothing to do with this listing and that
--- the pill tabline below does not even set. Give marks their own. netrw uses
--- `hi default link`, which leaves an explicit highlight alone, so this survives
--- its syntax file being sourced later.
 vim.api.nvim_set_hl(0, "netrwMarkFile", { fg = C.base, bg = C.peach, bold = true })
 
 -- gitsigns

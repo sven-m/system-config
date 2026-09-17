@@ -19,6 +19,7 @@ vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.showmode = false
+vim.opt.splitright = true
 
 -- indentation, formatting
 vim.opt.expandtab = true

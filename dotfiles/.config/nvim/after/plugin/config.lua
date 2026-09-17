@@ -89,16 +89,11 @@ vim.g.netrw_banner = 1
 -- Copying a directory needs -R, and netrw only reaches for its *directory* copy
 -- command when exactly one thing is marked and that one thing is a directory.
 -- Mark a directory alongside a file and it shells out to a plain `cp`, which
--- fails on the directory and takes the rest of the copy down with it. Putting
--- -R in the general copy options covers every case; the leading space matters,
--- as netrw concatenates it straight onto the command. The -R cannot go in the
--- command itself, which is checked with executable().
+-- fails on the directory and takes the rest of the copy down with it. Carrying
+-- -R in the general copy options covers every combination. It cannot go in the
+-- command, which netrw guards with executable(); the leading space is
+-- deliberate, as older netrw concatenates the option on without one.
 vim.g.netrw_localcopycmdopt = " -R"
-
--- Belt and braces for netrw before v184, which assigns localcopycmdopt
--- unconditionally at load and so discards the setting above. There the
--- single-directory path is all that can be reached from config.
-vim.g.netrw_localcopydircmd = "cp -r"
 
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())

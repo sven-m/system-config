@@ -76,6 +76,11 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 -- netrw (using vinegar)
 
+-- vinegar defaults the banner off, but the banner is where netrw reports the
+-- copy/move target (and where mt clears it again), so keep it. This file is an
+-- after/plugin one, so it is sourced after vinegar has had its say.
+vim.g.netrw_banner = 1
+
 -- netrw tracks the directory it is displaying (b:netrw_curdir) separately from
 -- vim's cwd, and by default lets the two drift apart as soon as you browse
 -- anywhere else. Marking and copying then resolve paths against the wrong
@@ -416,45 +421,6 @@ require("lualine").setup({
   sections = {
     lualine_b = {'diagnostics'},
     lualine_x = {
-      {
-        -- vinegar hides netrw's banner, which is the only place netrw reports
-        -- how many files are marked and where mc/mm would send them. Read both
-        -- back out of netrw instead. mc/mm operate on the *buffer's* mark list,
-        -- so that is the count worth showing -- and unlike the highlight, it
-        -- stays honest in tree mode, where same-named files in other
-        -- directories light up as though they were marked too.
-        function()
-          local buf = vim.api.nvim_get_current_buf()
-          if vim.bo[buf].filetype ~= "netrw" then
-            return ""
-          end
-
-          local expose = vim.fn["netrw#Expose"]
-
-          local marked = expose("netrwmarkfilelist_" .. buf)
-          local count = type(marked) == "table" and #marked or 0
-
-          local tgt = expose("netrwmftgt")
-          tgt = (type(tgt) == "string" and tgt ~= "n/a") and tgt or nil
-
-          if count == 0 and not tgt then
-            return ""
-          end
-
-          local out = count > 0 and (count .. " marked") or ""
-          if tgt then
-            -- the target is the thing worth reading in full; only fall back to
-            -- pathshorten() when it would otherwise crowd out the statusline
-            tgt = vim.fn.fnamemodify(tgt, ":~")
-            if #tgt > 40 then
-              tgt = vim.fn.pathshorten(tgt)
-            end
-            out = out .. (count > 0 and "  " or "") .. "\u{2192} " .. tgt
-          end
-          return out
-        end,
-        color = { fg = C.peach },
-      },
       {
         function()
           if vim.b.suppress_autosave then

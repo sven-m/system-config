@@ -12,6 +12,9 @@ require("catppuccin").setup({
   },
 })
 vim.cmd.colorscheme "catppuccin-mocha"
+
+local C = require("catppuccin.palettes").get_palette("mocha")
+
 vim.opt.list = true
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -92,6 +95,13 @@ vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd(-1, -1))
 end)
 
+-- netrw paints marked files with netrwMarkFile, which it only links to
+-- TabLineSel -- a group the pill tabline has already repurposed, leaving marks
+-- near-invisible. Give them their own colour. netrw uses `hi default link`,
+-- which does not override an explicit highlight, so this survives the netrw
+-- syntax file being sourced later.
+vim.api.nvim_set_hl(0, "netrwMarkFile", { fg = C.base, bg = C.peach, bold = true })
+
 -- gitsigns
 
 require("gitsigns").setup({
@@ -141,8 +151,6 @@ vim.keymap.set({ "n", "x", "o" }, "[M", function() ts_move.goto_previous_end("@f
 
 
 -- pill tabline
-
-local C = require("catppuccin.palettes").get_palette("mocha")
 
 vim.api.nvim_set_hl(0, "TabLine", { bg = "NONE", fg = C.overlay0 })
 vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
@@ -408,6 +416,45 @@ require("lualine").setup({
   sections = {
     lualine_b = {'diagnostics'},
     lualine_x = {
+      {
+        -- vinegar hides netrw's banner, which is the only place netrw reports
+        -- how many files are marked and where mc/mm would send them. Read both
+        -- back out of netrw instead. mc/mm operate on the *buffer's* mark list,
+        -- so that is the count worth showing -- and unlike the highlight, it
+        -- stays honest in tree mode, where same-named files in other
+        -- directories light up as though they were marked too.
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+          if vim.bo[buf].filetype ~= "netrw" then
+            return ""
+          end
+
+          local expose = vim.fn["netrw#Expose"]
+
+          local marked = expose("netrwmarkfilelist_" .. buf)
+          local count = type(marked) == "table" and #marked or 0
+
+          local tgt = expose("netrwmftgt")
+          tgt = (type(tgt) == "string" and tgt ~= "n/a") and tgt or nil
+
+          if count == 0 and not tgt then
+            return ""
+          end
+
+          local out = count > 0 and (count .. " marked") or ""
+          if tgt then
+            -- the target is the thing worth reading in full; only fall back to
+            -- pathshorten() when it would otherwise crowd out the statusline
+            tgt = vim.fn.fnamemodify(tgt, ":~")
+            if #tgt > 40 then
+              tgt = vim.fn.pathshorten(tgt)
+            end
+            out = out .. (count > 0 and "  " or "") .. "\u{2192} " .. tgt
+          end
+          return out
+        end,
+        color = { fg = C.peach },
+      },
       {
         function()
           if vim.b.suppress_autosave then

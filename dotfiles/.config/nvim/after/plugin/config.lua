@@ -76,9 +76,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 
 -- netrw (using vinegar)
 
--- vinegar defaults the banner off, but the banner is where netrw reports the
--- copy/move target (and where mt clears it again), so keep it. This file is an
--- after/plugin one, so it is sourced after vinegar has had its say.
+-- Override vinegar's default, I like the banner
 vim.g.netrw_banner = 1
 
 -- Deliberately leaving g:netrw_keepdir at its default of 1, which keeps the cwd
@@ -87,14 +85,7 @@ vim.g.netrw_banner = 1
 -- cwd rather than the listing and so marks files that are not even in it -- use
 -- mr instead, which composes its glob with b:netrw_curdir.
 
--- Copying a directory needs -R, and netrw only reaches for its *directory* copy
--- command when exactly one thing is marked and that one thing is a directory.
--- Mark a directory alongside a file and it shells out to a plain `cp`, which
--- copies the file, silently drops the directory, and reports the failure
--- against g:netrw_localcopycmd. Carrying -R in the general copy options covers
--- every combination. It cannot go in the command, which netrw guards with
--- executable(); the leading space is deliberate, as older netrw concatenates
--- the option on without one.
+-- workaround for netrw bug where copying a file and a dir together fails
 vim.g.netrw_localcopycmdopt = " -R"
 
 vim.keymap.set('n', '<leader>t', function()

@@ -82,28 +82,30 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 vim.g.netrw_banner = 1
 
 -- Deliberately leaving g:netrw_keepdir at its default of 1, which keeps the cwd
--- immune to wherever netrw is browsing. The one cost is that :MF globs against
--- the cwd rather than the listing, so it marks the wrong files -- use mr, which
--- globs against b:netrw_curdir and is unaffected.
+-- immune to wherever netrw is browsing. mc and mm do not care either way, as
+-- they build absolute paths. What it does cost is :MF, which globs against the
+-- cwd rather than the listing and so marks files that are not even in it -- use
+-- mr instead, which composes its glob with b:netrw_curdir.
 
 -- Copying a directory needs -R, and netrw only reaches for its *directory* copy
 -- command when exactly one thing is marked and that one thing is a directory.
 -- Mark a directory alongside a file and it shells out to a plain `cp`, which
--- fails on the directory and takes the rest of the copy down with it. Carrying
--- -R in the general copy options covers every combination. It cannot go in the
--- command, which netrw guards with executable(); the leading space is
--- deliberate, as older netrw concatenates the option on without one.
+-- copies the file, silently drops the directory, and reports the failure
+-- against g:netrw_localcopycmd. Carrying -R in the general copy options covers
+-- every combination. It cannot go in the command, which netrw guards with
+-- executable(); the leading space is deliberate, as older netrw concatenates
+-- the option on without one.
 vim.g.netrw_localcopycmdopt = " -R"
 
 vim.keymap.set('n', '<leader>t', function()
   vim.cmd('Ntree ' .. vim.fn.getcwd())
 end)
 
--- netrw paints marked files with netrwMarkFile, which it only links to
--- TabLineSel -- a group the pill tabline has already repurposed, leaving marks
--- near-invisible. Give them their own colour. netrw uses `hi default link`,
--- which does not override an explicit highlight, so this survives the netrw
--- syntax file being sourced later.
+-- netrw has no colour of its own for marked files -- it links netrwMarkFile to
+-- TabLineSel, a tabline group that has nothing to do with this listing and that
+-- the pill tabline below does not even set. Give marks their own. netrw uses
+-- `hi default link`, which leaves an explicit highlight alone, so this survives
+-- its syntax file being sourced later.
 vim.api.nvim_set_hl(0, "netrwMarkFile", { fg = C.base, bg = C.peach, bold = true })
 
 -- gitsigns

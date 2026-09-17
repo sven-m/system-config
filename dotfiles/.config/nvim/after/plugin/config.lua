@@ -79,12 +79,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fa', fzf_lua.lsp_code_actions)
 -- Override vinegar's default, I like the banner
 vim.g.netrw_banner = 1
 
--- Deliberately leaving g:netrw_keepdir at its default of 1, which keeps the cwd
--- immune to wherever netrw is browsing. mc and mm do not care either way, as
--- they build absolute paths. What it does cost is :MF, which globs against the
--- cwd rather than the listing and so marks files that are not even in it -- use
--- mr instead, which composes its glob with b:netrw_curdir.
-
 -- workaround for netrw bug where copying a file and a dir together fails
 vim.g.netrw_localcopycmdopt = " -R"
 

@@ -86,9 +86,18 @@ vim.g.netrw_banner = 1
 -- the cwd rather than the listing, so it marks the wrong files -- use mr, which
 -- globs against b:netrw_curdir and is unaffected.
 
--- Copying a directory needs `cp -R`. netrw keeps the -R in
--- g:netrw_localcopydircmdopt but, before v184, never passes it to the shell, so
--- fold it into the command itself; harmless on versions that do pass it.
+-- Copying a directory needs -R, and netrw only reaches for its *directory* copy
+-- command when exactly one thing is marked and that one thing is a directory.
+-- Mark a directory alongside a file and it shells out to a plain `cp`, which
+-- fails on the directory and takes the rest of the copy down with it. Putting
+-- -R in the general copy options covers every case; the leading space matters,
+-- as netrw concatenates it straight onto the command. The -R cannot go in the
+-- command itself, which is checked with executable().
+vim.g.netrw_localcopycmdopt = " -R"
+
+-- Belt and braces for netrw before v184, which assigns localcopycmdopt
+-- unconditionally at load and so discards the setting above. There the
+-- single-directory path is all that can be reached from config.
 vim.g.netrw_localcopydircmd = "cp -r"
 
 vim.keymap.set('n', '<leader>t', function()

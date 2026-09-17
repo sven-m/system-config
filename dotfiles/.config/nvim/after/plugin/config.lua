@@ -1,6 +1,5 @@
 -- ui
 vim.opt.updatetime = 1000
-vim.opt.timeoutlen = 300
 require("catppuccin").setup({
   integrations = {
     vimwiki = true,

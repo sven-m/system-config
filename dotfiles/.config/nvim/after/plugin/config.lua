@@ -190,6 +190,10 @@ require("xcodebuild").setup({
   project_config = {
     store_in_project_dir = false,
   },
+  logs = {
+    open_command = "silent edit {path}",
+    auto_open_on_failed_build = false,
+  },
 })
 
 vim.keymap.set("n", "<leader>X", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })

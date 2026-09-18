@@ -194,6 +194,9 @@ require("xcodebuild").setup({
     open_command = "silent edit {path}",
     auto_open_on_failed_build = false,
   },
+  quickfix = {
+    show_warnings_on_quickfixlist = false,
+  },
 })
 
 vim.keymap.set("n", "<leader>X", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })

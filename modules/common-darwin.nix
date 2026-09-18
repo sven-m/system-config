@@ -65,12 +65,12 @@ Configuration for all macOS systems
     "wireshark-app"
     "xcodes-app"
   ];
-  homebrew.masApps = {
-    "1Password for Safari" = 1569813296;
-    "Apple Configurator" = 1037126344;
-    "Hush Nag Blocker" = 1544743900;
-    "Things" = 904280696;
-  };
+  # homebrew.masApps = {
+    # "1Password for Safari" = 1569813296;
+    # "Apple Configurator" = 1037126344;
+    # "Hush Nag Blocker" = 1544743900;
+    # "Things" = 904280696;
+  # };
 
   programs.bash.enable = true;
 

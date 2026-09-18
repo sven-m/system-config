@@ -63,21 +63,21 @@ Configuration for darmok (macOS)
     "vivaldi"
   ];
 
-  homebrew.masApps = {
+  # homebrew.masApps = {
     #"Pages" = 409201541;
     #"Numbers" = 409203825;
     #"Keynote" = 409183694;
-    "Hush" = 1544743900;
-    "BioPassFIDO2" = 1456584103;
-    "MindNode Next" = 6446116532;
-    "Proton Pass for Safari" = 6502835663;
-    "Sketch" = 1667260533;
-    "Solitaire Epic" = 972224785;
-    "TestFlight" = 899247664;
-    "Bitwarden" = 1352778147;
-    "Prime Video" = 545519333;
-    "Whatsapp" = 310633997;
-  };
+    # "Hush" = 1544743900;
+    # "BioPassFIDO2" = 1456584103;
+    # "MindNode Next" = 6446116532;
+    # "Proton Pass for Safari" = 6502835663;
+    # "Sketch" = 1667260533;
+    # "Solitaire Epic" = 972224785;
+    # "TestFlight" = 899247664;
+    # "Bitwarden" = 1352778147;
+    # "Prime Video" = 545519333;
+    # "Whatsapp" = 310633997;
+  # };
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Apps.app"

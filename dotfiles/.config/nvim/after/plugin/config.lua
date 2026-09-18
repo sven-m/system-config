@@ -397,14 +397,28 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- lualine
 
+-- lualine renders each window's statusline inside nvim_win_call, so the
+-- current buffer here is the one that window shows.
+local bufnr_component = {
+  function()
+    return vim.api.nvim_get_current_buf()
+  end,
+  color = { fg = "Gray" },
+  padding = { left = 1, right = 0 },
+}
+
 require("lualine").setup({
   options = {
     globalstatus = false,
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }
   },
+  inactive_sections = {
+    lualine_c = { bufnr_component, 'filename' },
+  },
   sections = {
     lualine_b = {'diagnostics'},
+    lualine_c = { bufnr_component, 'filename' },
     lualine_x = {
       {
         function()

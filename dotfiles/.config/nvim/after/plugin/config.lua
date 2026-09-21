@@ -401,25 +401,16 @@ vim.lsp.config('sourcekit', {
 
 vim.lsp.enable('sourcekit')
 
+-- No keymaps here: 0.12 provides them all. K hover, i_CTRL-S signature help,
+-- gra/gri/grn/grr/grt/grx/gO, <C-w>d for the diagnostic float, gq{motion} for
+-- range formatting via the 'formatexpr' the client sets, and g CTRL-] for
+-- go-to-definition -- the client sets 'tagfunc', so a normal-mode tag command
+-- runs textDocument/definition rather than reading a tags file, and the g
+-- prefix turns the silent jump-to-first into a picker when a symbol has
+-- several definitions. ]t and [t walk the match list afterwards.
 vim.api.nvim_create_autocmd('LspAttach', {
-  desc = 'LSP Actions',
+  desc = 'Enable LSP completion',
   callback = function(args)
-    local opts = { noremap = true, silent = true, buffer = args.buf }
-
-    -- Everything else that used to be mapped here is a 0.12 default:
-    -- K hover, i_CTRL-S signature help, gra/gri/grn/grr/grt/grx/gO, <C-w>d for
-    -- the diagnostic float, and gq{motion} for range formatting via the
-    -- 'formatexpr' the client sets.
-    --
-    -- gd is the near miss. CTRL-] already asks sourcekit, not the tags file:
-    -- the client sets 'tagfunc', and for a normal-mode tag command that runs
-    -- textDocument/definition. But it takes the keyword under the cursor,
-    -- resolves synchronously, and on several matches jumps to the first one
-    -- silently. buf.definition() uses the real cursor position, is async, and
-    -- opens the quickfix list instead of picking for you -- which is what you
-    -- want for a Swift protocol witness or a symbol with several overloads.
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-
     -- Not `autotrigger = true`: that only fires on the server's own
     -- triggerCharacters, which for sourcekit are just "." and "(", and
     -- 'autocomplete' already opens the popup on every keystroke. enable() is

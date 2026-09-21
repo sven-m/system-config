@@ -249,14 +249,12 @@ local xcodebuild_dap = require("xcodebuild.integrations.dap")
 xcodebuild_dap.setup()
 
 -- Docked: `scopes` (plus `stacks`, since the interesting Swift frame is rarely
--- the top one) in a sidebar, and one of two output panels along the bottom.
---
--- The output panels are fed by unrelated paths and can't be merged: xcodebuild
--- writes the app's own stdout straight into the `console` buffer, while lldb's
--- logpoint messages arrive as DAP output events, which nvim-dap appends to the
--- `repl`. Both are declared as bottom layouts and only one is opened at a time,
--- so each gets full width -- see show_bottom() below.
-local LAYOUT_SIDEBAR, LAYOUT_CONSOLE, LAYOUT_REPL = 1, 2, 3
+-- the top one) in a sidebar, and both output panels side by side along the
+-- bottom. They stay separate elements because they are fed by unrelated paths:
+-- xcodebuild writes the app's own stdout straight into the `console` buffer,
+-- while lldb's logpoint messages arrive as DAP output events, which nvim-dap
+-- appends to the `repl`.
+local LAYOUT_SIDEBAR, LAYOUT_BOTTOM = 1, 2
 
 dapui.setup({
   layouts = {
@@ -268,30 +266,14 @@ dapui.setup({
       size = 50,
       position = "left",
     },
-    [LAYOUT_CONSOLE] = {
-      elements = { "console" },
-      size = 15,
-      position = "bottom",
-    },
-    [LAYOUT_REPL] = {
-      elements = { "repl" },
+    [LAYOUT_BOTTOM] = {
+      elements = { "console", "repl" },
       size = 15,
       position = "bottom",
     },
   },
   controls = { element = "console" },
 })
-
--- Closing the other panel first is load-bearing: dapui.open({layout = n})
--- reopens every lower-indexed layout afterwards to preserve geometry, so a
--- console left open would come straight back and stack under the repl.
-local current_bottom = LAYOUT_CONSOLE
-
-local function show_bottom(i, reset)
-  current_bottom = i
-  dapui.close({ layout = i == LAYOUT_CONSOLE and LAYOUT_REPL or LAYOUT_CONSOLE })
-  dapui.open({ layout = i, reset = reset })
-end
 
 -- `:q` on a single pane cannot be undone by dapui.open(): a layout counts as
 -- open while *any* of its windows survives, and open() returns early on one it
@@ -301,9 +283,13 @@ end
 -- each window's share of the layout, and the dead one's share is stale.
 local function reset_layout()
   dapui.close()
-  dapui.open({ layout = LAYOUT_SIDEBAR, reset = true })
-  show_bottom(current_bottom, true)
+  dapui.open({ reset = true })
 end
+
+vim.api.nvim_create_user_command("ResetDebugLayout", reset_layout, {
+  nargs = 0,
+  desc = "Restore Debugger Layout",
+})
 
 require("nvim-dap-virtual-text").setup({
   -- inline values get long in Swift; keep them out of the code itself
@@ -324,7 +310,6 @@ vim.api.nvim_set_hl(0, "DapStoppedLine", { bg = "#313244" })
 -- logs and crash symbolication, which you mostly want to read *after* it exits.
 -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  current_bottom = LAYOUT_CONSOLE
   reset_layout()
 end
 
@@ -352,11 +337,8 @@ vim.keymap.set("n", "<leader>du", function()
   dapui.toggle({ layout = LAYOUT_SIDEBAR })
 end, { desc = "Toggle Scopes & Stacks" })
 vim.keymap.set("n", "<leader>dc", function()
-  show_bottom(LAYOUT_CONSOLE)
-end, { desc = "Show App Console" })
-vim.keymap.set("n", "<leader>dp", function()
-  show_bottom(LAYOUT_REPL)
-end, { desc = "Show REPL" })
+  dapui.toggle({ layout = LAYOUT_BOTTOM })
+end, { desc = "Toggle Console & REPL" })
 vim.keymap.set("n", "<leader>dR", reset_layout, { desc = "Restore Debugger Layout" })
 
 vim.keymap.set({ "n", "v" }, "<leader>de", dapui.eval, { desc = "Evaluate Expression" })

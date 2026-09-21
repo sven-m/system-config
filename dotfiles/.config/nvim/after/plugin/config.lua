@@ -409,9 +409,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- Everything else that used to be mapped here is a 0.12 default:
     -- K hover, i_CTRL-S signature help, gra/gri/grn/grr/grt/grx/gO, <C-w>d for
     -- the diagnostic float, and gq{motion} for range formatting via the
-    -- 'formatexpr' the client sets. gd stays because it is not one of them --
-    -- CTRL-] reaches definitions through 'tagfunc', but it goes via the tag
-    -- stack and prompts on multiple matches.
+    -- 'formatexpr' the client sets.
+    --
+    -- gd is the near miss. CTRL-] already asks sourcekit, not the tags file:
+    -- the client sets 'tagfunc', and for a normal-mode tag command that runs
+    -- textDocument/definition. But it takes the keyword under the cursor,
+    -- resolves synchronously, and on several matches jumps to the first one
+    -- silently. buf.definition() uses the real cursor position, is async, and
+    -- opens the quickfix list instead of picking for you -- which is what you
+    -- want for a Swift protocol witness or a symbol with several overloads.
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
 
     -- Not `autotrigger = true`: that only fires on the server's own

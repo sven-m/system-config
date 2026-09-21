@@ -79,27 +79,12 @@ vim.opt.completeopt = { "menuone", "noselect", "popup", "fuzzy" }
 vim.o.pumheight = 12
 vim.o.pummaxwidth = 60
 
--- Nothing is ever preselected, so typing never inserts text on its own and <CR>
--- stays a newline. <C-y> accepts, and only on accept does the LSP side apply
--- snippets, additional text edits (imports) and commands.
---
--- <Tab> walks the menu, then falls back to jumping tabstops in a snippet --
--- sourcekit returns calls as snippets, one tabstop per argument. Neovim already
--- maps <Tab> to the snippet jump by default; this keeps that and puts the menu
--- case in front of it.
-local function tab_like(pum_key, direction, fallback)
-  return function()
-    if vim.fn.pumvisible() == 1 then
-      return pum_key
-    elseif vim.snippet.active({ direction = direction }) then
-      return string.format("<Cmd>lua vim.snippet.jump(%d)<CR>", direction)
-    end
-    return fallback
-  end
-end
-
-vim.keymap.set({ "i", "s" }, "<Tab>", tab_like("<C-n>", 1, "<Tab>"), { expr = true, silent = true })
-vim.keymap.set({ "i", "s" }, "<S-Tab>", tab_like("<C-p>", -1, "<S-Tab>"), { expr = true, silent = true })
+-- No completion keymaps: <C-n>/<C-p> walk the menu and <C-y> accepts, which is
+-- what ins-completion has always done. Nothing is ever preselected, so typing
+-- never inserts text on its own and <CR> stays a newline. Only on <C-y> does
+-- the LSP side apply snippets, additional text edits (imports) and commands --
+-- sourcekit returns calls as snippets, one tabstop per argument, and <Tab>
+-- jumps between them via Neovim's own default snippet mapping.
 
 
 -- fzf-lua
@@ -416,35 +401,18 @@ vim.lsp.config('sourcekit', {
 
 vim.lsp.enable('sourcekit')
 
-function _G.__lsp_format_operator()
-  local start_mark = vim.api.nvim_buf_get_mark(0, '[')
-  local end_mark = vim.api.nvim_buf_get_mark(0, ']')
-  vim.lsp.buf.format({
-    range = { start = start_mark, ['end'] = end_mark },
-  })
-end
-
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP Actions',
   callback = function(args)
     local opts = { noremap = true, silent = true, buffer = args.buf }
 
-    -- Show documentation for symbol under cursor
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-
+    -- Everything else that used to be mapped here is a 0.12 default:
+    -- K hover, i_CTRL-S signature help, gra/gri/grn/grr/grt/grx/gO, <C-w>d for
+    -- the diagnostic float, and gq{motion} for range formatting via the
+    -- 'formatexpr' the client sets. gd stays because it is not one of them --
+    -- CTRL-] reaches definitions through 'tagfunc', but it goes via the tag
+    -- stack and prompts on multiple matches.
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-
-    -- Show signature help (function args)
-    vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
-
-    -- Format buffer (normal mode), selection (visual mode), or as an
-    -- operator taking a motion/textobject (e.g. <leader>cfi()
-    vim.keymap.set('v', '<leader>cf', vim.lsp.buf.format, opts)
-    vim.keymap.set('n', '<leader>cf', function()
-      vim.go.operatorfunc = 'v:lua.__lsp_format_operator'
-      return 'g@'
-    end, vim.tbl_extend('force', opts, { expr = true }))
 
     -- Not `autotrigger = true`: that only fires on the server's own
     -- triggerCharacters, which for sourcekit are just "." and "(", and
@@ -452,10 +420,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- still required -- it is what makes <C-y> apply snippets and additional
     -- text edits, and what resolves the docs shown by "popup".
     vim.lsp.completion.enable(true, args.data.client_id, args.buf)
-
-    -- Reach for the menu after a character that is not part of a word, where
-    -- 'autocomplete' has nothing to complete yet.
-    vim.keymap.set("i", "<C-Space>", vim.lsp.completion.get, opts)
   end,
 })
 

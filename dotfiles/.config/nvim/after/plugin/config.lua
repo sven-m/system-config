@@ -248,20 +248,14 @@ local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
 xcodebuild_dap.setup()
 
--- Stock layouts: scopes/breakpoints/stacks/watches in a left sidebar (dapui's
--- layout 1), repl and console along the bottom (layout 2). Both output panels
--- are there because they are fed by unrelated paths: xcodebuild writes the
--- app's own stdout straight into the `console` buffer, while lldb's logpoint
--- messages arrive as DAP output events, which nvim-dap appends to the `repl`.
---
--- `layouts` is replace-not-merge in dapui, so overriding one means restating
--- both -- hence nothing here but `controls`, which hangs a clickable winbar
--- (play/pause, the three steps, step back, restart, terminate, disconnect) on
--- one element's window and refreshes it as the session changes state. It
--- defaults to the repl; the console is the pane worth spending the line on.
-dapui.setup({
-  controls = { element = "console" },
-})
+-- Stock everything: scopes/breakpoints/stacks/watches in a left sidebar
+-- (dapui's layout 1), repl and console along the bottom (layout 2). Both
+-- output panels are there because they are fed by unrelated paths: xcodebuild
+-- writes the app's own stdout straight into the `console` buffer, while lldb's
+-- logpoint messages arrive as DAP output events, which nvim-dap appends to the
+-- `repl`. setup() still has to run -- it is what registers the elements and
+-- their buffers.
+dapui.setup()
 
 require("nvim-dap-virtual-text").setup({
   -- inline values get long in Swift; keep them out of the code itself

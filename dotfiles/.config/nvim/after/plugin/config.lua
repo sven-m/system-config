@@ -248,17 +248,9 @@ local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
 xcodebuild_dap.setup()
 
--- Stock everything: scopes/breakpoints/stacks/watches in a left sidebar
--- (dapui's layout 1), repl and console along the bottom (layout 2). Both
--- output panels are there because they are fed by unrelated paths: xcodebuild
--- writes the app's own stdout straight into the `console` buffer, while lldb's
--- logpoint messages arrive as DAP output events, which nvim-dap appends to the
--- `repl`. setup() still has to run -- it is what registers the elements and
--- their buffers.
 dapui.setup()
 
 require("nvim-dap-virtual-text").setup({
-  -- inline values get long in Swift; keep them out of the code itself
   virt_text_pos = "eol",
   clear_on_continue = true,
 })
@@ -279,11 +271,6 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
 end
 
--- Build & Debug, Debug Without Building and Attach Debugger are reachable as
--- :XcodebuildBuildDebug, :XcodebuildDebug and :XcodebuildAttachDebugger.
--- terminate_session has no command of its own -- :XcodebuildDetachDebugger only
--- disconnects and leaves the app running -- so add one, and give the dap-ui
--- actions the same prefix so `:DebugSession<Tab>` lists the lot.
 vim.api.nvim_create_user_command("DebugSessionTerminate", function()
   xcodebuild_dap.terminate_session()
 end, { nargs = 0, desc = "Terminate Debugger" })
@@ -296,12 +283,6 @@ vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
   xcodebuild_dap.clear_console(true)
 end, { nargs = 0, desc = "Clear App Console" })
 
--- `:q` on a single pane cannot be undone by dapui.open(): a layout counts as
--- open while *any* of its windows survives, and open() returns early on one it
--- considers open -- so the sidebar never notices that `scopes` is gone. Closing
--- it for real is what brings the missing window back. `reset = true` then
--- restores the configured sizes, which dapui skews on the way out: it remembers
--- each window's share of the layout, and the dead one's share is stale.
 vim.api.nvim_create_user_command("DebugSessionResetLayout", function()
   dapui.close()
   dapui.open({ reset = true })
@@ -316,16 +297,11 @@ vim.keymap.set("n", "<leader>dB", function()
   xcodebuild_dap.save_breakpoints()
 end, { desc = "Set Conditional Breakpoint" })
 
--- F5 follows VS Code: start a session when there is none, continue when paused.
--- Without the guard, dap.continue() would fall through to the attach-only Swift
--- configuration and poll ps for 10s before failing.
 vim.keymap.set("n", "<F5>", function()
   if dap.session() then
     dap.continue()
-  else
-    xcodebuild_dap.build_and_debug()
   end
-end, { desc = "Debugger: Start / Continue" })
+end, { desc = "Debugger: Continue" })
 vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
 vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
 vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })

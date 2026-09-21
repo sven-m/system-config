@@ -285,9 +285,24 @@ dapui.setup({
 -- Closing the other panel first is load-bearing: dapui.open({layout = n})
 -- reopens every lower-indexed layout afterwards to preserve geometry, so a
 -- console left open would come straight back and stack under the repl.
-local function show_bottom(i)
+local current_bottom = LAYOUT_CONSOLE
+
+local function show_bottom(i, reset)
+  current_bottom = i
   dapui.close({ layout = i == LAYOUT_CONSOLE and LAYOUT_REPL or LAYOUT_CONSOLE })
-  dapui.open({ layout = i })
+  dapui.open({ layout = i, reset = reset })
+end
+
+-- `:q` on a single pane cannot be undone by dapui.open(): a layout counts as
+-- open while *any* of its windows survives, and open() returns early on one it
+-- considers open -- so the sidebar never notices that `scopes` is gone. Closing
+-- it for real is what brings the missing window back. `reset = true` then
+-- restores the configured sizes, which dapui skews on the way out: it remembers
+-- each window's share of the layout, and the dead one's share is stale.
+local function reset_layout()
+  dapui.close()
+  dapui.open({ layout = LAYOUT_SIDEBAR, reset = true })
+  show_bottom(current_bottom, true)
 end
 
 require("nvim-dap-virtual-text").setup({
@@ -309,13 +324,18 @@ vim.api.nvim_set_hl(0, "DapStoppedLine", { bg = "#313244" })
 -- logs and crash symbolication, which you mostly want to read *after* it exits.
 -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open({ layout = LAYOUT_SIDEBAR })
-  show_bottom(LAYOUT_CONSOLE)
+  current_bottom = LAYOUT_CONSOLE
+  reset_layout()
 end
 
-vim.keymap.set("n", "<leader>dd", xcodebuild_dap.build_and_debug, { desc = "Build & Debug" })
-vim.keymap.set("n", "<leader>dr", xcodebuild_dap.debug_without_build, { desc = "Debug Without Building" })
-vim.keymap.set("n", "<leader>da", xcodebuild_dap.attach_and_debug, { desc = "Attach Debugger" })
+-- Build & Debug, Debug Without Building and Attach Debugger are reachable as
+-- :XcodebuildBuildDebug, :XcodebuildDebug and :XcodebuildAttachDebugger.
+-- terminate_session has no command of its own -- :XcodebuildDetachDebugger only
+-- disconnects and leaves the app running -- so add one.
+vim.api.nvim_create_user_command("TerminateDebugSession", function()
+  xcodebuild_dap.terminate_session()
+end, { nargs = 0, desc = "Terminate Debugger" })
+
 vim.keymap.set("n", "<leader>dx", xcodebuild_dap.terminate_session, { desc = "Terminate Debugger" })
 
 -- Breakpoints go through xcodebuild so they persist to breakpoints.json and are
@@ -337,6 +357,7 @@ end, { desc = "Show App Console" })
 vim.keymap.set("n", "<leader>dp", function()
   show_bottom(LAYOUT_REPL)
 end, { desc = "Show REPL" })
+vim.keymap.set("n", "<leader>dR", reset_layout, { desc = "Restore Debugger Layout" })
 
 vim.keymap.set({ "n", "v" }, "<leader>de", dapui.eval, { desc = "Evaluate Expression" })
 vim.keymap.set("n", "<leader>dw", function()

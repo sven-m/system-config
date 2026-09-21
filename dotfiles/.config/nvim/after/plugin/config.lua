@@ -41,12 +41,50 @@ vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = false
 vim.opt.viewoptions = "folds,cursor"
 
--- completion
+-- command line / :find completion
 vim.opt.path:append("**")
 vim.opt.path:append("*/.config/**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
-vim.opt.completeopt = { "menuone", "noselect", "popup" }
+
+
+-- insert mode completion
+--
+-- No completion plugin: 'autocomplete' (0.12) opens the popup as you type and
+-- collects candidates from every source in 'complete', in order.
+--
+-- "o" runs 'omnifunc', which the LSP client points at vim.lsp.omnifunc when a
+-- server attaches -- that is how sourcekit-lsp gets in. It is async: the
+-- request goes out, the menu fills when the reply lands, and sources listed
+-- first get the largest time slice. The caret limits keep the cheap
+-- text-scraping sources from burying the LSP items; "u" (unloaded buffers) and
+-- "t" (tags) are dropped because sourcekit already covers what they would find.
+vim.o.autocomplete = true
+vim.o.complete = "o,.^10,w^5,b^5"
+
+-- The knob to turn first if the popup feels twitchy: raise it slightly above
+-- your typing speed so it stops opening mid-word.
+vim.o.autocompletedelay = 100
+
+-- 'autocomplete' forces "noselect" and only honours fuzzy/longest/popup/
+-- preinsert/preview. The rest of this applies to manual <C-x> completion, which
+-- still works and suspends autocompletion while it runs.
+--
+-- "fuzzy" earns its place in Swift: UIVC matches UIViewController. It does mean
+-- nvim re-ranks by fuzzy score and discards the server's sortText -- add
+-- "nosort" to keep sourcekit's own ordering while still filtering fuzzily.
+vim.opt.completeopt = { "menuone", "noselect", "popup", "fuzzy" }
+
+-- Swift symbol names and their signature previews are both long.
+vim.o.pumheight = 12
+vim.o.pummaxwidth = 60
+
+-- No completion keymaps: <C-n>/<C-p> walk the menu and <C-y> accepts, which is
+-- what ins-completion has always done. Nothing is ever preselected, so typing
+-- never inserts text on its own and <CR> stays a newline. Only on <C-y> does
+-- the LSP side apply snippets, additional text edits (imports) and commands --
+-- sourcekit returns calls as snippets, one tabstop per argument, and <Tab>
+-- jumps between them via Neovim's own default snippet mapping.
 
 
 -- fzf-lua
@@ -363,37 +401,22 @@ vim.lsp.config('sourcekit', {
 
 vim.lsp.enable('sourcekit')
 
-function _G.__lsp_format_operator()
-  local start_mark = vim.api.nvim_buf_get_mark(0, '[')
-  local end_mark = vim.api.nvim_buf_get_mark(0, ']')
-  vim.lsp.buf.format({
-    range = { start = start_mark, ['end'] = end_mark },
-  })
-end
-
+-- No keymaps here: 0.12 provides them all. K hover, i_CTRL-S signature help,
+-- gra/gri/grn/grr/grt/grx/gO, <C-w>d for the diagnostic float, gq{motion} for
+-- range formatting via the 'formatexpr' the client sets, and g CTRL-] for
+-- go-to-definition -- the client sets 'tagfunc', so a normal-mode tag command
+-- runs textDocument/definition rather than reading a tags file, and the g
+-- prefix turns the silent jump-to-first into a picker when a symbol has
+-- several definitions. ]t and [t walk the match list afterwards.
 vim.api.nvim_create_autocmd('LspAttach', {
-  desc = 'LSP Actions',
+  desc = 'Enable LSP completion',
   callback = function(args)
-    local opts = { noremap = true, silent = true, buffer = args.buf }
-
-    -- Show documentation for symbol under cursor
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-
-    -- Show signature help (function args)
-    vim.keymap.set('n', '<C-s>', vim.lsp.buf.signature_help, opts)
-
-    -- Format buffer (normal mode), selection (visual mode), or as an
-    -- operator taking a motion/textobject (e.g. <leader>cfi()
-    vim.keymap.set('v', '<leader>cf', vim.lsp.buf.format, opts)
-    vim.keymap.set('n', '<leader>cf', function()
-      vim.go.operatorfunc = 'v:lua.__lsp_format_operator'
-      return 'g@'
-    end, vim.tbl_extend('force', opts, { expr = true }))
-
-    vim.lsp.completion.enable(true, args.data.client_id, args.buf, { autotrigger = true })
+    -- Not `autotrigger = true`: that only fires on the server's own
+    -- triggerCharacters, which for sourcekit are just "." and "(", and
+    -- 'autocomplete' already opens the popup on every keystroke. enable() is
+    -- still required -- it is what makes <C-y> apply snippets and additional
+    -- text edits, and what resolves the docs shown by "popup".
+    vim.lsp.completion.enable(true, args.data.client_id, args.buf)
   end,
 })
 

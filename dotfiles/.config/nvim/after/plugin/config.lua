@@ -248,30 +248,18 @@ local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
 xcodebuild_dap.setup()
 
--- Docked: `scopes` (plus `stacks`, since the interesting Swift frame is rarely
--- the top one) in a sidebar, and both output panels side by side along the
--- bottom. They stay separate elements because they are fed by unrelated paths:
--- xcodebuild writes the app's own stdout straight into the `console` buffer,
--- while lldb's logpoint messages arrive as DAP output events, which nvim-dap
--- appends to the `repl`.
-local LAYOUT_SIDEBAR, LAYOUT_BOTTOM = 1, 2
+-- Stock layouts: scopes/breakpoints/stacks/watches in a left sidebar (dapui's
+-- layout 1), repl and console along the bottom (layout 2). Both output panels
+-- are there because they are fed by unrelated paths: xcodebuild writes the
+-- app's own stdout straight into the `console` buffer, while lldb's logpoint
+-- messages arrive as DAP output events, which nvim-dap appends to the `repl`.
+--
+-- `layouts` is replace-not-merge in dapui, so overriding one means restating
+-- both -- hence nothing here but the winbar controls, which default to the repl
+-- and belong on the console.
+local LAYOUT_SIDEBAR = 1
 
 dapui.setup({
-  layouts = {
-    [LAYOUT_SIDEBAR] = {
-      elements = {
-        { id = "scopes", size = 0.65 },
-        { id = "stacks", size = 0.35 },
-      },
-      size = 50,
-      position = "left",
-    },
-    [LAYOUT_BOTTOM] = {
-      elements = { "console", "repl" },
-      size = 15,
-      position = "bottom",
-    },
-  },
   controls = { element = "console" },
 })
 
@@ -332,18 +320,12 @@ vim.keymap.set("n", "<leader>dB", function()
   xcodebuild_dap.save_breakpoints()
 end, { desc = "Set Conditional Breakpoint" })
 
--- dap-ui: docked layouts, on-demand floats, and evaluation
+-- dap-ui: docked layouts and evaluation
 vim.keymap.set("n", "<leader>du", function()
   dapui.toggle({ layout = LAYOUT_SIDEBAR })
-end, { desc = "Toggle Scopes & Stacks" })
+end, { desc = "Toggle Sidebar" })
 
 vim.keymap.set({ "n", "v" }, "<leader>de", dapui.eval, { desc = "Evaluate Expression" })
-vim.keymap.set("n", "<leader>dw", function()
-  dapui.float_element("watches", { enter = true })
-end, { desc = "Float Watches" })
-vim.keymap.set("n", "<leader>dl", function()
-  dapui.float_element("breakpoints", { enter = true })
-end, { desc = "Float Breakpoint List" })
 vim.keymap.set("n", "<leader>dC", function()
   xcodebuild_dap.clear_console(true)
 end, { desc = "Clear App Console" })

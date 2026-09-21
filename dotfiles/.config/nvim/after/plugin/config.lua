@@ -271,7 +271,7 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
 end
 
-vim.api.nvim_create_user_command("DebugSessionTerminate", function()
+vim.api.nvim_create_user_command("DebugSessionKill", function()
   xcodebuild_dap.terminate_session()
 end, { nargs = 0, desc = "Terminate Debugger" })
 

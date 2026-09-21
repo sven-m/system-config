@@ -255,28 +255,12 @@ xcodebuild_dap.setup()
 -- messages arrive as DAP output events, which nvim-dap appends to the `repl`.
 --
 -- `layouts` is replace-not-merge in dapui, so overriding one means restating
--- both -- hence nothing here but the winbar controls, which default to the repl
--- and belong on the console.
-local LAYOUT_SIDEBAR = 1
-
+-- both -- hence nothing here but `controls`, which hangs a clickable winbar
+-- (play/pause, the three steps, step back, restart, terminate, disconnect) on
+-- one element's window and refreshes it as the session changes state. It
+-- defaults to the repl; the console is the pane worth spending the line on.
 dapui.setup({
   controls = { element = "console" },
-})
-
--- `:q` on a single pane cannot be undone by dapui.open(): a layout counts as
--- open while *any* of its windows survives, and open() returns early on one it
--- considers open -- so the sidebar never notices that `scopes` is gone. Closing
--- it for real is what brings the missing window back. `reset = true` then
--- restores the configured sizes, which dapui skews on the way out: it remembers
--- each window's share of the layout, and the dead one's share is stale.
-local function reset_layout()
-  dapui.close()
-  dapui.open({ reset = true })
-end
-
-vim.api.nvim_create_user_command("ResetDebugLayout", reset_layout, {
-  nargs = 0,
-  desc = "Restore Debugger Layout",
 })
 
 require("nvim-dap-virtual-text").setup({
@@ -298,16 +282,36 @@ vim.api.nvim_set_hl(0, "DapStoppedLine", { bg = "#313244" })
 -- logs and crash symbolication, which you mostly want to read *after* it exits.
 -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  reset_layout()
+  dapui.toggle()
 end
 
 -- Build & Debug, Debug Without Building and Attach Debugger are reachable as
 -- :XcodebuildBuildDebug, :XcodebuildDebug and :XcodebuildAttachDebugger.
 -- terminate_session has no command of its own -- :XcodebuildDetachDebugger only
--- disconnects and leaves the app running -- so add one.
-vim.api.nvim_create_user_command("TerminateDebugSession", function()
+-- disconnects and leaves the app running -- so add one, and give the dap-ui
+-- actions the same prefix so `:DebugSession<Tab>` lists the lot.
+vim.api.nvim_create_user_command("DebugSessionTerminate", function()
   xcodebuild_dap.terminate_session()
 end, { nargs = 0, desc = "Terminate Debugger" })
+
+vim.api.nvim_create_user_command("DebugSessionToggle", function()
+  dapui.toggle()
+end, { nargs = 0, desc = "Toggle Debugger UI" })
+
+vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
+  xcodebuild_dap.clear_console(true)
+end, { nargs = 0, desc = "Clear App Console" })
+
+-- `:q` on a single pane cannot be undone by dapui.open(): a layout counts as
+-- open while *any* of its windows survives, and open() returns early on one it
+-- considers open -- so the sidebar never notices that `scopes` is gone. Closing
+-- it for real is what brings the missing window back. `reset = true` then
+-- restores the configured sizes, which dapui skews on the way out: it remembers
+-- each window's share of the layout, and the dead one's share is stale.
+vim.api.nvim_create_user_command("DebugSessionResetLayout", function()
+  dapui.close()
+  dapui.open({ reset = true })
+end, { nargs = 0, desc = "Reset Debugger Layout" })
 
 vim.keymap.set("n", "<leader>dx", xcodebuild_dap.terminate_session, { desc = "Terminate Debugger" })
 
@@ -319,16 +323,6 @@ vim.keymap.set("n", "<leader>dB", function()
   dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
   xcodebuild_dap.save_breakpoints()
 end, { desc = "Set Conditional Breakpoint" })
-
--- dap-ui: docked layouts and evaluation
-vim.keymap.set("n", "<leader>du", function()
-  dapui.toggle({ layout = LAYOUT_SIDEBAR })
-end, { desc = "Toggle Sidebar" })
-
-vim.keymap.set({ "n", "v" }, "<leader>de", dapui.eval, { desc = "Evaluate Expression" })
-vim.keymap.set("n", "<leader>dC", function()
-  xcodebuild_dap.clear_console(true)
-end, { desc = "Clear App Console" })
 
 -- F5 follows VS Code: start a session when there is none, continue when paused.
 -- Without the guard, dap.continue() would fall through to the attach-only Swift

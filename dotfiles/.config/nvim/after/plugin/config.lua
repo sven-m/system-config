@@ -46,7 +46,7 @@ vim.opt.path:append("**")
 vim.opt.path:append("*/.config/**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
-
+vim.opt.wildignore:append("build/*")
 
 -- insert mode completion
 --

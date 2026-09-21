@@ -276,7 +276,7 @@ vim.api.nvim_set_hl(0, "DapStoppedLine", { bg = "#313244" })
 -- logs and crash symbolication, which you mostly want to read *after* it exits.
 -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.toggle()
+  dapui.open()
 end
 
 -- Build & Debug, Debug Without Building and Attach Debugger are reachable as

@@ -283,11 +283,6 @@ vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
   xcodebuild_dap.clear_console(true)
 end, { nargs = 0, desc = "Clear App Console" })
 
-vim.api.nvim_create_user_command("DebugSessionResetLayout", function()
-  dapui.close()
-  dapui.open({ reset = true })
-end, { nargs = 0, desc = "Reset Debugger Layout" })
-
 -- Breakpoints go through xcodebuild so they persist to breakpoints.json and are
 -- restored on BufReadPost for *.swift.
 vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })

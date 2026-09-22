@@ -27,9 +27,12 @@ local bufnr_component = {
 
 require("lualine").setup({
   options = {
-    -- The flavour-following theme. catppuccin-mocha and friends pin one
-    -- flavour, and there is no theme named plain "catppuccin".
-    theme = "catppuccin-nvim",
+    -- "auto" resolves against g:colors_name, and lualine reloads itself on
+    -- ColorScheme (it installs that autocmd in setup), so this already follows
+    -- a flavour switch. Naming a theme explicitly is not an improvement:
+    -- lualine looks themes up with nvim_get_runtime_file rather than require,
+    -- and "catppuccin-nvim" does not resolve in this nixpkgs build.
+    theme = "auto",
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }
   },

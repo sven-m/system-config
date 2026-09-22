@@ -28,8 +28,8 @@ function _G.PillTabline()
     s = s .. hl_left .. "\u{e0b6}"
     s = s .. hl_index .. i .. " "
     s = s .. hl_name .. " " .. name
-    s = s .. "%T"
     s = s .. hl_right .. "\u{e0b4}"
+    s = s .. "%T"
     s = s .. "%#TabLine# "
   end
 

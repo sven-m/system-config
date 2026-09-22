@@ -26,7 +26,6 @@ vim.opt.breakindent = true
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = false
-vim.opt.viewoptions = "folds,cursor"
 
 -- command line / :find completion
 vim.opt.path:append("**")

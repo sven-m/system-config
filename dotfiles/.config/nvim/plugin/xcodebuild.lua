@@ -5,10 +5,14 @@
 -- plugin/ they would be sourced alphabetically, i.e. backwards.
 --
 -- The DapStoppedLine highlight is defined in plugin/colorscheme.lua.
+--
+-- All of it is scoped to a configured project. setup() defines around seventy
+-- user commands and pulls in a dozen modules; outside an iOS project that is
+-- pure cost, since the plugin's own autocmds check is_configured() and no-op
+-- anyway. cwd is read once, at startup -- no DirChanged handling, on the
+-- assumption that nvim is always opened in the project directory.
 
--- xcodebuild
-
-require("xcodebuild").setup({
+local opts = {
   project_config = {
     store_in_project_dir = false,
   },
@@ -19,62 +23,97 @@ require("xcodebuild").setup({
   quickfix = {
     show_warnings_on_quickfixlist = false,
   },
-})
+}
 
-vim.keymap.set("n", "<leader>x", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })
+local function start()
+  vim.g.sven_xcodebuild_ready = true
 
--- dap (debugging, via xcodebuild's lldb integration)
+  require("xcodebuild").setup(opts)
 
-local dap = require("dap")
-local dapui = require("dapui")
-local xcodebuild_dap = require("xcodebuild.integrations.dap")
+  vim.keymap.set("n", "<leader>x", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })
 
-xcodebuild_dap.setup()
+  -- dap (debugging, via xcodebuild's lldb integration)
 
-dapui.setup()
+  local dap = require("dap")
+  local dapui = require("dapui")
+  local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
-require("nvim-dap-virtual-text").setup({
-  virt_text_pos = "eol",
-  clear_on_continue = true,
-})
+  xcodebuild_dap.setup()
 
--- Colors come from catppuccin's `dap` integration, which defines the highlight
--- groups but deliberately leaves the glyphs to us.
-vim.fn.sign_define("DapBreakpoint", { text = "\u{25cf}", texthl = "DapBreakpoint" })
-vim.fn.sign_define("DapBreakpointCondition", { text = "\u{25c6}", texthl = "DapBreakpointCondition" })
-vim.fn.sign_define("DapLogPoint", { text = "\u{25c7}", texthl = "DapLogPoint" })
-vim.fn.sign_define("DapBreakpointRejected", { text = "\u{25cb}", texthl = "DapBreakpointRejected" })
-vim.fn.sign_define("DapStopped", { text = "\u{25b6}", texthl = "DapStopped", linehl = "DapStoppedLine" })
+  dapui.setup()
 
--- Opened on session start, but never auto-closed: the console holds the app's
--- logs and crash symbolication, which you mostly want to read *after* it exits.
--- xcodebuild_dap.terminate_session closes it when you explicitly ask.
-dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
+  require("nvim-dap-virtual-text").setup({
+    virt_text_pos = "eol",
+    clear_on_continue = true,
+  })
+
+  -- Colors come from catppuccin's `dap` integration, which defines the highlight
+  -- groups but deliberately leaves the glyphs to us.
+  vim.fn.sign_define("DapBreakpoint", { text = "\u{25cf}", texthl = "DapBreakpoint" })
+  vim.fn.sign_define("DapBreakpointCondition", { text = "\u{25c6}", texthl = "DapBreakpointCondition" })
+  vim.fn.sign_define("DapLogPoint", { text = "\u{25c7}", texthl = "DapLogPoint" })
+  vim.fn.sign_define("DapBreakpointRejected", { text = "\u{25cb}", texthl = "DapBreakpointRejected" })
+  vim.fn.sign_define("DapStopped", { text = "\u{25b6}", texthl = "DapStopped", linehl = "DapStoppedLine" })
+
+  -- Opened on session start, but never auto-closed: the console holds the app's
+  -- logs and crash symbolication, which you mostly want to read *after* it exits.
+  -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
+  dap.listeners.after.event_initialized["dapui_config"] = function()
+    dapui.open()
+  end
+
+  vim.api.nvim_create_user_command("DebugSessionKill", function()
+    xcodebuild_dap.terminate_session()
+  end, { nargs = 0, desc = "Terminate Debugger" })
+
+  vim.api.nvim_create_user_command("DebugSessionToggle", function()
+    dapui.toggle()
+  end, { nargs = 0, desc = "Toggle Debugger UI" })
+
+  vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
+    xcodebuild_dap.clear_console(true)
+  end, { nargs = 0, desc = "Clear App Console" })
+
+  -- The breakpoint mappings are buffer-local, in after/ftplugin/swift.lua: they
+  -- only mean anything in a source buffer. The stepping keys below stay global
+  -- on purpose -- during a session the cursor is often in a dap-ui window or the
+  -- console, where a buffer-local mapping would not fire.
+
+  vim.keymap.set("n", "<F5>", function()
+    if dap.session() then
+      dap.continue()
+    end
+  end, { desc = "Debugger: Continue" })
+  vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
+  vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
+  vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
 end
 
-vim.api.nvim_create_user_command("DebugSessionKill", function()
-  xcodebuild_dap.terminate_session()
-end, { nargs = 0, desc = "Terminate Debugger" })
+-- The probe: load only enough of the plugin to answer "is there a configured
+-- project for this cwd". core.config supplies the options, appdata resolves
+-- where the settings file lives, project.config reads it. is_configured()
+-- then checks the settings actually name a scheme, destination and so on --
+-- stronger than testing that the file exists.
+require("xcodebuild.core.config").setup(opts)
+require("xcodebuild.project.appdata").setup()
 
-vim.api.nvim_create_user_command("DebugSessionToggle", function()
-  dapui.toggle()
-end, { nargs = 0, desc = "Toggle Debugger UI" })
+local projectConfig = require("xcodebuild.project.config")
+projectConfig.setup()
 
-vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
-  xcodebuild_dap.clear_console(true)
-end, { nargs = 0, desc = "Clear App Console" })
-
--- The breakpoint mappings are buffer-local, in after/ftplugin/swift.lua: they
--- only mean anything in a source buffer. The stepping keys below stay global
--- on purpose -- during a session the cursor is often in a dap-ui window or the
--- console, where a buffer-local mapping would not fire.
-
-vim.keymap.set("n", "<F5>", function()
-  if dap.session() then
-    dap.continue()
-  end
-end, { desc = "Debugger: Continue" })
-vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
-vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
-vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
+if projectConfig.is_configured() then
+  start()
+else
+  -- Nothing configured for this directory. setup() is what creates
+  -- :XcodebuildSetup, so without this the wizard would be unreachable and the
+  -- guard could never be satisfied. Note this is not only new projects: the
+  -- settings live in nvim's data directory rather than the repo
+  -- (store_in_project_dir = false), so a fresh clone of a long-configured
+  -- project lands here too.
+  --
+  -- `call(action)` in the plugin is just `function() action() end`, so
+  -- invoking the action directly is exactly what :XcodebuildSetup does.
+  vim.api.nvim_create_user_command("XcodebuildSetup", function()
+    start()
+    require("xcodebuild.actions").configure_project()
+  end, { nargs = 0, desc = "Configure xcodebuild for this project" })
+end

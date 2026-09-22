@@ -1,10 +1,7 @@
 -- lsp for iOS development
-
-vim.lsp.config('sourcekit', {
-  cmd = { vim.fn.trim(vim.fn.system('xcrun --find sourcekit-lsp 2>/dev/null')) },
-  filetypes = { "swift", "objc", "objcpp" },
-  root_markers = { '.git' }, -- '*.xcworkspace', '*.xcodeproj', 'Package.swift', 
-})
+--
+-- The sourcekit config table lives in lsp/sourcekit.lua so it is read lazily,
+-- when a client actually starts, rather than at startup.
 
 vim.lsp.enable('sourcekit')
 

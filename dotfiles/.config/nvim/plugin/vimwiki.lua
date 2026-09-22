@@ -32,13 +32,6 @@ vim.g.vimwiki_global_ext = 0
 -- everywhere, wiki buffers included -- see the parser registration below.
 vim.g.vimwiki_folding = 'custom'
 
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = vim.fn.expand("~") .. "/Documents/vimwiki/**",
-  callback = function()
-    vim.opt_local.textwidth = 80
-  end,
-})
-
 -- Parse vimwiki buffers as markdown: treesitter highlighting, and the
 -- treesitter foldexpr set in plugin/options.lua.
 vim.treesitter.language.register("markdown", "vimwiki")

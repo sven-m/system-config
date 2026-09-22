@@ -1,3 +1,8 @@
+-- Prose width. This replaces a BufRead/BufNewFile autocmd on the wiki path:
+-- every file under a registered wiki gets this filetype anyway, so the
+-- filetype is the more direct hook.
+vim.bo.textwidth = 80
+
 vim.keymap.set('n', '<C-M-i>', '<Tab>', { buffer = true, noremap = true })
 
 -- Prose, not code: there is no LSP here, so 'autocomplete' would do nothing but
@@ -42,3 +47,7 @@ vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
     end, 100)
   end,
 })
+
+vim.b.undo_ftplugin = vim.b.undo_ftplugin
+  and (vim.b.undo_ftplugin .. " | setlocal textwidth<")
+  or "setlocal textwidth<"

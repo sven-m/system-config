@@ -65,14 +65,10 @@ vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
   xcodebuild_dap.clear_console(true)
 end, { nargs = 0, desc = "Clear App Console" })
 
--- Breakpoints go through xcodebuild so they persist to breakpoints.json and are
--- restored on BufReadPost for *.swift.
-vim.keymap.set("n", "<leader>b", xcodebuild_dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
-vim.keymap.set("n", "<leader>B", xcodebuild_dap.toggle_message_breakpoint, { desc = "Toggle Message Breakpoint" })
-vim.keymap.set("n", "<leader>dB", function()
-  dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-  xcodebuild_dap.save_breakpoints()
-end, { desc = "Set Conditional Breakpoint" })
+-- The breakpoint mappings are buffer-local, in after/ftplugin/swift.lua: they
+-- only mean anything in a source buffer. The stepping keys below stay global
+-- on purpose -- during a session the cursor is often in a dap-ui window or the
+-- console, where a buffer-local mapping would not fire.
 
 vim.keymap.set("n", "<F5>", function()
   if dap.session() then

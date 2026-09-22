@@ -6,14 +6,9 @@
 -- No completion plugin: 'autocomplete' (0.12) opens the popup as you type and
 -- collects candidates from every source in 'complete', in order.
 --
--- "o" runs 'omnifunc', which the LSP client points at vim.lsp.omnifunc when a
--- server attaches -- that is how sourcekit-lsp gets in. It is async: the
--- request goes out, the menu fills when the reply lands, and sources listed
--- first get the largest time slice. The caret limits keep the cheap
--- text-scraping sources from burying the LSP items; "u" (unloaded buffers) and
--- "t" (tags) are dropped because sourcekit already covers what they would find.
+-- 'complete' itself is set per buffer on LspAttach, not here -- the source list
+-- is written for a server answering, so it belongs where one is attached.
 vim.o.autocomplete = true
-vim.o.complete = "o,.^10,w^5,b^5"
 
 -- The knob to turn first if the popup feels twitchy: raise it slightly above
 -- your typing speed so it stops opening mid-word.
@@ -23,9 +18,11 @@ vim.o.autocompletedelay = 100
 -- preinsert/preview. The rest of this applies to manual <C-x> completion, which
 -- still works and suspends autocompletion while it runs.
 --
--- "fuzzy" earns its place in Swift: UIVC matches UIViewController. It does mean
--- nvim re-ranks by fuzzy score and discards the server's sortText -- add
--- "nosort" to keep sourcekit's own ordering while still filtering fuzzily.
+-- "fuzzy" earns its place in Swift: UIVC matches UIViewController, but it is
+-- not Swift-specific and stays global; long identifiers are everywhere. Its one
+-- cost is LSP-only: nvim re-ranks by fuzzy score and discards the server's
+-- sortText -- add "nosort" to keep sourcekit's own ordering while still
+-- filtering fuzzily.
 vim.opt.completeopt = { "menuone", "noselect", "popup", "fuzzy" }
 
 -- Swift symbol names and their signature previews are both long.

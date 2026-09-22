@@ -25,6 +25,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- text edits, and what resolves the docs shown by "popup".
     vim.lsp.completion.enable(true, args.data.client_id, args.buf)
 
+    -- The popup-as-you-type only earns its keep once a server can answer, so
+    -- it is enabled here rather than globally.
+    vim.bo[args.buf].autocomplete = true
+
     -- "o" runs 'omnifunc', which the LSP client points at vim.lsp.omnifunc when
     -- a server attaches -- that is how sourcekit-lsp gets in. It is async: the
     -- request goes out, the menu fills when the reply lands, and sources listed

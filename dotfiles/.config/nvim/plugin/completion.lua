@@ -6,17 +6,21 @@
 -- No completion plugin: 'autocomplete' (0.12) opens the popup as you type and
 -- collects candidates from every source in 'complete', in order.
 --
--- 'complete' itself is set per buffer on LspAttach, not here -- the source list
--- is written for a server answering, so it belongs where one is attached.
-vim.o.autocomplete = true
+-- Both of those are set per buffer on LspAttach rather than here. Without a
+-- server the popup has nothing to offer but words already on the page, so it
+-- stays off by default and <C-n>/<C-x> remain for when a completion is
+-- genuinely wanted. 'autocompletedelay' is global-only and simply has no
+-- effect in buffers where 'autocomplete' is off.
 
 -- The knob to turn first if the popup feels twitchy: raise it slightly above
 -- your typing speed so it stops opening mid-word.
 vim.o.autocompletedelay = 100
 
--- 'autocomplete' forces "noselect" and only honours fuzzy/longest/popup/
--- preinsert/preview. The rest of this applies to manual <C-x> completion, which
--- still works and suspends autocompletion while it runs.
+-- Where 'autocomplete' is on it forces "noselect" and only honours
+-- fuzzy/longest/popup/preinsert/preview. The rest applies to manual <C-x>
+-- completion, which still works and suspends autocompletion while it runs --
+-- and which is now the only kind in buffers with no server, so the explicit
+-- "noselect" below is what keeps typing from inserting text there.
 --
 -- "fuzzy" earns its place in Swift: UIVC matches UIViewController, but it is
 -- not Swift-specific and stays global; long identifiers are everywhere. Its one

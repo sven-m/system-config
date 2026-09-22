@@ -5,11 +5,6 @@ vim.bo.textwidth = 80
 
 vim.keymap.set('n', '<C-M-i>', '<Tab>', { buffer = true, noremap = true })
 
--- Prose, not code: there is no LSP here, so 'autocomplete' would do nothing but
--- pop a menu of words already on the page after every keystroke. <C-n> still
--- works when a long word is genuinely worth completing.
-vim.bo.autocomplete = false
-
 do
   local filename = vim.api.nvim_buf_get_name(0)
   if vim.fn.filereadable(filename) == 0 and filename:match("/diary/%d.*%.md$") then

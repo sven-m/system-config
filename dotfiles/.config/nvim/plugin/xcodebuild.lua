@@ -9,7 +9,8 @@
 -- Setup itself is unconditional. It is cheap -- 36 files and no shell-out --
 -- and the dap integration registers a BufReadPost *.swift hook to restore
 -- breakpoints, which has to exist before the first Swift buffer is read.
--- Only the mappings are scoped, below.
+-- What is scoped to a configured project is the commands and mappings at the
+-- bottom, via sven.xcode.
 
 require("xcodebuild").setup({
   project_config = {
@@ -54,32 +55,28 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
 end
 
-vim.api.nvim_create_user_command("DebugSessionKill", function()
-  xcodebuild_dap.terminate_session()
-end, { nargs = 0, desc = "Terminate Debugger" })
+require("sven.xcode").on_xcode_project_configured(function()
+  -- Commands and mappings that are useless without a configured project. The
+  -- module runs this straight away when one is already configured, otherwise as
+  -- soon as the setup wizard finishes -- so it is bound exactly once either way.
+  --
+  -- The breakpoint mappings are buffer-local and live in
+  -- after/ftplugin/swift.lua, which defers through the same helper. The
+  -- stepping keys stay global on purpose: during a session the cursor is often
+  -- in a dap-ui window or the console, where a buffer-local mapping would not
+  -- fire.
 
-vim.api.nvim_create_user_command("DebugSessionToggle", function()
-  dapui.toggle()
-end, { nargs = 0, desc = "Toggle Debugger UI" })
+  vim.api.nvim_create_user_command("DebugSessionKill", function()
+    xcodebuild_dap.terminate_session()
+  end, { nargs = 0, desc = "Terminate Debugger" })
 
-vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
-  xcodebuild_dap.clear_console(true)
-end, { nargs = 0, desc = "Clear App Console" })
+  vim.api.nvim_create_user_command("DebugSessionToggle", function()
+    dapui.toggle()
+  end, { nargs = 0, desc = "Toggle Debugger UI" })
 
--- Mappings, bound only once this directory has a configured project. Nothing
--- below does anything useful without one, and these are global keys.
---
--- The breakpoint mappings are buffer-local, in after/ftplugin/swift.lua, and
--- check the same flag: a breakpoint only means anything in a source buffer.
--- The stepping keys stay global on purpose -- during a session the cursor is
--- often in a dap-ui window or the console, where a buffer-local mapping would
--- not fire.
-
-local function set_keymaps()
-  if vim.g.sven_xcodebuild_keys then
-    return
-  end
-  vim.g.sven_xcodebuild_keys = true
+  vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
+    xcodebuild_dap.clear_console(true)
+  end, { nargs = 0, desc = "Clear App Console" })
 
   vim.keymap.set("n", "<leader>x", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })
 
@@ -91,27 +88,4 @@ local function set_keymaps()
   vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
   vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
   vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
-end
-
-local projectConfig = require("xcodebuild.project.config")
-
-if projectConfig.is_configured() then
-  set_keymaps()
-else
-  -- Not configured yet, so wait for the wizard. The event also fires on scheme,
-  -- device and test plan changes, and can fire while the project is still
-  -- incomplete (selecting a test plan for a Swift package emits it having only
-  -- cleared the plan), hence the re-check rather than `once = true`. Returning
-  -- true deletes the autocommand once it has done its job.
-  vim.api.nvim_create_autocmd("User", {
-    pattern = "XcodebuildProjectSettingsUpdated",
-    desc = "Bind xcodebuild mappings once the project is configured",
-    callback = function()
-      if not projectConfig.is_configured() then
-        return
-      end
-      set_keymaps()
-      return true
-    end,
-  })
-end
+end)

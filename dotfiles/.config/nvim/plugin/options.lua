@@ -1,5 +1,4 @@
 -- ui
-
 vim.opt.updatetime = 1000
 vim.opt.list = true
 vim.opt.number = true

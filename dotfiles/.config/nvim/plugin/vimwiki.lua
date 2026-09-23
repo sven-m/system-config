@@ -15,8 +15,9 @@ vim.g.vimwiki_list = {
 vim.g.vimwiki_auto_header = 1
 vim.g.vimwiki_links_header = "All Files"
 vim.g.vimwiki_global_ext = 0
--- vimwiki applies folding config on window-local scope but does not unset. The
--- option custom disables vimwiki's folding implementation
+-- custom disables vimwiki's folding implementation entirely. this is
+-- desired, because vimwiki folding settings are applied window-local,
+-- which is too broad.
 vim.g.vimwiki_folding = 'custom'
 
 -- Parse vimwiki buffers as markdown: treesitter highlighting, and the

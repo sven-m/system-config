@@ -18,7 +18,20 @@ local dap = require("dap")
 local dapui = require("dapui")
 local xcodebuild_dap = require("xcodebuild.integrations.dap")
 
+-- xcodebuild resolves the lldb adapter inside setup(), which shells out to
+-- `xcodebuild -version` and blocks for ~70ms at launch. nvim-dap also accepts
+-- a function adapter, resolved when a session starts, so hand it one of those.
+local lldb = require("xcodebuild.integrations.lldb")
+local get_adapter = lldb.get_adapter
+lldb.get_adapter = function()
+  return function(callback)
+    callback(get_adapter())
+  end
+end
+
 xcodebuild_dap.setup()
+
+lldb.get_adapter = get_adapter
 
 dapui.setup()
 

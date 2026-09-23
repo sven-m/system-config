@@ -31,6 +31,16 @@ nvim() {
   command_and_reset_cursor nvim "$@"
 }
 
+# Prototype Rosé Pine in nvim; the rest of the nvim config stays as is. The
+# variant is pinned, so it stays put when the terminal switches light/dark.
+nvim-rose-main() {
+  nvim -c "lua require('rose-pine').setup({ variant = 'main' })" -c "colorscheme rose-pine" "$@"
+}
+
+nvim-rose-dawn() {
+  nvim -c "lua require('rose-pine').setup({ variant = 'dawn' })" -c "colorscheme rose-pine" "$@"
+}
+
 tmux() {
   __ETC_BASHRC_SOURCED= \
     __ETC_ZPROFILE_SOURCED= \

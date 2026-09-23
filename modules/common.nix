@@ -90,6 +90,7 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
+      rose-pine
       fzf-lua
       gitsigns-nvim
       lualine-nvim

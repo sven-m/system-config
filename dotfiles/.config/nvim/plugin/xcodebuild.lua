@@ -1,16 +1,5 @@
--- xcodebuild, and the dap setup that runs on top of it.
---
--- These stay in one file because order matters: xcodebuild.setup() must run
--- before xcodebuild.integrations.dap.setup(). Split across two files in
--- plugin/ they would be sourced alphabetically, i.e. backwards.
---
--- The DapStoppedLine highlight is defined in plugin/colorscheme.lua.
---
--- Setup itself is unconditional. It is cheap -- 36 files and no shell-out --
--- and the dap integration registers a BufReadPost *.swift hook to restore
--- breakpoints, which has to exist before the first Swift buffer is read.
--- What is scoped to a configured project is the commands and mappings at the
--- bottom.
+-- Setup xcodebuild.nvim at launch, configure keybinds and commands when
+-- configured xcode project detected
 
 require("xcodebuild").setup({
   project_config = {
@@ -25,8 +14,6 @@ require("xcodebuild").setup({
   },
 })
 
--- dap (debugging, via xcodebuild's lldb integration)
-
 local dap = require("dap")
 local dapui = require("dapui")
 local xcodebuild_dap = require("xcodebuild.integrations.dap")
@@ -40,27 +27,15 @@ require("nvim-dap-virtual-text").setup({
   clear_on_continue = true,
 })
 
--- Colors come from catppuccin's `dap` integration, which defines the highlight
--- groups but deliberately leaves the glyphs to us.
 vim.fn.sign_define("DapBreakpoint", { text = "\u{25cf}", texthl = "DapBreakpoint" })
 vim.fn.sign_define("DapBreakpointCondition", { text = "\u{25c6}", texthl = "DapBreakpointCondition" })
 vim.fn.sign_define("DapLogPoint", { text = "\u{25c7}", texthl = "DapLogPoint" })
 vim.fn.sign_define("DapBreakpointRejected", { text = "\u{25cb}", texthl = "DapBreakpointRejected" })
 vim.fn.sign_define("DapStopped", { text = "\u{25b6}", texthl = "DapStopped", linehl = "DapStoppedLine" })
 
--- Opened on session start, but never auto-closed: the console holds the app's
--- logs and crash symbolication, which you mostly want to read *after* it exits.
--- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
 end
-
--- Commands and mappings that do nothing useful without a configured project.
---
--- The buffer-local breakpoint mappings in after/ftplugin/swift.lua are not
--- scoped this way: they are harmless where they do not apply. The stepping keys
--- here stay global on purpose -- during a session the cursor is often in a
--- dap-ui window or the console, where a buffer-local mapping would not fire.
 
 local function configure()
   vim.api.nvim_create_user_command("DebugSessionKill", function()
@@ -92,12 +67,6 @@ local projectConfig = require("xcodebuild.project.config")
 if projectConfig.is_configured() then
   configure()
 else
-  -- Wait for the setup wizard. XcodebuildProjectSettingsUpdated also fires on
-  -- scheme, device and test plan changes, and can fire while the project is
-  -- still incomplete -- selecting a test plan for a Swift package emits it
-  -- having only cleared the plan -- hence the re-check rather than
-  -- `once = true`. Returning true deletes the autocommand, so configure() runs
-  -- exactly once on this path too.
   vim.api.nvim_create_autocmd("User", {
     pattern = "XcodebuildProjectSettingsUpdated",
     desc = "Set up xcodebuild commands and mappings once the project is configured",

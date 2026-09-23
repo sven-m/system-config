@@ -1,5 +1,8 @@
 require("catppuccin").setup({
-  -- follow vim.o.background, which nvim detects from the terminal at startup
+  -- follow vim.o.background. nvim 0.12 sets it from the terminal at startup and
+  -- again whenever the terminal reports a light/dark change (mode 2031, which
+  -- Ghostty and tmux 3.6 send); changing it reloads the colorscheme, so this
+  -- switches flavours live without an autocmd of our own
   background = { light = "latte", dark = "mocha" },
   -- Latte with accents at 80% of their OKLCH chroma: same hue and lightness,
   -- contrast on base no lower than stock, closer to Mocha's pastel feel

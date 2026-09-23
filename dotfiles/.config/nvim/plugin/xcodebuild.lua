@@ -1,6 +1,10 @@
 -- Setup xcodebuild.nvim at launch, configure keybinds and commands when
 -- configured xcode project detected
 
+if not vim.g.should_initialise_xcodebuild then
+  return
+end
+
 require("xcodebuild").setup({
   project_config = {
     store_in_project_dir = false,

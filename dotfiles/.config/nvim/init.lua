@@ -1,3 +1,6 @@
+-- enables .nvim.lua, which may set g:should_initialise_xcodebuild = true
+vim.o.exrc = true
+
 -- ui
 vim.opt.updatetime = 1000
 vim.opt.list = true

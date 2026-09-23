@@ -40,6 +40,11 @@ tmux() {
     command_and_reset_cursor tmux "$@"
 }
 
+# Separate tmux server with the Rosé Pine config; attaches if already running
+tmux-rose() {
+  tmux -L rose-pine -f ~/.config/tmux/rose-pine.conf new-session -A -s rose-pine "$@"
+}
+
 if command -v fzf &>/dev/null
 then
   export FZF_CTRL_R_OPTS="--reverse"

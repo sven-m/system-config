@@ -1,4 +1,5 @@
--- enables .nvim.lua, to enable `vim.g.should_initialise_xcodebuild = true` per project
+-- enables .nvim.lua,
+-- for `vim.g.should_initialise_xcodebuild = true` per project
 vim.o.exrc = true
 
 -- ui

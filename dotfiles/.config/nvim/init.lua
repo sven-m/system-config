@@ -1,4 +1,4 @@
--- enables .nvim.lua, which may set g:should_initialise_xcodebuild = true
+-- enables .nvim.lua, to enable `vim.g.should_initialise_xcodebuild = true` per project
 vim.o.exrc = true
 
 -- ui

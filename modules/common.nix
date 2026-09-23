@@ -81,7 +81,6 @@ Configuration for all systems (nixOS and macOS)
     programs.eza.icons = "auto";
 
     programs.neovim.enable = true;
-    # do not claim ~/.config/nvim/init.lua; the stowed one is ours
     programs.neovim.sideloadInitLua = true;
     programs.neovim.withRuby = true;
     programs.neovim.withPython3 = false;

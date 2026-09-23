@@ -1,4 +1,5 @@
--- this file is expected to be loaded before vimwiki.vim which is necessary for it to work
+-- this file is expected to be loaded before vimwiki.vim which is necessary for
+-- it to work
 
 vim.g.vimwiki_list = {
   {

@@ -1,4 +1,5 @@
--- produces a function that produces the catppuccin color of that name, dynamically
+-- produces a function that produces the catppuccin color of that name,
+-- dynamically
 local function fg(colour)
   return function()
     return { fg = require("catppuccin.palettes").get_palette()[colour] }

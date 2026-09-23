@@ -1,4 +1,26 @@
 require("catppuccin").setup({
+  -- follow vim.o.background, which nvim detects from the terminal at startup
+  background = { light = "latte", dark = "mocha" },
+  -- Latte with accents at 80% of their OKLCH chroma: same hue and lightness,
+  -- contrast on base no lower than stock, closer to Mocha's pastel feel
+  color_overrides = {
+    latte = {
+      rosewater = "#d08f80",
+      flamingo = "#d07f7e",
+      pink = "#db7fc1",
+      mauve = "#804bd4",
+      red = "#bf3644",
+      maroon = "#d3575c",
+      peach = "#ea723e",
+      yellow = "#d29247",
+      green = "#549c45",
+      teal = "#3e8f94",
+      sky = "#44a4d6",
+      sapphire = "#479cad",
+      blue = "#326ad9",
+      lavender = "#778ae7",
+    },
+  },
   integrations = {
     vimwiki = true,
     lualine = true,
@@ -32,4 +54,4 @@ require("catppuccin").setup({
   end,
 })
 
-vim.cmd.colorscheme "catppuccin-mocha"
+vim.cmd.colorscheme "catppuccin"

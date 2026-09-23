@@ -6,13 +6,11 @@
 --
 -- The DapStoppedLine highlight is defined in plugin/colorscheme.lua.
 --
--- Setup only, and unconditional. It is cheap -- 36 files and no shell-out --
+-- Setup itself is unconditional. It is cheap -- 36 files and no shell-out --
 -- and the dap integration registers a BufReadPost *.swift hook to restore
--- breakpoints, which has to exist before the first Swift buffer is read, so
--- deferring any of this to a filetype would be too late.
---
--- The commands and mappings built on top live in after/ftplugin/swift.lua:
--- opening a Swift file is a good enough proxy for wanting them.
+-- breakpoints, which has to exist before the first Swift buffer is read.
+-- What is scoped to a configured project is the commands and mappings at the
+-- bottom.
 
 require("xcodebuild").setup({
   project_config = {
@@ -55,4 +53,60 @@ vim.fn.sign_define("DapStopped", { text = "\u{25b6}", texthl = "DapStopped", lin
 -- xcodebuild_dap.terminate_session closes it when you explicitly ask.
 dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
+end
+
+-- Commands and mappings that do nothing useful without a configured project.
+--
+-- The buffer-local breakpoint mappings in after/ftplugin/swift.lua are not
+-- scoped this way: they are harmless where they do not apply. The stepping keys
+-- here stay global on purpose -- during a session the cursor is often in a
+-- dap-ui window or the console, where a buffer-local mapping would not fire.
+
+local function configure()
+  vim.api.nvim_create_user_command("DebugSessionKill", function()
+    xcodebuild_dap.terminate_session()
+  end, { nargs = 0, desc = "Terminate Debugger" })
+
+  vim.api.nvim_create_user_command("DebugSessionToggle", function()
+    dapui.toggle()
+  end, { nargs = 0, desc = "Toggle Debugger UI" })
+
+  vim.api.nvim_create_user_command("DebugSessionClearConsole", function()
+    xcodebuild_dap.clear_console(true)
+  end, { nargs = 0, desc = "Clear App Console" })
+
+  vim.keymap.set("n", "<leader>x", "<cmd>XcodebuildPicker<cr>", { desc = "Show Xcodebuild Actions" })
+
+  vim.keymap.set("n", "<F5>", function()
+    if dap.session() then
+      dap.continue()
+    end
+  end, { desc = "Debugger: Continue" })
+  vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debugger: Step Over" })
+  vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
+  vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
+end
+
+local projectConfig = require("xcodebuild.project.config")
+
+if projectConfig.is_configured() then
+  configure()
+else
+  -- Wait for the setup wizard. XcodebuildProjectSettingsUpdated also fires on
+  -- scheme, device and test plan changes, and can fire while the project is
+  -- still incomplete -- selecting a test plan for a Swift package emits it
+  -- having only cleared the plan -- hence the re-check rather than
+  -- `once = true`. Returning true deletes the autocommand, so configure() runs
+  -- exactly once on this path too.
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "XcodebuildProjectSettingsUpdated",
+    desc = "Set up xcodebuild commands and mappings once the project is configured",
+    callback = function()
+      if not projectConfig.is_configured() then
+        return
+      end
+      configure()
+      return true
+    end,
+  })
 end

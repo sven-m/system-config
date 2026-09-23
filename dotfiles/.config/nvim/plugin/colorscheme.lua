@@ -7,7 +7,7 @@ require("catppuccin").setup({
   -- Latte with accents at 80% of their OKLCH chroma: same hue and lightness,
   -- contrast on base no lower than stock, closer to Mocha's pastel feel
   color_overrides = {
-    latte = {
+    latte_soft = { -- renamed from latte to try stock Latte; catppuccin ignores it
       rosewater = "#d08f80",
       flamingo = "#d07f7e",
       pink = "#db7fc1",

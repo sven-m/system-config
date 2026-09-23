@@ -81,6 +81,7 @@ Configuration for all systems (nixOS and macOS)
     programs.eza.icons = "auto";
 
     programs.neovim.enable = true;
+    programs.neovim.sideloadInitLua = true;
     programs.neovim.withRuby = true;
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
@@ -94,7 +95,6 @@ Configuration for all systems (nixOS and macOS)
       nvim-nio
       nvim-lsp-file-operations
       nvim-treesitter.withAllGrammars
-      nvim-treesitter-textobjects
       nui-nvim
       lualine-nvim
       snacks-nvim

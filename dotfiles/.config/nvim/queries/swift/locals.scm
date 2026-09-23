@@ -1,6 +1,6 @@
 ; Full replacement for the swift locals query bundled with the grammar (a file
-; here, rather than under after/, takes runtimepath precedence and overrides it;
-; after/ can only append, via "; extends").
+; here, rather than under after/, takes runtimepath precedence and overrides
+; it; after/ can only append, via "; extends").
 ;
 ; Two problems with the bundled query, both of which break anything that reads
 ; locals -- nvim-dap-virtual-text in particular:

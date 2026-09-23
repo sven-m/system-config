@@ -1,9 +1,6 @@
-vim.keymap.set('n', '<C-M-i>', '<Tab>', { buffer = true, noremap = true })
+vim.bo.textwidth = 80
 
--- Prose, not code: there is no LSP here, so 'autocomplete' would do nothing but
--- pop a menu of words already on the page after every keystroke. <C-n> still
--- works when a long word is genuinely worth completing.
-vim.bo.autocomplete = false
+vim.keymap.set('n', 'g<Tab>', '<Tab>', { buffer = true, noremap = true })
 
 do
   local filename = vim.api.nvim_buf_get_name(0)
@@ -42,3 +39,7 @@ vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
     end, 100)
   end,
 })
+
+vim.b.undo_ftplugin = vim.b.undo_ftplugin
+  and (vim.b.undo_ftplugin .. " | setlocal textwidth<")
+  or "setlocal textwidth<"

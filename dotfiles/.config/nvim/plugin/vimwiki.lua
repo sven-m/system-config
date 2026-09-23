@@ -1,3 +1,6 @@
+-- this file is expected to be loaded before vimwiki.vim which is necessary for
+-- it to work
+
 vim.g.vimwiki_list = {
   {
     path = "~/Documents/vimwiki/",
@@ -13,11 +16,11 @@ vim.g.vimwiki_list = {
 vim.g.vimwiki_auto_header = 1
 vim.g.vimwiki_links_header = "All Files"
 vim.g.vimwiki_global_ext = 0
-vim.g.vimwiki_folding = 'expr'
+-- custom disables vimwiki's folding implementation entirely. this is
+-- desired, because vimwiki folding settings are applied window-local,
+-- which is too broad.
+vim.g.vimwiki_folding = 'custom'
 
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = vim.fn.expand("~") .. "/Documents/vimwiki/**",
-  callback = function()
-    vim.opt_local.textwidth = 80
-  end,
-})
+-- Parse vimwiki buffers as markdown: treesitter highlighting, and the
+-- treesitter foldexpr set in plugin/options.lua.
+vim.treesitter.language.register("markdown", "vimwiki")

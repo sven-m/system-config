@@ -1,12 +1,4 @@
--- vimwiki
---
--- This must be sourced before the vimwiki package. plugin/vimwiki.vim reads
--- g:vimwiki_list at source time to build s:known_extensions, then bakes the
--- result straight into its BufRead/BufEnter/BufWinEnter autocmd patterns. Set
--- these any later -- from after/plugin, say -- and vimwiki has already
--- registered itself for the default .wiki only, so .md wiki files are never
--- recognised at all. Files in plugin/ are sourced before packages, so here is
--- early enough.
+-- this file is expected to be loaded before vimwiki.vim which is necessary for it to work
 
 vim.g.vimwiki_list = {
   {

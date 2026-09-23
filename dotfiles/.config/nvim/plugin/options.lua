@@ -1,4 +1,4 @@
--- Editor options. Nothing here needs a plugin to be loaded.
+-- ui
 
 vim.opt.updatetime = 1000
 vim.opt.list = true

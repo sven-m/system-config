@@ -1,22 +1,10 @@
--- lualine
-
--- Component colours come from catppuccin's palette instead of literal hex.
--- get_palette() with no argument resolves the *active* flavour, and lualine
--- re-runs setup() on ColorScheme (it installs that autocmd itself), so these
--- are re-evaluated on a flavour switch rather than staying on mocha's values.
---
--- A function rather than a highlight-group name, deliberately: given a string,
--- lualine *links* the component to that group verbatim, which would throw away
--- the per-mode background it otherwise merges in from the section. A function
--- goes through the same path as a plain table, so only fg is overridden.
+-- produces a function that produces the catppuccin color of that name, dynamically
 local function fg(colour)
   return function()
     return { fg = require("catppuccin.palettes").get_palette()[colour] }
   end
 end
 
--- lualine renders each window's statusline inside nvim_win_call, so the
--- current buffer here is the one that window shows.
 local bufnr_component = {
   function()
     return vim.api.nvim_get_current_buf()
@@ -27,11 +15,6 @@ local bufnr_component = {
 
 require("lualine").setup({
   options = {
-    -- "auto" resolves against g:colors_name, and lualine reloads itself on
-    -- ColorScheme (it installs that autocmd in setup), so this already follows
-    -- a flavour switch. Naming a theme explicitly is not an improvement:
-    -- lualine looks themes up with nvim_get_runtime_file rather than require,
-    -- and "catppuccin-nvim" does not resolve in this nixpkgs build.
     theme = "auto",
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }

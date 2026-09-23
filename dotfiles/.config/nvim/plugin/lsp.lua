@@ -1,4 +1,4 @@
--- will trigger read of `lsp/sourcekit.lua`
+-- see lsp/sourcekit.lua
 vim.lsp.enable('sourcekit')
 
 vim.api.nvim_create_autocmd('LspAttach', {

@@ -1,9 +1,3 @@
--- pill tabline
---
--- The SvenPill* highlight groups this references are ours, not builtin, and are
--- defined in plugin/colorscheme.lua. TabLine (used for the gap between pills)
--- is a builtin group whose catppuccin value we override there too.
-
 vim.o.tabline = "%!v:lua.PillTabline()"
 
 function _G.PillTabline()

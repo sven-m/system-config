@@ -15,13 +15,8 @@ vim.g.vimwiki_list = {
 vim.g.vimwiki_auto_header = 1
 vim.g.vimwiki_links_header = "All Files"
 vim.g.vimwiki_global_ext = 0
--- 'custom' is vimwiki's "set no fold options at all" branch (an explicit
--- do-nothing in s:set_windowlocal_options). With 'expr' it ran
---   setlocal foldmethod=expr foldexpr=VimwikiFoldLevel(v:lnum)
--- on every BufWinEnter. Those options are window-local and nothing ever reset
--- them, so the next buffer opened in that window kept folding by vimwiki's
--- markdown-header logic. Treesitter folding (plugin/options.lua) now applies
--- everywhere, wiki buffers included -- see the parser registration below.
+-- vimwiki applies folding config on window-local scope but does not unset. The
+-- option custom disables vimwiki's folding implementation
 vim.g.vimwiki_folding = 'custom'
 
 -- Parse vimwiki buffers as markdown: treesitter highlighting, and the

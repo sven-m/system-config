@@ -1,18 +1,3 @@
--- catppuccin
---
--- Highlight overrides live in `custom_highlights` rather than as nvim_set_hl
--- calls next to the things they style. Catppuccin compiles them into the theme,
--- so they are reapplied every time the colorscheme loads -- a bare nvim_set_hl
--- only survives until the next `:colorscheme`, which clears user highlights.
---
--- It also means nothing else in plugin/ has to run after this file. Those files
--- are sourced in alphabetical order, so any ordering dependency between them
--- would be a filename away from breaking.
---
--- Groups prefixed "Sven" are ours, referenced by name from plugin/tabline.lua.
--- TabLine and TabLineFill are builtin groups; catppuccin defines them and we
--- override its values here.
-
 require("catppuccin").setup({
   integrations = {
     vimwiki = true,

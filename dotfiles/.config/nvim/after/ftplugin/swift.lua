@@ -1,9 +1,6 @@
 vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 
--- Breakpoints go through xcodebuild so they persist to breakpoints.json and are
--- restored on BufReadPost for *.swift. Buffer-local because a breakpoint only
--- means anything in a source buffer; the stepping keys stay global, in
--- plugin/xcodebuild.lua.
+-- Editing breakpoints is currently only used in Swift files
 local dap = require("dap")
 local xcodebuild_dap = require("xcodebuild.integrations.dap")
 

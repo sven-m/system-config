@@ -1,6 +1,3 @@
--- Prose width. This replaces a BufRead/BufNewFile autocmd on the wiki path:
--- every file under a registered wiki gets this filetype anyway, so the
--- filetype is the more direct hook.
 vim.bo.textwidth = 80
 
 vim.keymap.set('n', 'g<Tab>', '<Tab>', { buffer = true, noremap = true })

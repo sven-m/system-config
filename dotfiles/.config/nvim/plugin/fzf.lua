@@ -1,5 +1,3 @@
--- fzf-lua
-
 local fzf_lua = require('fzf-lua')
 
 fzf_lua.setup({
@@ -15,5 +13,3 @@ vim.keymap.set('n', '<leader>fh', fzf_lua.help_tags)
 vim.keymap.set('n', '<leader>fo', fzf_lua.oldfiles)
 vim.keymap.set('n', '<leader>fe', fzf_lua.diagnostics_workspace)
 vim.keymap.set('n', '<leader>fq', fzf_lua.quickfix)
-
--- The lsp_* pickers are buffer-local, set on LspAttach in plugin/lsp.lua.

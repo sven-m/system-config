@@ -1,5 +1,3 @@
--- gitsigns
-
 require("gitsigns").setup({
   base = "HEAD",
   on_attach = function(bufnr)

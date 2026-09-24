@@ -75,7 +75,7 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
-      github-nvim-theme
+      adwaita-nvim
       fzf-lua
       gitsigns-nvim
       lualine-nvim

@@ -2,6 +2,6 @@ macos-option-as-alt = left
 
 quit-after-last-window-closed = true
 
-theme = light:GitHub Light Default,dark:Catppuccin Mocha
+theme = light:Adwaita,dark:Catppuccin Mocha
 # theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 font-size = 15

@@ -22,29 +22,5 @@ require("catppuccin").setup({
   end,
 })
 
--- The same groups for github-nvim-theme (only its light variant is used).
--- Values are paths into the theme's spec (bg1 = background, fg1 = text, fg3 =
--- line numbers) or its palette.
-require("github-theme").setup({
-  groups = {
-    all = {
-      SvenMuted = { fg = "fg3" },
-
-      netrwMarkFile = { fg = "bg1", bg = "palette.orange", style = "bold" },
-
-      DapStoppedLine = { bg = "palette.attention.subtle" },
-    },
-  },
-})
-
--- loads `colors/github-mocha.lua`. Not until VimEnter: the themes set
--- 'background' while loading, and if that has happened by VimEnter Neovim
--- stops updating 'background' from the terminal's light/dark mode. This
--- autocmd runs after Neovim's check.
-vim.api.nvim_create_autocmd("VimEnter", {
-  once = true,
-  nested = true,
-  callback = function()
-    vim.cmd.colorscheme "github-mocha"
-  end,
-})
+-- loads `colors/adwaita-mocha.lua`
+vim.cmd.colorscheme "adwaita-mocha"

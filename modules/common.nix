@@ -4,7 +4,7 @@ Configuration for all systems (nixOS and macOS)
 
 - system-wide nix packages
 - shell: environment variables, shell aliases
-- home-manager: tmux plugins, bat, eza, neovim plugins
+- home-manager: bat, eza, neovim plugins
 */
 
 { config, lib, pkgs, pkgs-unstable, home-manager, username, ... }:
@@ -61,17 +61,6 @@ Configuration for all systems (nixOS and macOS)
   home-manager.useUserPackages = false;
   home-manager.users.${username} = {
     home.stateVersion = "23.11";
-
-    home.file.".config/tmux/plugins" = let
-      tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
-        {
-          name = "catppuccin";
-          path = "${catppuccin}/share/tmux-plugins/catppuccin";
-        }
-      ];
-    in {
-      source = tmuxPlugins;
-    };
 
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";

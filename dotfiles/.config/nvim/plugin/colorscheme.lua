@@ -1,4 +1,5 @@
 require("catppuccin").setup({
+  background = { light = "latte", dark = "mocha" },
   integrations = {
     vimwiki = true,
     lualine = true,
@@ -32,4 +33,4 @@ require("catppuccin").setup({
   end,
 })
 
-vim.cmd.colorscheme "catppuccin-mocha"
+vim.cmd.colorscheme "catppuccin"

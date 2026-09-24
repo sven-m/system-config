@@ -16,7 +16,7 @@ local bufnr_component = {
 
 require("lualine").setup({
   options = {
-    theme = "auto",
+    theme = "generated", -- lua/lualine/themes/generated.lua
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }
   },
@@ -47,14 +47,14 @@ require("lualine").setup({
         function()
           return vim.g.xcodebuild_test_plan and ('󰙨 ' .. vim.g.xcodebuild_test_plan) or ''
         end,
-        color = fg("green"),
+        color = fg("overlay1"),
         separator = '',
       },
       {
         function()
-          return vim.g.xcodebuild_device_name and (vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")") or ''
+          return vim.g.xcodebuild_device_name and ("\u{eadb} " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")") or ''
         end,
-        color = fg("yellow")
+        color = fg("overlay1")
       },
       {
         'lsp_status',

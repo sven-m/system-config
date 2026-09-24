@@ -1,5 +1,33 @@
 -- Setup xcodebuild.nvim at launch, configure keybinds and commands when
 -- configured xcode project detected
+--
+-- Per-project presets (scheme/device/test plan) go in the project's .nvim.lua,
+-- next to `vim.g.should_initialise_xcodebuild = true`. .nvim.lua is sourced
+-- before this file, so only require xcodebuild modules inside the command
+-- body. `save_settings()` persists to settings.json and refreshes the
+-- vim.g.xcodebuild_* globals shown in lualine; `update_settings()` re-reads
+-- bundleId/appPath/productName for the new scheme/platform.
+-- `destination` is the device UDID: `xcrun simctl list devices` (simulators),
+-- `xcrun xctrace list devices` (physical), or pick the device once and copy it
+-- from `:XcodebuildShowConfig`. `platform` is e.g. "iOS Simulator", "iOS",
+-- "macOS", "watchOS Simulator", "tvOS Simulator", "xrOS Simulator".
+--
+-- Template for .nvim.lua:
+--
+-- vim.api.nvim_create_user_command("XcodebuildPresetMyApp", function()
+--   local projectConfig = require("xcodebuild.project.config")
+--   local settings = projectConfig.settings
+--   settings.scheme = "MyApp"
+--   settings.testPlan = "MyAppUnitTests" -- nil for no test plan
+--   settings.platform = "iOS Simulator"
+--   settings.deviceName = "iPhone 16"
+--   settings.os = "18.0"
+--   settings.destination = "28B52DAA-BC2F-410B-A5BE-F485A3AFB0BC"
+--   projectConfig.save_settings()
+--   projectConfig.update_settings({}, function()
+--     vim.notify("Xcodebuild preset: MyApp / iPhone 16 / MyAppUnitTests")
+--   end)
+-- end, { nargs = 0, desc = "Xcodebuild preset: MyApp on iPhone 16" })
 
 if not vim.g.should_initialise_xcodebuild then
   return

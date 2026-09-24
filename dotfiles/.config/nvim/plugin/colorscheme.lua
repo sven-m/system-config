@@ -1,3 +1,9 @@
+-- Which theme to use: "github" or "catppuccin". Both follow the terminal's
+-- light/dark mode. Theme-specific colours used elsewhere (tabline pills,
+-- netrw marks, dap, lualine's muted text) are highlight groups defined for
+-- both below, so switching is just this line.
+local theme = "github"
+
 require("catppuccin").setup({
   background = { light = "latte", dark = "mocha" },
   integrations = {
@@ -10,6 +16,9 @@ require("catppuccin").setup({
   },
   custom_highlights = function(C)
     return {
+      -- muted text (plugin/lualine.lua)
+      SvenMuted = { fg = C.overlay1 },
+
       -- netrw (plugin/netrw.lua)
       netrwMarkFile = { fg = C.base, bg = C.peach, bold = true },
 
@@ -33,4 +42,33 @@ require("catppuccin").setup({
   end,
 })
 
-vim.cmd.colorscheme "catppuccin"
+-- The same groups for github-nvim-theme. Values are paths into the theme's
+-- spec (bg1 = background, fg1 = text, fg3 = line numbers) or its palette.
+require("github-theme").setup({
+  groups = {
+    all = {
+      SvenMuted = { fg = "fg3" },
+
+      netrwMarkFile = { fg = "bg1", bg = "palette.orange", style = "bold" },
+
+      TabLine = { bg = "NONE", fg = "fg3" },
+      TabLineFill = { bg = "NONE" },
+
+      SvenPillActiveLeft = { fg = "palette.accent.fg", bg = "bg1" },
+      SvenPillActiveIndex = { fg = "bg1", bg = "palette.accent.fg", style = "bold" },
+      SvenPillActiveName = { fg = "fg1", bg = "palette.neutral.muted" },
+      SvenPillActiveRight = { fg = "palette.neutral.muted", bg = "bg1" },
+
+      SvenPillInactiveLeft = { fg = "fg3", bg = "bg1" },
+      SvenPillInactiveIndex = { fg = "bg1", bg = "fg3" },
+      SvenPillInactiveName = { fg = "fg1", bg = "palette.neutral.subtle" },
+      SvenPillInactiveRight = { fg = "palette.neutral.subtle", bg = "bg1" },
+
+      DapStoppedLine = { bg = "palette.attention.subtle" },
+    },
+  },
+})
+
+-- both pick their light or dark variant from 'background' (github's is
+-- colors/github.lua)
+vim.cmd.colorscheme(theme)

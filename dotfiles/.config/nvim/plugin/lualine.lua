@@ -1,8 +1,9 @@
--- produces a function that produces the catppuccin color of that name,
--- dynamically
-local function fg(colour)
+-- produces a function that produces the foreground colour of that highlight
+-- group, dynamically (so it follows colorscheme changes)
+local function fg(group)
   return function()
-    return { fg = require("catppuccin.palettes").get_palette()[colour] }
+    local colour = vim.api.nvim_get_hl(0, { name = group, link = false }).fg
+    return { fg = colour and string.format("#%06x", colour) }
   end
 end
 
@@ -10,7 +11,7 @@ local bufnr_component = {
   function()
     return vim.api.nvim_get_current_buf()
   end,
-  color = fg("overlay1"),
+  color = fg("SvenMuted"),
   padding = { left = 1, right = 0 },
 }
 
@@ -34,35 +35,35 @@ require("lualine").setup({
           end
           return ""
         end,
-        color = fg("red"),
+        color = fg("DiagnosticError"),
       },
       {
         function()
           return vim.g.xcodebuild_scheme and (' ' .. vim.g.xcodebuild_scheme) or ''
         end,
-        color = fg("overlay1"),
+        color = fg("SvenMuted"),
         separator = '',
       },
       {
         function()
           return vim.g.xcodebuild_test_plan and ('󰙨 ' .. vim.g.xcodebuild_test_plan) or ''
         end,
-        color = fg("overlay1"),
+        color = fg("SvenMuted"),
         separator = '',
       },
       {
         function()
           return vim.g.xcodebuild_device_name and ("\u{eadb} " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")") or ''
         end,
-        color = fg("overlay1")
+        color = fg("SvenMuted")
       },
       {
         'lsp_status',
-        color = fg("overlay1"),
+        color = fg("SvenMuted"),
       },
       {
         'filetype',
-        color = fg("overlay1"),
+        color = fg("SvenMuted"),
       },
     },
   },

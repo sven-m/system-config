@@ -41,10 +41,10 @@ nvim-rose-dawn() {
   nvim -c "lua require('rose-pine').setup({ variant = 'dawn' })" -c "colorscheme rose-pine" "$@"
 }
 
-# Prototype zenbones in nvim; follows light/dark like the normal config.
-# Compat mode uses zenbones' prebuilt colours, so it doesn't need lush.nvim
-nvim-zenbones() {
-  nvim --cmd "let g:zenbones_compat = 1" -c "colorscheme zenbones" "$@"
+# Prototype Tokyo Night in nvim: Night when dark, Day when light, following
+# light/dark like the normal config
+nvim-tokyonight() {
+  nvim -c "lua require('tokyonight').setup({ style = 'night', light_style = 'day' })" -c "colorscheme tokyonight" "$@"
 }
 
 tmux() {
@@ -56,9 +56,9 @@ tmux() {
     command_and_reset_cursor tmux "$@"
 }
 
-# Separate tmux server with the zenbones config; attaches if already running
-tmux-zenbones() {
-  tmux -L zenbones -f ~/.config/tmux/zenbones.conf new-session -A -s zenbones "$@"
+# Separate tmux server with the Tokyo Night config; attaches if already running
+tmux-tokyonight() {
+  tmux -L tokyonight -f ~/.config/tmux/tokyonight.conf new-session -A -s tokyonight "$@"
 }
 
 if command -v fzf &>/dev/null

@@ -2,5 +2,5 @@ macos-option-as-alt = left
 
 quit-after-last-window-closed = true
 
-theme = light:Zenbones Light,dark:Zenbones Dark
+theme = light:TokyoNight Day,dark:TokyoNight Night
 font-size = 15

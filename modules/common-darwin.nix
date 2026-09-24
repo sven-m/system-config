@@ -116,13 +116,16 @@ Configuration for all macOS systems
         rev = "6b483ce504a8b0c558d85a0663ebbcbfc457c2b0";
         sha256 = "sha256-F9sUoBPJ2kE2wt2FIIrOWhJOacsxYC1tp1ksh++TDG8=";
       };
-      filename = "Catppuccin Mocha.xccolortheme";
-      source = "${catppuccin-xcode}/themes/${filename}";
-      destination = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/${filename}";
+      filename_latte = "Catppuccin Latte.xccolortheme";
+      filename_mocha = "Catppuccin Mocha.xccolortheme";
+      source_dir = "${catppuccin-xcode}/themes";
+      destination_dir = "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes";
     in
     home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''
-    cp "${source}" "${destination}"
-    chmod 644 "${destination}"
+    cp "${source_dir}/${filename_latte}" "${destination_dir}/${filename_latte}"
+    cp "${source_dir}/${filename_mocha}" "${destination_dir}/${filename_mocha}"
+    chmod 644 "${destination_dir}/${filename_latte}"
+    chmod 644 "${destination_dir}/${filename_mocha}"
     '';
 
     home.activation.sshAgentSocket = home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] /* sh */ ''

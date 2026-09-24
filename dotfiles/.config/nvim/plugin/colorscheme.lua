@@ -37,5 +37,14 @@ require("github-theme").setup({
   },
 })
 
--- loads `colors/github-mocha.lua`
-vim.cmd.colorscheme "github-mocha"
+-- loads `colors/github-mocha.lua`. Not until VimEnter: the themes set
+-- 'background' while loading, and if that has happened by VimEnter Neovim
+-- stops updating 'background' from the terminal's light/dark mode. This
+-- autocmd runs after Neovim's check.
+vim.api.nvim_create_autocmd("VimEnter", {
+  once = true,
+  nested = true,
+  callback = function()
+    vim.cmd.colorscheme "github-mocha"
+  end,
+})

@@ -18,6 +18,8 @@ require("xcodebuild").setup({
   },
 })
 
+local projectConfig = require("xcodebuild.project.config")
+
 local dap = require("dap")
 local dapui = require("dapui")
 local xcodebuild_dap = require("xcodebuild.integrations.dap")
@@ -65,8 +67,6 @@ local function configure()
   vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debugger: Step Into" })
   vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debugger: Step Out" })
 end
-
-local projectConfig = require("xcodebuild.project.config")
 
 if projectConfig.is_configured() then
   configure()

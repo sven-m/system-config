@@ -1,8 +1,10 @@
--- Which theme to use: "github" or "catppuccin". Both follow the terminal's
--- light/dark mode. Theme-specific colours used elsewhere (tabline pills,
--- netrw marks, dap, lualine's muted text) are highlight groups defined for
--- both below, so switching is just this line.
-local theme = "github"
+-- Which theme to use: "github-mocha" (GitHub Light Default when light,
+-- Catppuccin Mocha when dark; colors/github-mocha.lua) or "catppuccin" (Latte
+-- when light, Mocha when dark). Both follow the terminal's light/dark mode.
+-- Theme-specific colours used elsewhere (tabline pills, netrw marks, dap,
+-- lualine's muted text) are highlight groups defined for both themes below,
+-- so switching is just this line.
+local theme = "github-mocha"
 
 require("catppuccin").setup({
   background = { light = "latte", dark = "mocha" },
@@ -42,7 +44,7 @@ require("catppuccin").setup({
   end,
 })
 
--- The same groups for github-nvim-theme. Values are paths into the theme's
+-- The same groups for github-nvim-theme (only its light variant is used). Values are paths into the theme's
 -- spec (bg1 = background, fg1 = text, fg3 = line numbers) or its palette.
 require("github-theme").setup({
   groups = {
@@ -69,6 +71,4 @@ require("github-theme").setup({
   },
 })
 
--- both pick their light or dark variant from 'background' (github's is
--- colors/github.lua)
 vim.cmd.colorscheme(theme)

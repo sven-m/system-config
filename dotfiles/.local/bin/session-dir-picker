@@ -11,15 +11,16 @@ menu() {
 }
 
 fzf-line() {
-  teal=$'\033[38;2;148;226;213m'
-  yellow=$'\033[38;2;249;226;175m'
+  # terminal colours, so they follow Ghostty's light/dark Catppuccin theme
+  cyan=$'\033[36m'
+  blue=$'\033[34m'
   reset=$'\033[0m'
 
   dir=$(dirname "$1")
   branch=$(git -C "$dir" symbolic-ref-or-commit)
   session=$(tmux list-sessions -F "#{session_name}" -f "#{==:#{session_path},$dir}" 2>/dev/null)
 
-  printf "%s\t%s%s%s\t%s%s%s\n" "$dir" "$teal" "$branch" "$reset" "$yellow" "$session" "$reset"
+  printf "%s%s%s\t%s%s%s\t%s\n" "$cyan" "$dir" "$reset" "$blue" "$branch" "$reset" "$session"
 }
 
 create-session() {

@@ -20,7 +20,7 @@ fzf-line() {
   branch=$(git -C "$dir" symbolic-ref-or-commit)
   session=$(tmux list-sessions -F "#{session_name}" -f "#{==:#{session_path},$dir}" 2>/dev/null)
 
-  printf "%s%s%s\t%s%s%s\t%s\n" "$cyan" "$dir" "$reset" "$blue" "$branch" "$reset" "$session"
+  printf "%s\t%s%s%s\t%s%s%s\n" "$dir" "$cyan" "$branch" "$reset" "$blue" "$session" "$reset"
 }
 
 create-session() {

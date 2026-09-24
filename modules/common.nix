@@ -4,7 +4,7 @@ Configuration for all systems (nixOS and macOS)
 
 - system-wide nix packages
 - shell: environment variables, shell aliases
-- home-manager: tmux plugins, bat, eza, neovim plugins
+- home-manager: bat, eza, neovim plugins
 */
 
 { config, lib, pkgs, pkgs-unstable, home-manager, username, ... }:
@@ -62,22 +62,6 @@ Configuration for all systems (nixOS and macOS)
   home-manager.users.${username} = {
     home.stateVersion = "23.11";
 
-    home.file.".config/tmux/plugins" = let
-      tmuxPlugins = with pkgs.tmuxPlugins; pkgs.linkFarm "tmux-plugins" [
-        {
-          name = "catppuccin";
-          path = "${catppuccin}/share/tmux-plugins/catppuccin";
-        }
-        {
-          # tmux themes shipped with the tokyonight nvim plugin (tmux-tokyonight)
-          name = "tokyonight";
-          path = "${pkgs.vimPlugins.tokyonight-nvim}/extras/tmux";
-        }
-      ];
-    in {
-      source = tmuxPlugins;
-    };
-
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
 
@@ -91,8 +75,6 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
-      rose-pine
-      tokyonight-nvim
       fzf-lua
       gitsigns-nvim
       lualine-nvim

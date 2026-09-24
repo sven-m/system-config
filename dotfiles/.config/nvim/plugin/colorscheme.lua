@@ -4,26 +4,6 @@ require("catppuccin").setup({
   -- Ghostty and tmux 3.6 send); changing it reloads the colorscheme, so this
   -- switches flavours live without an autocmd of our own
   background = { light = "latte", dark = "mocha" },
-  -- Latte with accents at 80% of their OKLCH chroma: same hue and lightness,
-  -- contrast on base no lower than stock, closer to Mocha's pastel feel
-  color_overrides = {
-    latte_soft = { -- renamed from latte to try stock Latte; catppuccin ignores it
-      rosewater = "#d08f80",
-      flamingo = "#d07f7e",
-      pink = "#db7fc1",
-      mauve = "#804bd4",
-      red = "#bf3644",
-      maroon = "#d3575c",
-      peach = "#ea723e",
-      yellow = "#d29247",
-      green = "#549c45",
-      teal = "#3e8f94",
-      sky = "#44a4d6",
-      sapphire = "#479cad",
-      blue = "#326ad9",
-      lavender = "#778ae7",
-    },
-  },
   integrations = {
     vimwiki = true,
     lualine = true,

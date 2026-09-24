@@ -87,7 +87,6 @@ Configuration for all systems (nixOS and macOS)
       nvim-treesitter.withAllGrammars
       nui-nvim
       lualine-nvim
-      snacks-nvim
       vim-nix
       vim-vinegar
       (

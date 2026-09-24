@@ -1,17 +1,13 @@
--- produces a function that produces the foreground colour of that highlight
--- group, dynamically (so it follows colorscheme changes)
-local function fg(group)
-  return function()
-    local colour = vim.api.nvim_get_hl(0, { name = group, link = false }).fg
-    return { fg = colour and string.format("#%06x", colour) }
-  end
+local function foreground_of(highlight_group)
+  local colour = vim.api.nvim_get_hl(0, { name = highlight_group, link = false }).fg
+  return { fg = colour and string.format("#%06x", colour) }
 end
 
 local bufnr_component = {
   function()
     return vim.api.nvim_get_current_buf()
   end,
-  color = fg("SvenMuted"),
+  color = function() return foreground_of("SvenMuted") end,
   padding = { left = 1, right = 0 },
 }
 
@@ -35,35 +31,35 @@ require("lualine").setup({
           end
           return ""
         end,
-        color = fg("DiagnosticError"),
+        color = function() return foreground_of("DiagnosticError") end,
       },
       {
         function()
           return vim.g.xcodebuild_scheme and (' ' .. vim.g.xcodebuild_scheme) or ''
         end,
-        color = fg("SvenMuted"),
+        color = function() return foreground_of("SvenMuted") end,
         separator = '',
       },
       {
         function()
           return vim.g.xcodebuild_test_plan and ('󰙨 ' .. vim.g.xcodebuild_test_plan) or ''
         end,
-        color = fg("SvenMuted"),
+        color = function() return foreground_of("SvenMuted") end,
         separator = '',
       },
       {
         function()
           return vim.g.xcodebuild_device_name and ("\u{eadb} " .. vim.g.xcodebuild_device_name .. " (" .. vim.g.xcodebuild_os .. ")") or ''
         end,
-        color = fg("SvenMuted")
+        color = function() return foreground_of("SvenMuted") end
       },
       {
         'lsp_status',
-        color = fg("SvenMuted"),
+        color = function() return foreground_of("SvenMuted") end,
       },
       {
         'filetype',
-        color = fg("SvenMuted"),
+        color = function() return foreground_of("SvenMuted") end,
       },
     },
   },

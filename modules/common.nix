@@ -44,6 +44,8 @@ Configuration for all systems (nixOS and macOS)
     EDITOR = "nvim";
     PAGER = "less";
     CLICOLOR = "1";
+    # lazygit's default on macOS is ~/Library/Application Support/lazygit
+    LG_CONFIG_FILE = "$HOME/.config/lazygit/config.yml";
   };
 
   environment.shellAliases = {

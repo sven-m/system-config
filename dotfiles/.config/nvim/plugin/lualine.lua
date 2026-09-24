@@ -16,7 +16,7 @@ local bufnr_component = {
 
 require("lualine").setup({
   options = {
-    theme = "auto",
+    theme = "generated", -- lua/lualine/themes/generated.lua
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }
   },

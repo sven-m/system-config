@@ -26,11 +26,7 @@ require("catppuccin").setup({
   },
   integrations = {
     vimwiki = true,
-    lualine = {
-      -- Latte's VISUAL label: white text on mauve reads better than the default
-      -- base (5.4:1 vs 4.8:1 contrast)
-      latte = { visual = { a = { fg = "#ffffff" } } },
-    },
+    lualine = true,
     gitsigns = true,
     fzf = true,
     dap = true,

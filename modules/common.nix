@@ -68,6 +68,11 @@ Configuration for all systems (nixOS and macOS)
           name = "catppuccin";
           path = "${catppuccin}/share/tmux-plugins/catppuccin";
         }
+        {
+          # tmux themes shipped with the zenbones nvim plugin (tmux-zenbones)
+          name = "zenbones";
+          path = "${pkgs.vimPlugins.zenbones-nvim}/extras/tmux";
+        }
       ];
     in {
       source = tmuxPlugins;
@@ -87,6 +92,7 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
       rose-pine
+      zenbones-nvim
       fzf-lua
       gitsigns-nvim
       lualine-nvim

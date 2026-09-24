@@ -3,7 +3,7 @@
 --
 -- Preset command template for .nvim.lua
 --
--- vim.api.nvim_create_user_command("XcodePresetMyApp", "ApplyXcodePreset MyApp MyAppUnitTests iPhone 16", {})
+-- vim.api.nvim_create_user_command("XcodePresetMyApp", "ApplyXcodePreset MyApp MyAppUnitTests 28B52DAA-BC2F-410B-A5BE-F485A3AFB0BC 18.0 iPhone 16", {})
 
 if not vim.g.should_initialise_xcodebuild then
   return
@@ -24,54 +24,25 @@ require("xcodebuild").setup({
 
 local projectConfig = require("xcodebuild.project.config")
 
--- Find a device by name, optionally suffixed with " (<os>)", e.g. "iPhone 16 (18.0)"
-local function find_device(devices, query)
-  local name, os = query:match("^(.-) %((.+)%)$")
-  name = name or query
-  for _, device in ipairs(devices or {}) do
-    if device.name == name and (not os or device.os == os) then
-      return device
-    end
-  end
-end
-
--- :ApplyXcodePreset <scheme> <testplan|-> <device name> [(<os>)]
+-- :ApplyXcodePreset <scheme> <testplan|-> <device_udid> <os_version> <device name>
 vim.api.nvim_create_user_command("ApplyXcodePreset", function(opts)
-  if #opts.fargs < 3 then
-    vim.notify("Usage: ApplyXcodePreset <scheme> <testplan|-> <device name> [(<os>)]", vim.log.levels.ERROR)
+  if #opts.fargs < 5 then
+    vim.notify("Usage: ApplyXcodePreset <scheme> <testplan|-> <device_udid> <os_version> <device name>", vim.log.levels.ERROR)
     return
   end
-  local scheme, testPlan = opts.fargs[1], opts.fargs[2]
-  local deviceQuery = table.concat(opts.fargs, " ", 3)
+  local scheme, testPlan, udid, os = unpack(opts.fargs, 1, 4)
+  local deviceName = table.concat(opts.fargs, " ", 5)
   local settings = projectConfig.settings
-
-  local function apply(device)
-    if not device then
-      vim.notify("ApplyXcodePreset: device not found: " .. deviceQuery, vim.log.levels.ERROR)
-      return
-    end
-    settings.scheme = scheme
-    settings.testPlan = testPlan ~= "-" and testPlan or nil
-    projectConfig.set_destination(device) -- also saves settings
-    projectConfig.update_settings({}, function()
-      vim.notify(string.format("Xcode preset: %s / %s / %s", scheme, testPlan, device.name))
-    end)
-  end
-
-  local device = find_device(projectConfig.device_cache and projectConfig.device_cache.devices, deviceQuery)
-  if device then
-    apply(device)
-    return
-  end
-
-  -- not in the device cache yet: ask xcodebuild for the scheme's destinations
-  local projectFile = settings.projectFile or settings.swiftPackage
-  if not projectFile then
-    vim.notify("ApplyXcodePreset: no project configured, run :XcodebuildSetup first", vim.log.levels.ERROR)
-    return
-  end
-  require("xcodebuild.core.xcode").get_destinations(projectFile, scheme, settings.workingDirectory, function(destinations)
-    apply(find_device(destinations, deviceQuery))
+  settings.scheme = scheme
+  settings.testPlan = testPlan ~= "-" and testPlan or nil
+  projectConfig.set_destination({
+    id = udid,
+    os = os,
+    name = deviceName,
+    platform = settings.platform or "iOS Simulator",
+  }) -- also saves settings
+  projectConfig.update_settings({}, function()
+    vim.notify(string.format("Xcode preset: %s / %s / %s (%s)", scheme, testPlan, deviceName, os))
   end)
 end, { nargs = "+", desc = "Set Xcode scheme, test plan and device" })
 

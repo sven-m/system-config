@@ -1,9 +1,5 @@
 -- Setup xcodebuild.nvim at launch, configure keybinds and commands when
 -- configured xcode project detected
---
--- Preset command template for .nvim.lua
---
--- vim.api.nvim_create_user_command("XcodePresetMyApp", "ApplyXcodePreset MyApp MyAppUnitTests 28B52DAA-BC2F-410B-A5BE-F485A3AFB0BC 18.0 iPhone 16", {})
 
 if not vim.g.should_initialise_xcodebuild then
   return
@@ -23,28 +19,6 @@ require("xcodebuild").setup({
 })
 
 local projectConfig = require("xcodebuild.project.config")
-
--- :ApplyXcodePreset <scheme> <testplan|-> <device_udid> <os_version> <device name>
-vim.api.nvim_create_user_command("ApplyXcodePreset", function(opts)
-  if #opts.fargs < 5 then
-    vim.notify("Usage: ApplyXcodePreset <scheme> <testplan|-> <device_udid> <os_version> <device name>", vim.log.levels.ERROR)
-    return
-  end
-  local scheme, testPlan, udid, os = unpack(opts.fargs, 1, 4)
-  local deviceName = table.concat(opts.fargs, " ", 5)
-  local settings = projectConfig.settings
-  settings.scheme = scheme
-  settings.testPlan = testPlan ~= "-" and testPlan or nil
-  projectConfig.set_destination({
-    id = udid,
-    os = os,
-    name = deviceName,
-    platform = settings.platform or "iOS Simulator",
-  }) -- also saves settings
-  projectConfig.update_settings({}, function()
-    vim.notify(string.format("Xcode preset: %s / %s / %s (%s)", scheme, testPlan, deviceName, os))
-  end)
-end, { nargs = "+", desc = "Set Xcode scheme, test plan and device" })
 
 local dap = require("dap")
 local dapui = require("dapui")

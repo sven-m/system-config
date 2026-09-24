@@ -68,10 +68,6 @@ Configuration for all systems (nixOS and macOS)
           name = "catppuccin";
           path = "${catppuccin}/share/tmux-plugins/catppuccin";
         }
-        {
-          name = "rose-pine";
-          path = "${rose-pine}/share/tmux-plugins/rose-pine";
-        }
       ];
     in {
       source = tmuxPlugins;

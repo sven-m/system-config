@@ -75,6 +75,7 @@ Configuration for all systems (nixOS and macOS)
     programs.neovim.withPython3 = false;
     programs.neovim.plugins = with pkgs.vimPlugins; [
       catppuccin-nvim
+      adwaita-nvim
       fzf-lua
       gitsigns-nvim
       lualine-nvim
@@ -86,7 +87,6 @@ Configuration for all systems (nixOS and macOS)
       nvim-treesitter.withAllGrammars
       nui-nvim
       lualine-nvim
-      snacks-nvim
       vim-nix
       vim-vinegar
       (

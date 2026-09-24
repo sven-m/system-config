@@ -2,5 +2,5 @@ macos-option-as-alt = left
 
 quit-after-last-window-closed = true
 
-theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+theme = light:Adwaita,dark:Catppuccin Mocha
 font-size = 15

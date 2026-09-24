@@ -1,11 +1,3 @@
--- Which theme to use: "github-mocha" (GitHub Light Default when light,
--- Catppuccin Mocha when dark; colors/github-mocha.lua) or "catppuccin" (Latte
--- when light, Mocha when dark). Both follow the terminal's light/dark mode.
--- Theme-specific colours used elsewhere (netrw marks, dap, lualine's muted
--- text) are highlight groups defined for both themes below, so switching is
--- just this line.
-local theme = "github-mocha"
-
 require("catppuccin").setup({
   background = { light = "latte", dark = "mocha" },
   integrations = {
@@ -45,4 +37,5 @@ require("github-theme").setup({
   },
 })
 
-vim.cmd.colorscheme(theme)
+-- loads `colors/github-mocha.lua`
+vim.cmd.colorscheme "github-mocha"

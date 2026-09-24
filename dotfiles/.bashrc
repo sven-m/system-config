@@ -1,4 +1,6 @@
 export HISTCONTROL=ignorespace
+# lazygit's default on macOS is ~/Library/Application Support/lazygit
+export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
 
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"

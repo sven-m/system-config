@@ -1,2 +1,8 @@
 git:
   autofetch: false
+gui:
+  theme:
+    # reversed text instead of lazygit's default blue bar, which is hard to
+    # read with Catppuccin in both Latte and Mocha
+    selectedLineBgColor:
+      - reverse

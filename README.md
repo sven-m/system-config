@@ -75,7 +75,9 @@ and the dotfiles home-manager *would* install, built from the working tree
 
 - `XDG_CONFIG_HOME` points at the shell's copy of `~/.config`, so nvim, git,
   lazygit, starship and friends use the new config.
-- `tmux` runs a separate server (`-L dev`) so the new `tmux.conf` is loaded.
+- `tmux` runs a separate server (`-L dev`) that loads only the new
+  `tmux.conf`; its panes (and other shells started from the dev shell) are dev
+  shells too.
 - The dev copy of `.bashrc` is sourced; the prompt shows the shell's name,
   e.g. `(tanagra)`.
 - Machine-local files are referenced through `~`, so they keep working.

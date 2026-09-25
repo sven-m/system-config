@@ -86,17 +86,38 @@
     mkDevShell = name: pkgs: host:
       let
         hm = host.config.home-manager.users.${username};
-        # a separate tmux server, so the dev tmux.conf is actually loaded
+        homeFiles = hm.home-files;
+
+        # A separate tmux server that loads only the dev tmux.conf (without
+        # -f, tmux also loads ~/.config/tmux/tmux.conf, which then wins).
         tmux-dev = pkgs.writeShellScriptBin "tmux" ''
-          exec ${pkgs.tmux}/bin/tmux -L dev "$@"
+          exec ${pkgs.tmux}/bin/tmux -L dev -f ${homeFiles}/.config/tmux/tmux.conf "$@"
+        '';
+
+        # For shells started from the dev shell (tmux panes, :terminal): the
+        # system bashrc resets PATH, so put the dev shell's PATH back, then
+        # load the dev .bashrc.
+        devBashrc = pkgs.writeText "dev-bashrc" ''
+          export PATH="$CFG_DEV_PATH"
+          source ${homeFiles}/.bashrc
+        '';
+
+        # $SHELL in the dev shell. nix develop sets SHELL to the minimal
+        # build bash (no `complete`, no readline prompt handling).
+        dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
+          exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
         '';
       in pkgs.mkShell {
         inherit name;
+        # shown by the starship prompt; nix develop turns `name` into <name>-env
+        CFG_DEV_SHELL = name;
         packages = [ tmux-dev host.config.system.path hm.home.path ];
         shellHook = ''
-          export XDG_CONFIG_HOME=${hm.home-files}/.config
+          export XDG_CONFIG_HOME=${homeFiles}/.config
           export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
-          source ${hm.home-files}/.bashrc
+          export SHELL=${dev-bash}/bin/dev-bash
+          export CFG_DEV_PATH="$PATH"
+          source ${homeFiles}/.bashrc
         '';
       };
   in

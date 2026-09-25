@@ -1,4 +1,4 @@
-format = "$nix_shell$directory$username$status"
+format = "${env_var.CFG_DEV_SHELL}$directory$username$status"
 add_newline = false
 
 # Status module: shows previous command status
@@ -15,6 +15,7 @@ format = "[$user]($style) "
 style_root = "bold red"
 show_always = false
 
-# Only shown inside `nix develop`: the name of the dev shell, e.g. (tanagra)
-[nix_shell]
-format = '[\($name\)]($style) '
+# Only set inside the dev shell (nix develop .#<name>): shows e.g. (tanagra)
+[env_var.CFG_DEV_SHELL]
+format = '[\($env_value\)]($style) '
+style = "bold blue"

@@ -34,12 +34,7 @@ nvim() {
 }
 
 tmux() {
-  __ETC_BASHRC_SOURCED= \
-    __ETC_ZPROFILE_SOURCED= \
-    __ETC_ZSHENV_SOURCED= \
-    __ETC_ZSHRC_SOURCED= \
-    __NIX_DARWIN_SET_ENVIRONMENT_DONE= \
-    command_and_reset_cursor tmux "$@"
+  command_and_reset_cursor tmux "$@"
 }
 
 if command -v fzf &>/dev/null

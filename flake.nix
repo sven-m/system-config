@@ -98,10 +98,10 @@
 
         # Every shell in the dev shell (the shell itself, tmux panes,
         # :terminal) starts the way a pane does after a switch, but from this
-        # configuration: clear the once-per-shell guards (like .bashrc's
-        # tmux() does), run its set-environment, which resets PATH to the
-        # system paths, and its /etc/bashrc; then put the dev packages first
-        # and load the dev .bashrc.
+        # configuration: clear the once-per-shell guards (like nix-darwin's
+        # tmux wrapper does), run its set-environment, which resets PATH to
+        # the system paths, and its /etc/bashrc; then put the dev packages
+        # first and load the dev .bashrc.
         #
         # PATH still names the installed /run/current-system, so the dev
         # packages can add and override but not remove.

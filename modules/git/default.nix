@@ -15,7 +15,6 @@ The shared config includes, in order:
     pkgs.git
     pkgs.git-lfs
     pkgs.diff-so-fancy
-    (pkgs.writeShellScriptBin "git-symbolic-ref-or-commit" (builtins.readFile ./git-symbolic-ref-or-commit))
   ];
 
   home-manager.users.${username} = {

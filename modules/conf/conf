@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+main() {
+  if [ ! -f "${CFG_HOME:-}/flake.nix" ]
+  then
+    echo "CFG_HOME ('${CFG_HOME:-}') does not point at the system-config checkout" >&2
+    exit 1
+  fi
+  cd "$CFG_HOME"
+
+  if [ "$#" = "0" ]
+  then
+    local commands=(wait build)
+  else
+    local commands=("$@")
+  fi
+
+  for current_command in "${commands[@]}"
+  do
+    "${current_command}-command" || exit 1
+  done
+}
+
+edit-command() {
+  "$EDITOR" .
+}
+
+lazygit-command() {
+  command lazygit
+}
+
+ask-cfg-name() {
+  if [ -z "${CFG_NAME:-}" ]
+  then
+    read -p "Configuration name: " CFG_NAME
+  fi
+}
+
+build-command() {
+  ask-cfg-name
+
+  echo "Building configuration for $CFG_NAME"
+  nix run "$PWD#rebuild" -- build --flake "$PWD#$CFG_NAME"
+}
+
+switch-command() {
+  git_author
+  ask-cfg-name
+
+  echo "Applying configuration for $CFG_NAME"
+  sudo -i nix run "$PWD#rebuild" -- switch --flake "$PWD#$CFG_NAME"
+}
+
+# kept for the tmux apply-config alias
+apply-command() {
+  switch-command
+}
+
+dev-command() {
+  ask-cfg-name
+
+  nix develop "$PWD#$CFG_NAME"
+}
+
+wait-command() {
+  perform-wait() {
+    echo
+    read -p "Press any key to close." -n 1
+  }
+  trap perform-wait EXIT
+}
+
+git_author() {
+  local git_config_author_email_command=(
+    git config --file ~/.config/git/config.local user.email
+  )
+
+  if ! "${git_config_author_email_command[@]}" > /dev/null
+  then
+    echo "⚠️ No git author configured yet."
+    read -p "Enter git author email addres (leave empty to skip): " email
+
+    if [ -n "$email" ]
+    then
+      "${git_config_author_email_command[@]}" "$email"
+    fi
+  fi
+}
+
+main "$@"

@@ -13,9 +13,13 @@
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
   };
   outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, darwin, disko, ... }@inputs:
   let
+    username = "sven";
+
     darwin64-system = "aarch64-darwin";
     linux-x86_64-system = "x86_64-linux";
     linux-aarch64-system = "aarch64-linux";
@@ -49,95 +53,82 @@
       system = linux-aarch64-system;
       config.allowUnfree = true;
     };
+
+    specialArgs = pkgs-unstable: {
+      inherit username home-manager inputs pkgs-unstable;
+    };
+
+    # Each host's own modules are imported from hosts/<name>/default.nix
+    mkDarwin = name: pkgs: pkgs-unstable: darwin.lib.darwinSystem {
+      inherit pkgs;
+      system = pkgs.stdenv.hostPlatform.system;
+      specialArgs = specialArgs pkgs-unstable;
+      modules = [
+        home-manager.darwinModules.home-manager
+        ./hosts/${name}
+      ];
+    };
+
+    mkNixos = name: pkgs: pkgs-unstable: extraModules: nixpkgs.lib.nixosSystem {
+      inherit pkgs;
+      system = pkgs.stdenv.hostPlatform.system;
+      specialArgs = specialArgs pkgs-unstable;
+      modules = [
+        home-manager.nixosModules.home-manager
+        ./hosts/${name}
+      ] ++ extraModules;
+    };
+
+    # `nix develop .#<name>`: that host's packages and the dotfiles
+    # home-manager would install, built from the working tree, without
+    # switching. Sources the dev copy of .bashrc (starship prompt shows the
+    # shell's name).
+    mkDevShell = name: pkgs: host:
+      let
+        hm = host.config.home-manager.users.${username};
+        # a separate tmux server, so the dev tmux.conf is actually loaded
+        tmux-dev = pkgs.writeShellScriptBin "tmux" ''
+          exec ${pkgs.tmux}/bin/tmux -L dev "$@"
+        '';
+      in pkgs.mkShell {
+        inherit name;
+        packages = [ tmux-dev host.config.system.path hm.home.path ];
+        shellHook = ''
+          export XDG_CONFIG_HOME=${hm.home-files}/.config
+          export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
+          source ${hm.home-files}/.bashrc
+        '';
+      };
   in
   {
     packages.${darwin64-system} = with darwin-pkgs; {
-      inherit stow;
       inherit git;
       inherit dockutil;
       rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
     };
     packages.${linux-x86_64-system} = with linux-pkgs; {
-      inherit stow;
       inherit git;
       rebuild = nixos-rebuild;
     };
     packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
-      inherit stow;
       inherit git;
       rebuild = nixos-rebuild;
     };
 
-    devShells = nixpkgs.lib.genAttrs [ darwin64-system linux-x86_64-system linux-aarch64-system ] (system: {
-      default = nixpkgs.legacyPackages.${system}.mkShell {
-        DEMO_STARSHIP_CONFIG = ./dotfiles/.config/starship.toml;
-      };
-    });
+    darwinConfigurations.darmok = mkDarwin "darmok" darwin-pkgs darwin-pkgs-unstable;
+    darwinConfigurations.tanagra = mkDarwin "tanagra" darwin-pkgs darwin-pkgs-unstable;
+    nixosConfigurations.jalad = mkNixos "jalad" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
+    nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
-    darwinConfigurations.darmok = darwin.lib.darwinSystem {
-      system = darwin64-system;
-      pkgs = darwin-pkgs;
-      specialArgs = {
-        username = "sven";
-        inherit home-manager;
-        pkgs-unstable = darwin-pkgs-unstable;
-      };
-      modules = [
-        home-manager.darwinModules.home-manager
-        ./modules/common.nix
-        ./modules/common-packages.nix
-        ./modules/common-darwin.nix
-        ./modules/system-darmok.nix
-      ];
+    devShells.${darwin64-system} = {
+      darmok = mkDevShell "darmok" darwin-pkgs self.darwinConfigurations.darmok;
+      tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
     };
-
-    nixosConfigurations.jalad = nixpkgs.lib.nixosSystem {
-      system = linux-x86_64-system;
-      pkgs = linux-pkgs;
-      specialArgs = {
-        username = "sven";
-        inherit home-manager;
-        pkgs-unstable = linux-pkgs-unstable;
-      };
-      modules = [
-        home-manager.nixosModules.home-manager
-        disko.nixosModules.disko
-        ./modules/common.nix
-        ./modules/common-packages.nix
-        ./modules/system-jalad.nix
-      ];
+    devShells.${linux-x86_64-system} = {
+      jalad = mkDevShell "jalad" linux-pkgs self.nixosConfigurations.jalad;
     };
-
-    nixosConfigurations.temba = nixpkgs.lib.nixosSystem {
-      system = linux-aarch64-system;
-      pkgs = linux-aarch64-pkgs;
-      specialArgs = {
-        username = "sven";
-        inherit home-manager;
-        pkgs-unstable = linux-aarch64-pkgs-unstable;
-      };
-      modules = [
-        home-manager.nixosModules.home-manager
-        ./modules/common.nix
-        ./modules/system-temba.nix
-      ];
-    };
-
-    darwinConfigurations.tanagra = darwin.lib.darwinSystem {
-      system = darwin64-system;
-      pkgs = darwin-pkgs;
-      specialArgs = {
-        username = "sven";
-        inherit home-manager;
-        pkgs-unstable = darwin-pkgs-unstable;
-      };
-      modules = [
-        home-manager.darwinModules.home-manager
-        ./modules/common.nix
-        ./modules/common-packages.nix
-        ./modules/common-darwin.nix
-        ./modules/system-tanagra.nix
-      ];
+    devShells.${linux-aarch64-system} = {
+      temba = mkDevShell "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
     };
   };
 }

@@ -1,203 +1,141 @@
 # system-config
 
-The primary system configuration for my macbook that uses `nix`, `nix-darwin` and `home-manager`.
+System configuration for my Macs (`nix-darwin`) and Linux machines (NixOS),
+with `home-manager` deploying all dotfiles.
+
+## Layout
+
+```
+flake.nix             inputs, one helper per platform, per-host devShells
+hosts/<name>/         one directory per machine: what it imports, host packages, casks, Dock
+modules/<name>/       one directory per feature: default.nix plus the files it deploys
+```
+
+Every `modules/<name>/default.nix` is a system-level (nix-darwin / NixOS)
+module. Its home-manager part lives in `home-manager.users.${username}`, and
+the dotfiles it links sit next to it (e.g. `modules/tmux/tmux.conf` becomes
+`~/.config/tmux/tmux.conf`). A host picks its modules in its `imports` list.
+
+| Module | Contents |
+|---|---|
+| `common` | base CLI packages, fonts, env vars, aliases, bat/eza, home-manager defaults |
+| `packages` | extra tools for the full machines |
+| `darwin` | macOS settings, Homebrew (nix-homebrew) and shared casks, macOS-only tools |
+| `bash`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
+| `xcode` | Xcode tooling, `xcode-build-server`, xcodebuild.nvim and the Swift parts of the Neovim config, Xcode themes |
+| `conf` | the `conf` command |
+
+Only files tracked by git are visible to the flake: `git add` new files before
+building.
 
 ## Installation
 
-1. Clone the repository
+1. Install Nix ([Determinate](https://determinate.systems/nix-installer/)).
+   Homebrew does not need to be installed by hand; nix-homebrew does that.
+2. Clone the repository to `~/src/system-config` (or set `CFG_HOME` in the host
+   module to where it lives):
    ```sh
-   git clone https://github.com/sven-m/system-config.git
+   git clone https://github.com/sven-m/system-config.git ~/src/system-config
    ```
-2. Set `$CFG_HOME` in `~/.config/cfg_home_env`
-   ```
-   cd system-config
-   echo export CFG_HOME=\"$PWD\" > ~/.config/cfg_home_env
-   ```
+3. Apply the configuration for this machine:
+   ```sh
+   cd ~/src/system-config
 
-4. Apply the configuration by running:
-   ```sh
    # nix-darwin
-   nix run nix-darwin -- switch --flake .#variant
+   sudo nix run nix-darwin -- switch --flake .#<name>
 
    # nixos
-   nixos-rebuild switch --flake .#variant
+   sudo nixos-rebuild switch --flake .#<name>
    ```
+4. Put private git settings in `~/.config/git/config.local` (not in the repo):
+   ```ini
+   [user]
+     email = …
+   ```
+   `conf switch` asks for the email address when it is missing.
 
-## Edit & Update Aliases
+## Workflow
 
-The configuration defines 2 aliases useful for changing and updating the configuration from anywhere.
+`conf` works from any directory (it uses `$CFG_HOME`, and `$CFG_NAME` which
+each host sets to its configuration name):
+
 ```sh
-modify-cfg  # open the root folder of the sytem config repository in $EDITOR
-rebuild-cfg # re-apply the configuration
+conf edit      # open the checkout in $EDITOR
+conf dev       # dev shell for this host, from the working tree
+conf build     # build without switching
+conf switch    # build and switch (also: conf apply)
+conf           # build, then wait for a key press
 ```
 
-## Migration plan (proposal)
+### Trying changes in a dev shell
 
-Status: under evaluation, nothing below is implemented yet (except the demo
-`devShell` in `flake.nix`).
+`nix develop .#<name>` (or `conf dev`) opens a shell with that host's packages
+and the dotfiles home-manager *would* install, built from the working tree
+(uncommitted changes included), without switching:
 
-Goal: drop stow, let home-manager deploy all dotfiles from per-module
-directories, test changes in a per-host `nix develop` shell before switching,
-and make Homebrew itself part of the flake.
+- `XDG_CONFIG_HOME` points at the shell's copy of `~/.config`, so nvim, git,
+  lazygit, starship and friends use the new config.
+- `tmux` runs a separate server (`-L dev`) so the new `tmux.conf` is loaded.
+- The dev copy of `.bashrc` is sourced; the prompt shows the shell's name,
+  e.g. `(tanagra)`.
+- Machine-local files are referenced through `~`, so they keep working.
+- The shell is a snapshot: after editing, `exit` and enter it again.
 
-### 1. Structure
+Also from a branch on GitHub, without a checkout:
 
-- One directory per feature, `modules/<name>/default.nix`, with the files that
-  module deploys living next to it. One directory per machine,
-  `hosts/<name>/default.nix`. The `dotfiles/` directory goes away.
-- Every module is a system-level module (nix-darwin or NixOS). Its
-  home-manager settings go inside `home-manager.users.${username}`. Hosts pull
-  modules in with a single `imports = [ … ];` list.
-
-```
-system-config/
-├── flake.nix                        // inputs (+ nix-homebrew), one helper per host, per-host devShells
-├── flake.lock
-├── README.md
-├── hosts/
-│   ├── darmok/default.nix           // CFG_NAME, host packages (incl. libssh, openssh) and casks, Dock, tailscale, imports
-│   ├── tanagra/default.nix          // CFG_NAME, work casks, Dock, git config.host, imports
-│   ├── jalad/
-│   │   ├── default.nix              // boot + initrd SSH unlock, GNOME/xrdp, users, 1Password, Steam
-│   │   ├── hardware.nix
-│   │   └── disko.nix
-│   └── temba/
-│       ├── default.nix              // UTM VM: 9p share, i3, autologin
-│       └── hardware.nix
-└── modules/
-    ├── common/default.nix           // base CLI packages, fonts, env vars, aliases, bat/eza, home-manager defaults
-    ├── packages/default.nix         // was common-packages.nix (extra tools; not imported on temba)
-    ├── darwin/default.nix           // macOS defaults, Touch ID sudo, nix-homebrew, general casks,
-    │                                // aria2, xcp, mas, container, syncthing
-    ├── bash/                        // bashrc, bash_profile
-    ├── starship/                    // starship.toml (+ $nix_shell for the dev-shell prompt)
-    ├── tmux/                        // tmux.conf, session-dir-picker (packaged onto PATH)
-    ├── git/                         // config (includes config.host and config.local), git-symbolic-ref-or-commit
-    ├── lazygit/                     // config.yml
-    ├── ghostty/                     // config (config.orig dropped)
-    ├── ssh/                         // config + 1Password agent.sock link (Darwin/Linux path chosen by platform)
-    ├── nvim/
-    │   ├── default.nix              // plugins (minus xcodebuild), vimwiki-diary-template on nvim's PATH only
-    │   ├── vimwiki-diary-template
-    │   └── config/                  // → ~/.config/nvim (lsp.lua without the sourcekit line)
-    ├── xcode/                       // macOS only
-    │   ├── default.nix              // xcodebuild.nvim, Catppuccin Xcode theme, swiftformat, xcbeautify,
-    │   │                            // libimobiledevice, ideviceinstaller, brew "xcode-build-server"
-    │   ├── delete-derived-data      // packaged onto PATH
-    │   └── nvim/                    // merged into ~/.config/nvim: xcodebuild.lua, sourcekit (lsp + enable),
-    │                                // xcode_preset.lua, after/ftplugin/swift.lua, Swift treesitter queries
-    ├── sublime/                     // macOS only: Preferences.sublime-settings
-    ├── ansible/                     // ansible.cfg (vault path fixed), personal-ansible-vault-pass
-    ├── npm/                         // npmrc, written with the real home directory
-    ├── gdu/                         // gdu.yaml
-    └── conf/                        // conf script (+ `conf dev`, stow parts removed)
+```sh
+nix develop "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#$CFG_NAME"
 ```
 
-### 2. Dotfiles through home-manager
+System-level changes (macOS defaults, services, casks) cannot be tried in a
+shell; `conf build` at least checks that they build.
 
-- Each module links its own files into `~`, one link per file
-  (`xdg.configFile`/`home.file` with `recursive = true` for directories).
-- Shell scripts are packaged (`writeShellScriptBin`) and moved into the module
-  that uses them; `~/.local/bin` is no longer managed by the repo.
-- Stow, `.stowrc` and the stow parts of `conf` are removed.
-- Only files tracked by git are seen by the flake: new files need `git add`.
+## Git config
 
-### 3. Git config layering
+`modules/git/config` is shared. At the end it includes:
 
-The shared `config` includes, in order:
+1. `config.host`: per host, committed, written by the host module, e.g.
+   ```nix
+   home-manager.users.${username}.xdg.configFile."git/config.host".text = ''
+     [includeIf "gitdir:~/src/work/"]
+       path = ~/.config/git/work.local
+   '';
+   ```
+2. `~/.config/git/config.local`: uncommitted, for private settings such as the
+   email address.
 
-1. `~/.config/git/config.host`: per host, committed, written by the host module
-   (e.g. `xdg.configFile."git/config.host".text = …`).
-2. `~/.config/git/config.local`: uncommitted, not managed by Nix. Holds the
-   email address and anything else private. Missing files are silently skipped
-   by git.
+Later includes override earlier settings; missing files are skipped.
 
-### 4. Homebrew
+## Homebrew
 
-- **nix-homebrew** (new flake input) in `modules/darwin/`:
-  ```nix
-  nix-homebrew = {
-    enable = true;
-    user = username;
-    autoMigrate = true;   # take over the existing, manually installed Homebrew
-  };
-  ```
-  Homebrew itself is pinned by `flake.lock` and installed automatically on a
-  new Mac. No taps are declared, so formulae and casks still come from
-  Homebrew's API (unpinned), which suits self-updating casks.
-- **Formulae** move to Nix packages, except `xcode-build-server` (not in
-  nixpkgs), which stays a formula in the `xcode` module.
-
-  | Formula | Moves to |
-  |---|---|
-  | `aria2`, `xcp`, `mas` | `darwin` / `common` |
-  | `container` | `darwin` (Apple Silicon only) |
-  | `swiftformat`, `xcbeautify`, `libimobiledevice`, `ideviceinstaller` | `xcode` |
-  | `libssh`, `openssh` | darmok host |
-  | `xcode-build-server` | stays `homebrew.brews` in `xcode` |
-
-- **Casks** stay in nix-darwin's `homebrew.casks`, split over modules and hosts.
-- **App Store apps**: no `masApps`. Managed by hand; `switch` never checks them.
-- **Cleanup**: `homebrew.onActivation.cleanup = "none"`, so a switch only
-  installs and never uninstalls. `homebrew.global.brewfile = true` points
-  `brew bundle` at the generated Brewfile, so manual cleanup is:
+- nix-homebrew installs and pins Homebrew itself (`flake.lock`). Taps are not
+  declared, so formulae and casks come from Homebrew's API.
+- CLI tools come from nixpkgs. The only formula is `xcode-build-server`
+  (`modules/xcode`), which nixpkgs does not have.
+- Casks are listed in `homebrew.casks` (`modules/darwin`, `modules/xcode`,
+  hosts).
+- App Store apps are not managed; install them by hand.
+- A switch only installs what is missing, it never uninstalls
+  (`onActivation.cleanup = "none"`). `brew bundle` uses the generated
+  Brewfile, so cleaning up is:
   ```sh
-  brew bundle cleanup           # list what is installed but not in the config
+  brew bundle cleanup           # list what is installed but not configured
   brew bundle cleanup --force   # remove it
   ```
-  The generated Brewfile can be printed without switching:
-  `nix eval --raw .#darwinConfigurations.$CFG_NAME.config.homebrew.brewfile`
+  The generated Brewfile for a host:
+  `nix eval --raw .#darwinConfigurations.<name>.config.homebrew.brewfile`
 
-### 5. Per-host dev shells
+## Moving a machine from the stow setup
 
-- `devShells.<system>.<CFG_NAME>`, generated from each configuration, built
-  from that host's `home.path` (packages, nvim with plugins) and `home-files`
-  (the dotfiles home-manager would install). Replaces the demo shell.
-  ```sh
-  nix develop .#$CFG_NAME
-  nix develop "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#$CFG_NAME"
-  ```
-- `XDG_CONFIG_HOME` points at the shell's store copy of `.config`; programs
-  that need a flag get a wrapper on `PATH` (e.g. `tmux -L dev -f …`) rather than
-  an alias, so it also applies to programs started from the shell.
-- Machine-local files are referenced through `~` (never `$XDG_CONFIG_HOME`), so
-  they keep working inside the dev shell.
-- **Prompt**: starship's `$nix_shell` module added to the format, the shell's
-  `name` set to the host name, `STARSHIP_CONFIG` pointed at the store copy and
-  `starship init bash` run from `shellHook`, so the prompt shows e.g.
-  `(tanagra)`.
-- The shell is a snapshot: after editing, leave and re-enter it.
-
-### 6. `conf` and README
-
-- `conf dev` runs `nix develop "$PWD#$CFG_NAME"`.
-- The fallback `git`/`stow` aliases in `conf` (never expanded in a script) are
-  replaced with functions or removed.
-- README rewritten for the new install steps and the
-  edit → dev shell → switch workflow.
-
-### 7. Small fixes along the way
-
-- tmux reload binding sources `~/.config/tmux/tmux.conf` instead of the file
-  actually loaded.
-- `.ansible.cfg` points at `~/bin/…`; the script lives elsewhere.
-- `.npmrc` hard-codes `/Users/sven`.
-- `lualine-nvim` is listed twice in the neovim plugins.
-- `ghostty/config.orig` is a stray file.
-
-### Hand-over on each machine
-
-1. `stow -D .` in the old checkout before the first switch (or set
-   `home-manager.backupFileExtension`).
-2. Create `~/.config/git/config.local` with the email address if missing.
-3. After the first switch, check that `brew` still works (nix-homebrew
-   `autoMigrate` takes over the existing installation).
-4. `brew bundle cleanup` to find and remove leftover formulae.
-
-### Implementation order
-
-1. Module layout (move files, no behaviour change yet).
-2. home-manager deploys the dotfiles; stow removed.
-3. Homebrew: nix-homebrew, formulae to Nix, cleanup settings.
-4. Per-host dev shells and the prompt.
-5. `conf dev` and the README rewrite.
+1. **Before pulling this version**, remove the stow links from the old checkout:
+   `stow -D .`
+2. Pull, then `conf switch` (or step 3 of the installation).
+   home-manager refuses to overwrite files it does not manage; move any it
+   reports out of the way and switch again.
+3. Check that `~/.config/git/config.local` has the email address.
+4. On a Mac: check that `brew` works (nix-homebrew's `autoMigrate` takes over
+   the existing installation), then `brew bundle cleanup` to see leftover
+   formulae that now come from Nix, and `brew bundle cleanup --force` to
+   remove them.
+5. Anything that was in uncommitted changes to the old dotfiles (e.g. per-host
+   git settings) goes into the host module or `config.local`.

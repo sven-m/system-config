@@ -1,0 +1,69 @@
+/*
+
+Configuration for tanagra (macOS)
+
+- home directory
+- host packages and casks
+- Dock items
+
+*/
+
+{ config, lib, pkgs, username, ... }:
+
+{
+  imports = [
+    ../../modules/common
+    ../../modules/packages
+    ../../modules/darwin
+    ../../modules/bash
+    ../../modules/starship
+    ../../modules/tmux
+    ../../modules/git
+    ../../modules/lazygit
+    ../../modules/ghostty
+    ../../modules/ssh
+    ../../modules/nvim
+    ../../modules/xcode
+    ../../modules/sublime
+    ../../modules/ansible
+    ../../modules/npm
+    ../../modules/gdu
+    ../../modules/conf
+  ];
+
+  users.users.${username}.home = "/Users/${username}";
+
+  environment.variables = {
+    CFG_NAME = "tanagra";
+  };
+
+  environment.systemPackages = [
+    pkgs.typescript
+    pkgs.jetbrains.idea
+    pkgs.lynx
+  ];
+
+  environment.shellAliases = {
+  };
+
+
+  homebrew.casks = [
+    "github-copilot-for-xcode"
+    "zoom"
+  ];
+
+  # App Store apps are installed by hand, not through homebrew.masApps
+  #   "Slack for Desktop" = 803453959;
+
+  system.defaults.dock.persistent-apps = [
+    "/System/Applications/Apps.app"
+    "/Applications/Brave Browser.app"
+    "/Applications/Ghostty.app"
+    "/Applications/Xcode-26.5.0.app"
+    "/Applications/GitHub Copilot for Xcode.app"
+    "/Applications/Slack.app"
+    "/System/Applications/App Store.app"
+    "/System/Applications/System Settings.app"
+    "/Applications/Admin By Request.app"
+  ];
+}

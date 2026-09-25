@@ -79,13 +79,13 @@
       ] ++ extraModules;
     };
 
-    # `nix develop .#<name>`: that host's packages and the dotfiles
-    # home-manager would install, built from the working tree, without
-    # switching. Sources the dev copy of .bashrc (starship prompt shows the
-    # shell's name).
+    # `nix develop .#<name>`: that host's packages, environment and the
+    # dotfiles home-manager would install, built from the working tree,
+    # without switching. The starship prompt shows the shell's name.
     mkDevShell = name: pkgs: host:
       let
-        hm = host.config.home-manager.users.${username};
+        cfg = host.config;
+        hm = cfg.home-manager.users.${username};
         homeFiles = hm.home-files;
 
         # A separate tmux server that loads only the dev tmux.conf (without
@@ -94,30 +94,42 @@
           exec ${pkgs.tmux}/bin/tmux -L dev -f ${homeFiles}/.config/tmux/tmux.conf "$@"
         '';
 
-        # For shells started from the dev shell (tmux panes, :terminal): the
-        # system bashrc resets PATH, so put the dev shell's PATH back, then
-        # load the dev .bashrc.
+        devPath = pkgs.lib.makeBinPath [ tmux-dev cfg.system.path hm.home.path ];
+
+        # Every shell in the dev shell (the shell itself, tmux panes,
+        # :terminal) starts the way a pane does after a switch, but from this
+        # configuration: clear the once-per-shell guards (like .bashrc's
+        # tmux() does), run its set-environment, which resets PATH to the
+        # system paths, and its /etc/bashrc; then put the dev packages first
+        # and load the dev .bashrc.
+        #
+        # PATH still names the installed /run/current-system, so the dev
+        # packages can add and override but not remove.
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          export PATH="$CFG_DEV_PATH"
-          source ${homeFiles}/.bashrc
+          unset NOSYSBASHRC __ETC_BASHRC_SOURCED __NIX_DARWIN_SET_ENVIRONMENT_DONE __NIXOS_SET_ENVIRONMENT_DONE
+          . ${cfg.system.build.setEnvironment}
+          # NixOS: keep the new /etc/bashrc from sourcing the installed /etc/profile
+          export __ETC_PROFILE_DONE=1
+          . ${cfg.environment.etc.bashrc.source}
+          export PATH="${devPath}:$PATH"
+          . ${homeFiles}/.bashrc
         '';
 
-        # $SHELL in the dev shell. nix develop sets SHELL to the minimal
-        # build bash (no `complete`, no readline prompt handling).
+        # $SHELL in the dev shell. nix develop sets SHELL to the minimal build
+        # bash (no `complete`, no readline prompt handling). NOSYSBASHRC skips
+        # the installed /etc/bashrc; dev-bashrc sources the new one instead.
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
-          exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
+          NOSYSBASHRC=1 exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
         '';
-      in pkgs.mkShell {
+      in pkgs.mkShellNoCC {
         inherit name;
         # shown by the starship prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
-        packages = [ tmux-dev host.config.system.path hm.home.path ];
         shellHook = ''
           export XDG_CONFIG_HOME=${homeFiles}/.config
           export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
           export SHELL=${dev-bash}/bin/dev-bash
-          export CFG_DEV_PATH="$PATH"
-          source ${homeFiles}/.bashrc
+          . ${devBashrc}
         '';
       };
   in

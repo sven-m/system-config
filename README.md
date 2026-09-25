@@ -69,9 +69,9 @@ conf           # build, then wait for a key press
 
 ### Trying changes in a dev shell
 
-`nix develop .#<name>` (or `conf dev`) opens a shell with that host's packages
-and the dotfiles home-manager *would* install, built from the working tree
-(uncommitted changes included), without switching:
+`nix develop .#<name>` (or `conf dev`) opens a shell with that host's packages,
+environment variables, aliases and the dotfiles home-manager *would* install,
+built from the working tree (uncommitted changes included), without switching:
 
 - `XDG_CONFIG_HOME` points at the shell's copy of `~/.config`, so nvim, git,
   lazygit, starship and friends use the new config.
@@ -81,6 +81,10 @@ and the dotfiles home-manager *would* install, built from the working tree
 - The dev copy of `.bashrc` is sourced; the prompt shows the shell's name,
   e.g. `(tanagra)`.
 - Machine-local files are referenced through `~`, so they keep working.
+- Every shell in it (including tmux panes) starts the way a pane does after a
+  switch: the new configuration's set-environment and `/etc/bashrc`, then the
+  new packages in front of `PATH`, then the new `.bashrc`. Packages removed in
+  the new configuration are still found in the installed system.
 - The shell is a snapshot: after editing, `exit` and enter it again.
 
 Also from a branch on GitHub, without a checkout:

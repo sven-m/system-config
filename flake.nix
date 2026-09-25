@@ -68,6 +68,12 @@
       rebuild = nixos-rebuild;
     };
 
+    devShells = nixpkgs.lib.genAttrs [ darwin64-system linux-x86_64-system linux-aarch64-system ] (system: {
+      default = nixpkgs.legacyPackages.${system}.mkShell {
+        DEMO_STARSHIP_CONFIG = ./dotfiles/.config/starship.toml;
+      };
+    });
+
     darwinConfigurations.darmok = darwin.lib.darwinSystem {
       system = darwin64-system;
       pkgs = darwin-pkgs;

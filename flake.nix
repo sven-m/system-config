@@ -54,7 +54,7 @@
       config.allowUnfree = true;
     };
 
-    specialArgs = pkgs-unstable: {
+    mkSpecialArgs = pkgs-unstable: {
       inherit username home-manager inputs pkgs-unstable;
     };
 
@@ -62,7 +62,7 @@
     mkDarwin = name: pkgs: pkgs-unstable: darwin.lib.darwinSystem {
       inherit pkgs;
       system = pkgs.stdenv.hostPlatform.system;
-      specialArgs = specialArgs pkgs-unstable;
+      specialArgs = mkSpecialArgs pkgs-unstable;
       modules = [
         home-manager.darwinModules.home-manager
         ./hosts/${name}
@@ -72,7 +72,7 @@
     mkNixos = name: pkgs: pkgs-unstable: extraModules: nixpkgs.lib.nixosSystem {
       inherit pkgs;
       system = pkgs.stdenv.hostPlatform.system;
-      specialArgs = specialArgs pkgs-unstable;
+      specialArgs = mkSpecialArgs pkgs-unstable;
       modules = [
         home-manager.nixosModules.home-manager
         ./hosts/${name}

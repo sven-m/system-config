@@ -193,8 +193,6 @@ The shared `config` includes, in order:
 3. After the first switch, check that `brew` still works (nix-homebrew
    `autoMigrate` takes over the existing installation).
 4. `brew bundle cleanup` to find and remove leftover formulae.
-5. Re-run `xcode-build-server config` in Xcode projects only if their
-   `buildServer.json` stops resolving.
 
 ### Implementation order
 

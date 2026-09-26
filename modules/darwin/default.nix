@@ -30,9 +30,6 @@ Configuration for all macOS systems
     xcp
   ];
 
-  environment.shellAliases = {
-  };
-
   # Installs and pins Homebrew itself. Taps are not declared, so formulae and
   # casks still come from Homebrew's API.
   nix-homebrew = {

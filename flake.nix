@@ -133,10 +133,11 @@
         '';
       };
 
-    # `nix run .#preview-<program>-<host>`: one program with the config
-    # home-manager would install for that host, built from the working tree.
-    # Everything else (the shell, PATH, other programs) is the installed system.
-    mkPreviews = name: pkgs: host:
+    # `nix run .#preview-<program>`: one program with the config home-manager
+    # would install for that platform's host, built from the flake. Everything
+    # else (the shell, PATH, other programs) is the installed system. `suffix`
+    # tells hosts apart while a platform has more than one.
+    mkPreviews = suffix: pkgs: host:
       let
         hm = host.config.home-manager.users.${username};
         homeFiles = hm.home-files;
@@ -144,7 +145,7 @@
         # A separate tmux server (kill it with `tmux -L preview kill-server`
         # to pick up changes). On macOS it clears the same guards as
         # nix-darwin's tmux wrapper, so panes start like in the real tmux.
-        "preview-tmux-${name}" = pkgs.writeShellScriptBin "preview-tmux" (
+        "preview-tmux${suffix}" = pkgs.writeShellScriptBin "preview-tmux" (
           pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
             export __ETC_BASHRC_SOURCED= __ETC_ZPROFILE_SOURCED= __ETC_ZSHENV_SOURCED= __ETC_ZSHRC_SOURCED= __NIX_DARWIN_SET_ENVIRONMENT_DONE=
           '' + ''
@@ -153,7 +154,7 @@
 
         # nvim with the new plugins (home-manager's own nvim package) and the
         # new ~/.config/nvim
-        "preview-nvim-${name}" = pkgs.writeShellScriptBin "preview-nvim" ''
+        "preview-nvim${suffix}" = pkgs.writeShellScriptBin "preview-nvim" ''
           XDG_CONFIG_HOME=${homeFiles}/.config exec ${hm.programs.neovim.finalPackage}/bin/nvim "$@"
         '';
       };
@@ -178,19 +179,16 @@
     packages.${darwin64-system} = with darwin-pkgs; {
       inherit git;
       inherit dockutil;
-      rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
     }
-      // mkPreviews "darmok" darwin-pkgs self.darwinConfigurations.darmok
-      // mkPreviews "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
+      // mkPreviews "" darwin-pkgs self.darwinConfigurations.darmok
+      // mkPreviews "-tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
     packages.${linux-x86_64-system} = with linux-pkgs; {
       inherit git;
-      rebuild = nixos-rebuild;
     }
-      // mkPreviews "jalad" linux-pkgs self.nixosConfigurations.jalad;
+      // mkPreviews "" linux-pkgs self.nixosConfigurations.jalad;
     packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
       inherit git;
-      rebuild = nixos-rebuild;
     }
-      // mkPreviews "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
+      // mkPreviews "" linux-aarch64-pkgs self.nixosConfigurations.temba;
   };
 }

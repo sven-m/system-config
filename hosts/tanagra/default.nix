@@ -28,14 +28,10 @@ Configuration for tanagra (macOS)
     ../../modules/ansible
     ../../modules/npm
     ../../modules/gdu
-    ../../modules/conf
+    ../../modules/cfg
   ];
 
   users.users.${username}.home = "/Users/${username}";
-
-  environment.variables = {
-    CFG_NAME = "tanagra";
-  };
 
   environment.systemPackages = [
     pkgs.typescript

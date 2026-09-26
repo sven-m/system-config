@@ -11,12 +11,8 @@
     ../../modules/lazygit
     ../../modules/ssh
     ../../modules/nvim
-    ../../modules/conf
+    ../../modules/cfg
   ];
-
-  environment.sessionVariables = {
-    CFG_NAME = "temba";
-  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

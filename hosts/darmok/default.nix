@@ -27,7 +27,7 @@ Configuration for darmok (macOS)
     ../../modules/ansible
     ../../modules/npm
     ../../modules/gdu
-    ../../modules/conf
+    ../../modules/cfg
   ];
 
   users.users.${username}.home = "/Users/${username}";
@@ -35,7 +35,6 @@ Configuration for darmok (macOS)
   services.tailscale.enable = true;
 
   environment.variables = {
-    CFG_NAME = "darmok";
     NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED = "1";
   };
 

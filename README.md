@@ -23,7 +23,7 @@ the dotfiles it links sit next to it (e.g. `modules/tmux/tmux.conf` becomes
 | `darwin` | macOS settings, Homebrew (nix-homebrew) and shared casks, macOS-only tools |
 | `bash`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
 | `xcode` | Xcode tooling, `xcode-build-server`, xcodebuild.nvim and the Swift parts of the Neovim config, Xcode themes |
-| `conf` | the `conf` command |
+| `cfg` | `rebuild-switch` and the `cfg` flake registry name |
 
 Only files tracked by git are visible to the flake: `git add` new files before
 building.
@@ -32,12 +32,13 @@ building.
 
 1. Install Nix ([Determinate](https://determinate.systems/nix-installer/)).
    Homebrew does not need to be installed by hand; nix-homebrew does that.
-2. Clone the repository to `~/src/system-config` (or set `CFG_HOME` in the host
-   module to where it lives):
+2. Clone the repository to `~/src/system-config` (the tmux `apply-config`
+   alias expects it there):
    ```sh
-   git clone https://github.com/sven-m/system-config.git ~/src/system-config
+   git clone git@github.com:sven-m/system-config.git ~/src/system-config
    ```
-3. Apply the configuration for this machine:
+3. Apply the configuration for this machine. Configurations are named after
+   the hostname:
    ```sh
    cd ~/src/system-config
 
@@ -47,29 +48,44 @@ building.
    # nixos
    sudo nixos-rebuild switch --flake .#<name>
    ```
+   After that, `rebuild-switch` does this (see below).
 4. Put private git settings in `~/.config/git/config.local` (not in the repo):
    ```ini
    [user]
      email = …
    ```
-   `conf switch` asks for the email address when it is missing.
 
 ## Workflow
 
-`conf` works from any directory (it uses `$CFG_HOME`, and `$CFG_NAME` which
-each host sets to its configuration name):
+Every command is *command* + *flake*. The flake is one of:
 
-```sh
-conf edit      # open the checkout in $EDITOR
-conf dev       # dev shell for this host, from the working tree
-conf build     # build without switching
-conf switch    # build and switch (also: conf apply)
-conf           # build, then wait for a key press
-```
+| | Flake reference |
+|---|---|
+| the checkout you are in | `.` |
+| GitHub, main | `cfg` |
+| GitHub, a branch | `cfg/<branch>` (with slashes in the name: `'cfg?ref=claude/x'`) |
+
+`cfg` is a flake registry name (`~/.config/nix/registry.json`, from
+`modules/cfg`) for `git+ssh://git@github.com/sven-m/system-config`.
+
+| | Switch | Preview a program |
+|---|---|---|
+| local | `rebuild-switch` | `nix run .#preview-tmux` |
+| main | `rebuild-switch cfg` | `nix run cfg#preview-tmux` |
+| branch | `rebuild-switch cfg/<branch>` | `nix run cfg/<branch>#preview-nvim -- file` |
+
+- `rebuild-switch [flake]` picks the configuration by hostname. The repository
+  is private, so it fetches the flake as you (SSH agent) and lets root build
+  from the copy in the Nix store.
+- Build without switching: `darwin-rebuild build --flake <flake>` /
+  `nixos-rebuild build --flake <flake>`.
+- Remote references are cached for a while; add `--refresh` to `nix run` right
+  after pushing (`rebuild-switch` always refreshes).
+- In tmux: the `apply-config` alias runs `rebuild-switch` in `~/src/system-config`.
 
 ### Trying changes in a dev shell
 
-`nix develop .#<name>` (or `conf dev`) opens a shell with that host's packages,
+`nix develop .#<name>` opens a shell with that host's packages,
 environment variables, aliases and the dotfiles home-manager *would* install,
 built from the working tree (uncommitted changes included), without switching:
 
@@ -90,23 +106,26 @@ built from the working tree (uncommitted changes included), without switching:
 Also from a branch on GitHub, without a checkout:
 
 ```sh
-nix develop "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#$CFG_NAME"
+nix develop cfg/<branch>#<name>
 ```
 
 System-level changes (macOS defaults, services, casks) cannot be tried in a
-shell; `conf build` at least checks that they build.
+shell; a `build` at least checks that they build.
 
 ### Previewing a single program
 
-`nix run .#preview-<program>-<host>` runs one program with the config
-home-manager would install for that host, built from the working tree.
-Everything else (your shell, `PATH`, other programs) stays the installed system.
+`nix run <flake>#preview-<program>` runs one program with the config
+home-manager would install for this platform's host (darmok, jalad, temba),
+built from the flake. Everything else (your shell, `PATH`, other programs)
+stays the installed system.
 
 ```sh
-nix run .#preview-tmux-$CFG_NAME            # separate tmux server (-L preview) with the new tmux.conf
-nix run .#preview-nvim-$CFG_NAME -- file    # nvim with the new plugins and ~/.config/nvim
-nix run "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#preview-tmux-$CFG_NAME"
+nix run .#preview-tmux              # separate tmux server (-L preview) with the new tmux.conf
+nix run .#preview-nvim -- file      # nvim with the new plugins and ~/.config/nvim
+nix run cfg/<branch>#preview-tmux   # from a branch, without a checkout
 ```
+
+tanagra's previews are `preview-tmux-tanagra` and `preview-nvim-tanagra`.
 
 A running preview tmux server keeps its config: `tmux -L preview kill-server`
 before previewing a change.
@@ -150,7 +169,7 @@ Later includes override earlier settings; missing files are skipped.
 
 1. **Before pulling this version**, remove the stow links from the old checkout:
    `stow -D .`
-2. Pull, then `conf switch` (or step 3 of the installation).
+2. Pull, then step 3 of the installation.
    home-manager refuses to overwrite files it does not manage; move any it
    reports out of the way and switch again.
 3. Check that `~/.config/git/config.local` has the email address.

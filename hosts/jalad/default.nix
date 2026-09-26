@@ -32,12 +32,8 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     ../../modules/ansible
     ../../modules/npm
     ../../modules/gdu
-    ../../modules/conf
+    ../../modules/cfg
   ];
-
-  environment.sessionVariables = {
-    CFG_NAME = "jalad";
-  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

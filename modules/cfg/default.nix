@@ -10,32 +10,41 @@ Working with this configuration
 
 */
 
-{ pkgs, username, ... }:
+{ lib, pkgs, ... }:
 
 let
   rebuild = if pkgs.stdenv.isDarwin then "darwin-rebuild" else "nixos-rebuild";
+
+  cfgFlake = {
+    type = "git";
+    url = "ssh://git@github.com/sven-m/system-config";
+  };
 in
 {
   # `_cfg_prefill <text>` replaces the command line with <text>, cursor at the
-  # `@` (which is removed).
-  #
-  # The switch command fetches the flake as you and hands root the copy in the
-  # store: the repository is private, and root has no SSH agent or GitHub host
-  # key. The configuration is picked by hostname.
+  # `@` (which is removed). The switch picks the configuration by hostname;
+  # root can fetch `cfg` through your SSH agent (see modules/ssh).
   programs.bash.interactiveShellInit = ''
     _cfg_prefill() {
       local after_cursor="''${1#*@}"
       READLINE_LINE="''${1/@/}"
       READLINE_POINT=$(( ''${#1} - ''${#after_cursor} - 1 ))
     }
-    bind -x '"\C-xs": _cfg_prefill "sudo ${rebuild} switch --flake \"\$(nix flake metadata --refresh --json .@ | jq -r .path)\""'
+    bind -x '"\C-xs": _cfg_prefill "sudo ${rebuild} switch --flake .@"'
     bind -x '"\C-xp": _cfg_prefill "nix run .#preview-@"'
   '';
 
-  home-manager.users.${username} = {
-    nix.registry.cfg.to = {
-      type = "git";
-      url = "ssh://git@github.com/sven-m/system-config";
+  # The system registry (/etc/nix/registry.json), so root sees `cfg` too:
+  # darwin-rebuild runs with root's HOME, which has no user registry. On macOS
+  # Nix is not managed by nix-darwin (Determinate), so the file is written
+  # directly.
+  nix.registry = lib.mkIf pkgs.stdenv.isLinux {
+    cfg.to = cfgFlake;
+  };
+  environment.etc = lib.mkIf pkgs.stdenv.isDarwin {
+    "nix/registry.json".text = builtins.toJSON {
+      version = 2;
+      flakes = [ { from = { type = "indirect"; id = "cfg"; }; to = cfgFlake; } ];
     };
   };
 }

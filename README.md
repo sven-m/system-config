@@ -65,7 +65,7 @@ Every command is *command* + *flake*. The flake is one of:
 | GitHub, main | `cfg` |
 | GitHub, a branch | `cfg/<branch>` (with slashes in the name: `'cfg?ref=claude/x'`) |
 
-`cfg` is a flake registry name (`~/.config/nix/registry.json`, from
+`cfg` is a flake registry name (system-wide, `/etc/nix/registry.json`, from
 `modules/cfg`) for `git+ssh://git@github.com/sven-m/system-config`.
 
 Two bash key bindings put the command on the prompt without running it, with
@@ -73,12 +73,13 @@ the cursor on the flake:
 
 - **Ctrl-x s**: switch this machine (the configuration is picked by hostname)
   ```sh
-  sudo darwin-rebuild switch --flake "$(nix flake metadata --refresh --json .| | jq -r .path)"
+  sudo darwin-rebuild switch --flake .|
   ```
-  Backspace over the `.` and type `cfg` or `cfg/<branch>` for GitHub. The
-  repository is private and root has no SSH agent, so the flake is fetched as
-  you and root builds from the copy in the Nix store. On NixOS it is
-  `nixos-rebuild`.
+  Backspace over the `.` and type `cfg` or `cfg/<branch>` for GitHub. On NixOS
+  it is `nixos-rebuild`. The repository is private: root reaches GitHub through
+  your 1Password SSH agent (system-wide `IdentityAgent` for github.com and
+  GitHub's host key, from `modules/ssh`). Check once with
+  `sudo ssh -T git@github.com`.
 - **Ctrl-x p**: preview a program
   ```sh
   nix run .#preview-|
@@ -95,8 +96,8 @@ the cursor on the flake:
 
 - Build without switching: `darwin-rebuild build --flake <flake>` /
   `nixos-rebuild build --flake <flake>`.
-- Remote references are cached for a while; add `--refresh` to `nix run` right
-  after pushing (the switch command always refreshes).
+- Remote references are cached for a while; add `--refresh` right after
+  pushing.
 - In tmux: the `apply-config` alias switches from `~/src/system-config`.
 
 ### Trying changes in a dev shell

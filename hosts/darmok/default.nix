@@ -15,6 +15,7 @@ Configuration for darmok (macOS)
     ../../modules/packages
     ../../modules/darwin
     ../../modules/bash
+    ../../modules/fzf
     ../../modules/starship
     ../../modules/tmux
     ../../modules/git
@@ -33,8 +34,6 @@ Configuration for darmok (macOS)
   users.users.${username}.home = "/Users/${username}";
 
   services.tailscale.enable = true;
-
-  environment.variables.NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED = "1";
 
   environment.systemPackages = [
     pkgs.certbot-full

@@ -18,7 +18,6 @@ Configuration for all systems (nixOS and macOS)
     claude-code
     coreutils
     fd
-    fzf
     gnused
     less
     jq
@@ -47,11 +46,6 @@ Configuration for all systems (nixOS and macOS)
 
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
-
-    programs.bash.initExtra = ''
-      export FZF_CTRL_R_OPTS="--reverse"
-      eval "$(${pkgs.fzf}/bin/fzf --bash)"
-    '';
 
     # eza plus its aliases (ls, ll, la, lt, lla), all with these options
     programs.eza.enable = true;

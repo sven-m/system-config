@@ -5,6 +5,7 @@
     ./hardware.nix
     ../../modules/common
     ../../modules/bash
+    ../../modules/fzf
     ../../modules/starship
     ../../modules/tmux
     ../../modules/git

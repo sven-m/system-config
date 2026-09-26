@@ -36,7 +36,7 @@ harmless on single-user machines. Homebrew comes from nix-darwin's
 | `common` | base CLI packages, fonts, env vars, aliases, bat/eza, home-manager defaults |
 | `packages` | extra tools for the full machines |
 | `darwin` | macOS settings, Homebrew (nix-homebrew) and shared casks, macOS-only tools |
-| `bash`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
+| `bash`, `fzf`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
 | `xcode` | Xcode tooling, `xcode-build-server`, xcodebuild.nvim and the Swift parts of the Neovim config, Xcode themes |
 | `cfg` | the `cfg` flake registry name and the Ctrl-x key bindings below |
 

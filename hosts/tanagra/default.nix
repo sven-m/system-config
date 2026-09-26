@@ -16,6 +16,7 @@ Configuration for tanagra (macOS)
     ../../modules/packages
     ../../modules/darwin
     ../../modules/bash
+    ../../modules/fzf
     ../../modules/starship
     ../../modules/tmux
     ../../modules/git

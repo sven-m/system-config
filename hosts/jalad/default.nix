@@ -22,6 +22,7 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     ../../modules/common
     ../../modules/packages
     ../../modules/bash
+    ../../modules/fzf
     ../../modules/starship
     ../../modules/tmux
     ../../modules/git

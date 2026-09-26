@@ -2,11 +2,10 @@
 
 Working with this configuration
 
-- `cfg`: flake registry name for the repository on GitHub, so `cfg`,
-  `cfg/<branch>` and `cfg#preview-tmux` work in any nix command
-- bash key bindings that put a command on the prompt, cursor on the flake:
+- `cfg`: flake registry name for the repository on GitHub, so `cfg` and
+  `cfg/<branch>` work in any nix command
+- a bash key binding that puts a command on the prompt, cursor on the flake:
     Ctrl-x s  switch this machine
-    Ctrl-x p  preview a program
 
 */
 
@@ -31,7 +30,6 @@ in
       READLINE_POINT=$(( ''${#1} - ''${#after_cursor} - 1 ))
     }
     bind -x '"\C-xs": _cfg_prefill "sudo ${rebuild} switch --flake .@"'
-    bind -x '"\C-xp": _cfg_prefill "nix run .#preview-@"'
   '';
 
   # The system registry (/etc/nix/registry.json), so root sees `cfg` too:

@@ -101,19 +101,21 @@
         # configuration. PATH still names the installed /run/current-system, so
         # the dev packages can add and override but not remove.
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          # so programs started from this shell read /etc/bashrc normally again
+          # NOSYSBASHRC: when set, bash skips /etc/bashrc at startup and /etc/bashrc returns
+          # at its top. dev-bash sets it; unsetting lets the new /etc/bashrc below run and
+          # makes other shells started from here read /etc/bashrc normally.
           unset NOSYSBASHRC
-          # so the new /etc/bashrc runs, not "already sourced" from the installed one
+          # __ETC_BASHRC_SOURCED: /etc/bashrc sets it and returns at its top when it is set.
+          # It is set if this shell already read the installed /etc/bashrc (the nix develop
+          # shell, before its shellHook); unsetting lets the new /etc/bashrc below run.
           unset __ETC_BASHRC_SOURCED
-          # so the new set-environment runs on macOS (nix-darwin's once-per-shell marker)
-          unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
-          # so the new set-environment runs on NixOS (NixOS's once-per-shell marker)
-          unset __NIXOS_SET_ENVIRONMENT_DONE
-          # to get the new configuration's environment variables, and a PATH free of what nix develop added
+          # the new configuration's environment variables and PATH (replacing what nix develop
+          # added). It exports its once-per-shell marker, so /etc/bashrc below skips it.
           source ${cfg.system.build.setEnvironment}
-          # to keep the new /etc/bashrc from sourcing the installed /etc/profile on NixOS
+          # __ETC_PROFILE_DONE: NixOS's /etc/bashrc sources the installed /etc/profile when it
+          # is unset, which would run the installed set-environment over the line above.
           export __ETC_PROFILE_DONE=1
-          # to get the new configuration's aliases, completion and interactive setup
+          # the new configuration's aliases, completion and interactive setup
           source ${cfg.environment.etc.bashrc.source}
           # so the new packages win over the installed system that set-environment put in PATH
           export PATH="${devPath}:$PATH"
@@ -142,32 +144,6 @@
           source ${devBashrc}
         '';
       };
-
-    # `nix run .#preview-<program>`: one program with the config home-manager
-    # would install for that platform's host, built from the flake. Everything
-    # else (the shell, PATH, other programs) is the installed system. `suffix`
-    # tells hosts apart while a platform has more than one.
-    mkPreviews = suffix: pkgs: host:
-      let
-        hm = host.config.home-manager.users.${username};
-        homeFiles = hm.home-files;
-      in {
-        # A separate tmux server (kill it with `tmux -L preview kill-server`
-        # to pick up changes). On macOS it clears the same guards as
-        # nix-darwin's tmux wrapper, so panes start like in the real tmux.
-        "preview-tmux${suffix}" = pkgs.writeShellScriptBin "preview-tmux" (
-          pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
-            export __ETC_BASHRC_SOURCED= __ETC_ZPROFILE_SOURCED= __ETC_ZSHENV_SOURCED= __ETC_ZSHRC_SOURCED= __NIX_DARWIN_SET_ENVIRONMENT_DONE=
-          '' + ''
-            exec ${pkgs.tmux}/bin/tmux -L preview -f ${homeFiles}/.config/tmux/tmux.conf "$@"
-          '');
-
-        # nvim with the new plugins (home-manager's own nvim package) and the
-        # new ~/.config/nvim
-        "preview-nvim${suffix}" = pkgs.writeShellScriptBin "preview-nvim" ''
-          XDG_CONFIG_HOME=${homeFiles}/.config exec ${hm.programs.neovim.finalPackage}/bin/nvim "$@"
-        '';
-      };
   in
   {
     darwinConfigurations.darmok = mkDarwin "darmok" darwin-pkgs darwin-pkgs-unstable;
@@ -175,7 +151,7 @@
     nixosConfigurations.jalad = mkNixos "jalad" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
     nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
-    # `default` is the platform's host, like the previews: plain `nix develop`
+    # `default` is the platform's host: plain `nix develop`
     devShells.${darwin64-system} = rec {
       darmok = mkDevShell "darmok" darwin-pkgs self.darwinConfigurations.darmok;
       tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
@@ -193,16 +169,12 @@
     packages.${darwin64-system} = with darwin-pkgs; {
       inherit git;
       inherit dockutil;
-    }
-      // mkPreviews "" darwin-pkgs self.darwinConfigurations.darmok
-      // mkPreviews "-tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
+    };
     packages.${linux-x86_64-system} = with linux-pkgs; {
       inherit git;
-    }
-      // mkPreviews "" linux-pkgs self.nixosConfigurations.jalad;
+    };
     packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
       inherit git;
-    }
-      // mkPreviews "" linux-aarch64-pkgs self.nixosConfigurations.temba;
+    };
   };
 }

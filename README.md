@@ -83,7 +83,7 @@ Every command is *command* + *flake*. The flake is one of:
 `cfg` is a flake registry name (system-wide, `/etc/nix/registry.json`, from
 `modules/cfg`) for `git+ssh://git@github.com/sven-m/system-config`.
 
-Two bash key bindings put the command on the prompt without running it, with
+A bash key binding puts the command on the prompt without running it, with
 the cursor on the flake:
 
 - **Ctrl-x s**: switch this machine (the configuration is picked by hostname)
@@ -95,19 +95,14 @@ the cursor on the flake:
   your 1Password SSH agent (system-wide `IdentityAgent` for github.com and
   GitHub's host key, from `modules/ssh`). Check once with
   `sudo ssh -T git@github.com`.
-- **Ctrl-x p**: preview a program
-  ```sh
-  nix run .#preview-|
-  ```
-  Type `tmux` or `nvim`, or change the `.` to `cfg` / `cfg/<branch>`.
 
 (`|` marks the cursor.) The same pattern, command + flake, covers the rest:
 
-| | Switch | Preview a program |
+| | Switch | Dev shell |
 |---|---|---|
-| local | Ctrl-x s | `nix run .#preview-tmux` |
-| main | Ctrl-x s, `cfg` | `nix run cfg#preview-tmux` |
-| branch | Ctrl-x s, `cfg/<branch>` | `nix run cfg/<branch>#preview-nvim -- file` |
+| local | Ctrl-x s | `nix develop` |
+| main | Ctrl-x s, `cfg` | `nix develop cfg` |
+| branch | Ctrl-x s, `cfg/<branch>` | `nix develop cfg/<branch>` |
 
 - Build without switching: `darwin-rebuild build --flake <flake>` /
   `nixos-rebuild build --flake <flake>`.
@@ -143,24 +138,6 @@ nix develop cfg/<branch>
 
 System-level changes (macOS defaults, services, casks) cannot be tried in a
 shell; a `build` at least checks that they build.
-
-### Previewing a single program
-
-`nix run <flake>#preview-<program>` runs one program with the config
-home-manager would install for this platform's host (darmok, jalad, temba),
-built from the flake. Everything else (your shell, `PATH`, other programs)
-stays the installed system.
-
-```sh
-nix run .#preview-tmux              # separate tmux server (-L preview) with the new tmux.conf
-nix run .#preview-nvim -- file      # nvim with the new plugins and ~/.config/nvim
-nix run cfg/<branch>#preview-tmux   # from a branch, without a checkout
-```
-
-tanagra's previews are `preview-tmux-tanagra` and `preview-nvim-tanagra`.
-
-A running preview tmux server keeps its config: `tmux -L preview kill-server`
-before previewing a change.
 
 ## Git config
 

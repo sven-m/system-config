@@ -23,7 +23,7 @@ the dotfiles it links sit next to it (e.g. `modules/tmux/tmux.conf` becomes
 | `darwin` | macOS settings, Homebrew (nix-homebrew) and shared casks, macOS-only tools |
 | `bash`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
 | `xcode` | Xcode tooling, `xcode-build-server`, xcodebuild.nvim and the Swift parts of the Neovim config, Xcode themes |
-| `cfg` | `rebuild-switch` and the `cfg` flake registry name |
+| `cfg` | the `cfg` flake registry name and the Ctrl-x key bindings below |
 
 Only files tracked by git are visible to the flake: `git add` new files before
 building.
@@ -48,7 +48,7 @@ building.
    # nixos
    sudo nixos-rebuild switch --flake .#<name>
    ```
-   After that, `rebuild-switch` does this (see below).
+   After that, Ctrl-x s does this (see below).
 4. Put private git settings in `~/.config/git/config.local` (not in the repo):
    ```ini
    [user]
@@ -68,20 +68,36 @@ Every command is *command* + *flake*. The flake is one of:
 `cfg` is a flake registry name (`~/.config/nix/registry.json`, from
 `modules/cfg`) for `git+ssh://git@github.com/sven-m/system-config`.
 
+Two bash key bindings put the command on the prompt without running it, with
+the cursor on the flake:
+
+- **Ctrl-x s**: switch this machine (the configuration is picked by hostname)
+  ```sh
+  sudo darwin-rebuild switch --flake "$(nix flake metadata --refresh --json .| | jq -r .path)"
+  ```
+  Backspace over the `.` and type `cfg` or `cfg/<branch>` for GitHub. The
+  repository is private and root has no SSH agent, so the flake is fetched as
+  you and root builds from the copy in the Nix store. On NixOS it is
+  `nixos-rebuild`.
+- **Ctrl-x p**: preview a program
+  ```sh
+  nix run .#preview-|
+  ```
+  Type `tmux` or `nvim`, or change the `.` to `cfg` / `cfg/<branch>`.
+
+(`|` marks the cursor.) The same pattern, command + flake, covers the rest:
+
 | | Switch | Preview a program |
 |---|---|---|
-| local | `rebuild-switch` | `nix run .#preview-tmux` |
-| main | `rebuild-switch cfg` | `nix run cfg#preview-tmux` |
-| branch | `rebuild-switch cfg/<branch>` | `nix run cfg/<branch>#preview-nvim -- file` |
+| local | Ctrl-x s | `nix run .#preview-tmux` |
+| main | Ctrl-x s, `cfg` | `nix run cfg#preview-tmux` |
+| branch | Ctrl-x s, `cfg/<branch>` | `nix run cfg/<branch>#preview-nvim -- file` |
 
-- `rebuild-switch [flake]` picks the configuration by hostname. The repository
-  is private, so it fetches the flake as you (SSH agent) and lets root build
-  from the copy in the Nix store.
 - Build without switching: `darwin-rebuild build --flake <flake>` /
   `nixos-rebuild build --flake <flake>`.
 - Remote references are cached for a while; add `--refresh` to `nix run` right
-  after pushing (`rebuild-switch` always refreshes).
-- In tmux: the `apply-config` alias runs `rebuild-switch` in `~/src/system-config`.
+  after pushing (the switch command always refreshes).
+- In tmux: the `apply-config` alias switches from `~/src/system-config`.
 
 ### Trying changes in a dev shell
 

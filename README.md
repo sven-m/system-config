@@ -102,7 +102,7 @@ the cursor on the flake:
 
 ### Trying changes in a dev shell
 
-`nix develop .#<name>` opens a shell with that host's packages,
+`nix develop` (this platform's host; `.#<name>` for another) opens a shell with that host's packages,
 environment variables, aliases and the dotfiles home-manager *would* install,
 built from the working tree (uncommitted changes included), without switching:
 
@@ -123,7 +123,7 @@ built from the working tree (uncommitted changes included), without switching:
 Also from a branch on GitHub, without a checkout:
 
 ```sh
-nix develop cfg/<branch>#<name>
+nix develop cfg/<branch>
 ```
 
 System-level changes (macOS defaults, services, casks) cannot be tried in a

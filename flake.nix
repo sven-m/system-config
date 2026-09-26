@@ -165,15 +165,19 @@
     nixosConfigurations.jalad = mkNixos "jalad" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
     nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
-    devShells.${darwin64-system} = {
+    # `default` is the platform's host, like the previews: plain `nix develop`
+    devShells.${darwin64-system} = rec {
       darmok = mkDevShell "darmok" darwin-pkgs self.darwinConfigurations.darmok;
       tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
+      default = darmok;
     };
-    devShells.${linux-x86_64-system} = {
+    devShells.${linux-x86_64-system} = rec {
       jalad = mkDevShell "jalad" linux-pkgs self.nixosConfigurations.jalad;
+      default = jalad;
     };
-    devShells.${linux-aarch64-system} = {
+    devShells.${linux-aarch64-system} = rec {
       temba = mkDevShell "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
+      default = temba;
     };
 
     packages.${darwin64-system} = with darwin-pkgs; {

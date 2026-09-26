@@ -132,22 +132,33 @@
           . ${devBashrc}
         '';
       };
+
+    # `nix run .#preview-<program>-<host>`: one program with the config
+    # home-manager would install for that host, built from the working tree.
+    # Everything else (the shell, PATH, other programs) is the installed system.
+    mkPreviews = name: pkgs: host:
+      let
+        hm = host.config.home-manager.users.${username};
+        homeFiles = hm.home-files;
+      in {
+        # A separate tmux server (kill it with `tmux -L preview kill-server`
+        # to pick up changes). On macOS it clears the same guards as
+        # nix-darwin's tmux wrapper, so panes start like in the real tmux.
+        "preview-tmux-${name}" = pkgs.writeShellScriptBin "preview-tmux" (
+          pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+            export __ETC_BASHRC_SOURCED= __ETC_ZPROFILE_SOURCED= __ETC_ZSHENV_SOURCED= __ETC_ZSHRC_SOURCED= __NIX_DARWIN_SET_ENVIRONMENT_DONE=
+          '' + ''
+            exec ${pkgs.tmux}/bin/tmux -L preview -f ${homeFiles}/.config/tmux/tmux.conf "$@"
+          '');
+
+        # nvim with the new plugins (home-manager's own nvim package) and the
+        # new ~/.config/nvim
+        "preview-nvim-${name}" = pkgs.writeShellScriptBin "preview-nvim" ''
+          XDG_CONFIG_HOME=${homeFiles}/.config exec ${hm.programs.neovim.finalPackage}/bin/nvim "$@"
+        '';
+      };
   in
   {
-    packages.${darwin64-system} = with darwin-pkgs; {
-      inherit git;
-      inherit dockutil;
-      rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
-    };
-    packages.${linux-x86_64-system} = with linux-pkgs; {
-      inherit git;
-      rebuild = nixos-rebuild;
-    };
-    packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
-      inherit git;
-      rebuild = nixos-rebuild;
-    };
-
     darwinConfigurations.darmok = mkDarwin "darmok" darwin-pkgs darwin-pkgs-unstable;
     darwinConfigurations.tanagra = mkDarwin "tanagra" darwin-pkgs darwin-pkgs-unstable;
     nixosConfigurations.jalad = mkNixos "jalad" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
@@ -163,5 +174,23 @@
     devShells.${linux-aarch64-system} = {
       temba = mkDevShell "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
     };
+
+    packages.${darwin64-system} = with darwin-pkgs; {
+      inherit git;
+      inherit dockutil;
+      rebuild = darwin.packages.${darwin64-system}.darwin-rebuild;
+    }
+      // mkPreviews "darmok" darwin-pkgs self.darwinConfigurations.darmok
+      // mkPreviews "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
+    packages.${linux-x86_64-system} = with linux-pkgs; {
+      inherit git;
+      rebuild = nixos-rebuild;
+    }
+      // mkPreviews "jalad" linux-pkgs self.nixosConfigurations.jalad;
+    packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
+      inherit git;
+      rebuild = nixos-rebuild;
+    }
+      // mkPreviews "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
   };
 }

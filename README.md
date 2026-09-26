@@ -96,6 +96,21 @@ nix develop "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#$CFG_NAM
 System-level changes (macOS defaults, services, casks) cannot be tried in a
 shell; `conf build` at least checks that they build.
 
+### Previewing a single program
+
+`nix run .#preview-<program>-<host>` runs one program with the config
+home-manager would install for that host, built from the working tree.
+Everything else (your shell, `PATH`, other programs) stays the installed system.
+
+```sh
+nix run .#preview-tmux-$CFG_NAME            # separate tmux server (-L preview) with the new tmux.conf
+nix run .#preview-nvim-$CFG_NAME -- file    # nvim with the new plugins and ~/.config/nvim
+nix run "git+ssh://git@github.com/sven-m/system-config?ref=<branch>#preview-tmux-$CFG_NAME"
+```
+
+A running preview tmux server keeps its config: `tmux -L preview kill-server`
+before previewing a change.
+
 ## Git config
 
 `modules/git/config` is shared. At the end it includes:

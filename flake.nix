@@ -98,27 +98,33 @@
 
         # Every shell in the dev shell (the shell itself, tmux panes,
         # :terminal) starts the way a pane does after a switch, but from this
-        # configuration: clear the once-per-shell guards (like nix-darwin's
-        # tmux wrapper does), run its set-environment, which resets PATH to
-        # the system paths, and its /etc/bashrc; then put the dev packages
-        # first and load the dev .bashrc.
-        #
-        # PATH still names the installed /run/current-system, so the dev
-        # packages can add and override but not remove.
+        # configuration. PATH still names the installed /run/current-system, so
+        # the dev packages can add and override but not remove.
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          unset NOSYSBASHRC __ETC_BASHRC_SOURCED __NIX_DARWIN_SET_ENVIRONMENT_DONE __NIXOS_SET_ENVIRONMENT_DONE
-          . ${cfg.system.build.setEnvironment}
-          # NixOS: keep the new /etc/bashrc from sourcing the installed /etc/profile
+          # so programs started from this shell read /etc/bashrc normally again
+          unset NOSYSBASHRC
+          # so the new /etc/bashrc runs, not "already sourced" from the installed one
+          unset __ETC_BASHRC_SOURCED
+          # so the new set-environment runs on macOS (nix-darwin's once-per-shell marker)
+          unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
+          # so the new set-environment runs on NixOS (NixOS's once-per-shell marker)
+          unset __NIXOS_SET_ENVIRONMENT_DONE
+          # to get the new configuration's environment variables, and a PATH free of what nix develop added
+          source ${cfg.system.build.setEnvironment}
+          # to keep the new /etc/bashrc from sourcing the installed /etc/profile on NixOS
           export __ETC_PROFILE_DONE=1
-          . ${cfg.environment.etc.bashrc.source}
+          # to get the new configuration's aliases, completion and interactive setup
+          source ${cfg.environment.etc.bashrc.source}
+          # so the new packages win over the installed system that set-environment put in PATH
           export PATH="${devPath}:$PATH"
-          . ${homeFiles}/.bashrc
+          # to get your new .bashrc, last as in a normal startup, so it can rely on the lines above
+          source ${homeFiles}/.bashrc
         '';
 
-        # $SHELL in the dev shell. nix develop sets SHELL to the minimal build
-        # bash (no `complete`, no readline prompt handling). NOSYSBASHRC skips
-        # the installed /etc/bashrc; dev-bashrc sources the new one instead.
+        # $SHELL in the dev shell, so tmux panes and other child shells go
+        # through dev-bashrc too.
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
+          # full bash (nix develop's lacks readline and `complete`), skipping the installed /etc/bashrc (dev-bashrc sources the new one)
           NOSYSBASHRC=1 exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
         '';
       in pkgs.mkShellNoCC {
@@ -126,10 +132,14 @@
         # shown by the starship prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
         shellHook = ''
+          # to point nvim, git, lazygit, tmux, … at the new config
           export XDG_CONFIG_HOME=${homeFiles}/.config
+          # because starship reads ~/.config/starship.toml regardless of XDG_CONFIG_HOME
           export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
+          # because nix develop set SHELL to its minimal build bash, which tmux would start in panes
           export SHELL=${dev-bash}/bin/dev-bash
-          . ${devBashrc}
+          # so this shell, which nix develop started itself, gets the same setup as every child shell
+          source ${devBashrc}
         '';
       };
 

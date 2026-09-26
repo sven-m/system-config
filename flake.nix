@@ -121,6 +121,8 @@
           export PATH="${devPath}:$PATH"
           # to get your new .bashrc, last as in a normal startup, so it can rely on the lines above
           source ${homeFiles}/.bashrc
+          # after .bashrc, whose session variables set it to the installed ~/.config/starship.toml
+          export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
         '';
 
         # $SHELL in the dev shell, so tmux panes and other child shells go
@@ -136,8 +138,6 @@
         shellHook = ''
           # to point nvim, git, lazygit, tmux, … at the new config
           export XDG_CONFIG_HOME=${homeFiles}/.config
-          # because starship reads ~/.config/starship.toml regardless of XDG_CONFIG_HOME
-          export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
           # because nix develop set SHELL to its minimal build bash, which tmux would start in panes
           export SHELL=${dev-bash}/bin/dev-bash
           # so this shell, which nix develop started itself, gets the same setup as every child shell

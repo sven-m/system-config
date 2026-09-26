@@ -1,20 +1,18 @@
 /*
 
-Starship prompt
+Starship prompt, through home-manager: settings from ./starship.toml, prompt
+hook in ~/.bashrc (after the other init code)
 
 */
 
-{ lib, pkgs, username, ... }:
+{ username, ... }:
 
 {
-  environment.systemPackages = [ pkgs.starship ];
-
   home-manager.users.${username} = {
-    xdg.configFile."starship.toml".source = ./starship.toml;
-
-    # last, since it sets the prompt
-    programs.bash.initExtra = lib.mkAfter ''
-      eval "$(${pkgs.starship}/bin/starship init bash)"
-    '';
+    programs.starship = {
+      enable = true;
+      enableBashIntegration = true;
+      settings = builtins.fromTOML (builtins.readFile ./starship.toml);
+    };
   };
 }

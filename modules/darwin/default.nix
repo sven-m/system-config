@@ -116,7 +116,8 @@ Configuration for all macOS systems
         eval "$(/opt/homebrew/bin/brew shellenv)"
       fi
 
-      # Android Studio's SDK tools (ANDROID_HOME is set in modules/common)
+      # Android Studio's SDK and its tools
+      export ANDROID_HOME="$HOME/Library/Android/sdk"
       prepend_path "''${ANDROID_HOME}/cmdline-tools/latest/bin"
       prepend_path "''${ANDROID_HOME}/build-tools/35.0.0-rc3/"
       prepend_path "''${ANDROID_HOME}/platform-tools"

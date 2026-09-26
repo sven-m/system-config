@@ -14,6 +14,9 @@ let
     (builtins.readFile ./vimwiki-diary-template);
 in
 {
+  # system-wide, so root (sudoedit, sudo -i) gets it too
+  environment.variables.EDITOR = "nvim";
+
   home-manager.users.${username} = {
     programs.neovim.enable = true;
     programs.neovim.sideloadInitLua = true;

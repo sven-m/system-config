@@ -10,7 +10,7 @@ Working with this configuration
 
 */
 
-{ lib, pkgs, ... }:
+{ lib, pkgs, username, ... }:
 
 let
   rebuild = if pkgs.stdenv.isDarwin then "darwin-rebuild" else "nixos-rebuild";
@@ -24,7 +24,7 @@ in
   # `_cfg_prefill <text>` replaces the command line with <text>, cursor at the
   # `@` (which is removed). The switch picks the configuration by hostname;
   # root can fetch `cfg` through your SSH agent (see modules/ssh).
-  programs.bash.interactiveShellInit = ''
+  home-manager.users.${username}.programs.bash.initExtra = ''
     _cfg_prefill() {
       local after_cursor="''${1#*@}"
       READLINE_LINE="''${1/@/}"

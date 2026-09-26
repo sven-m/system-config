@@ -21,6 +21,14 @@ other modules add their own lines to it (`programs.bash.bashrcExtra` for exports
 and `PATH`, `programs.bash.initExtra` for interactive setup), so e.g. the `nvim`
 wrapper function lives in `modules/nvim`.
 
+System-level shell settings (`environment.variables`, `environment.shellAliases`)
+are only for what root should get too: `EDITOR`, `PAGER`, `CLICOLOR` and the
+eza aliases `ll`/`la`/`lla`. Everything else is personal and goes through
+`programs.bash`: exports and `PATH` in `bashrcExtra`, aliases in
+`shellAliases`, functions and key bindings in `initExtra`. (Not
+`home.sessionVariables`/`home.sessionPath`: those run once per login, so tmux
+panes and the dev shell would miss them.)
+
 | Module | Contents |
 |---|---|
 | `common` | base CLI packages, fonts, env vars, aliases, bat/eza, home-manager defaults |

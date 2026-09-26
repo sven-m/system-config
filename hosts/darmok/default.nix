@@ -34,9 +34,9 @@ Configuration for darmok (macOS)
 
   services.tailscale.enable = true;
 
-  environment.variables = {
-    NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED = "1";
-  };
+  home-manager.users.${username}.programs.bash.bashrcExtra = ''
+    export NEOVIM_VIMWIKI_MAGIC_MERGE_ENABLED=1
+  '';
 
   environment.systemPackages = [
     pkgs.certbot-full

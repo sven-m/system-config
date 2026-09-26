@@ -19,5 +19,11 @@ The shared config includes, in order:
 
   home-manager.users.${username} = {
     xdg.configFile."git/config".source = ./config;
+
+    programs.bash.shellAliases = {
+      gs = "git status";
+      gl = "git lg1";
+      gll = "git lg2";
+    };
   };
 }

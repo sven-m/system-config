@@ -4,7 +4,7 @@ Configuration for all systems (nixOS and macOS)
 
 - system-wide nix packages
 - shell: environment variables, shell aliases
-- home-manager defaults, bat, eza
+- home-manager defaults, bat
 
 */
 
@@ -17,6 +17,7 @@ Configuration for all systems (nixOS and macOS)
   environment.systemPackages = with pkgs; [
     claude-code
     coreutils
+    eza
     fd
     fzf
     gnused
@@ -30,22 +31,17 @@ Configuration for all systems (nixOS and macOS)
     yamllint
   ];
 
+  # System-wide (root too). Personal shell setup is in home-manager's
+  # programs.bash, in the module it belongs to.
   environment.variables = {
-    ANDROID_HOME = "$HOME/Library/Android/sdk";
-    THEOS = "$HOME/theos";
-
-    EDITOR = "nvim";
     PAGER = "less";
     CLICOLOR = "1";
   };
 
   environment.shellAliases = {
-    ll = "eza -l";
-    la = "eza -a";
-    lla = "eza -la";
-    gs = "git status";
-    gl = "git lg1";
-    gll = "git lg2";
+    ll = "eza -l --git --icons=auto";
+    la = "eza -a --git --icons=auto";
+    lla = "eza -la --git --icons=auto";
   };
 
   fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
@@ -58,15 +54,13 @@ Configuration for all systems (nixOS and macOS)
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
 
+    programs.bash.bashrcExtra = ''
+      export THEOS="$HOME/theos"
+    '';
+
     programs.bash.initExtra = ''
       export FZF_CTRL_R_OPTS="--reverse"
       eval "$(${pkgs.fzf}/bin/fzf --bash)"
     '';
-
-    programs.eza.enable = true;
-    programs.eza.git = true;
-    programs.eza.icons = "auto";
-    # no ls/ll/la/lt aliases from home-manager; environment.shellAliases above has ours
-    programs.eza.enableBashIntegration = false;
   };
 }

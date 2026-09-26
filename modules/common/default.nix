@@ -58,8 +58,15 @@ Configuration for all systems (nixOS and macOS)
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
 
+    programs.bash.initExtra = ''
+      export FZF_CTRL_R_OPTS="--reverse"
+      eval "$(${pkgs.fzf}/bin/fzf --bash)"
+    '';
+
     programs.eza.enable = true;
     programs.eza.git = true;
     programs.eza.icons = "auto";
+    # no ls/ll/la/lt aliases from home-manager; environment.shellAliases above has ours
+    programs.eza.enableBashIntegration = false;
   };
 }

@@ -26,5 +26,11 @@ of the Nix paths). The wrapper only loads /etc/tmux.conf, which sources ours.
 
   home-manager.users.${username} = {
     xdg.configFile."tmux/tmux.conf".source = ./tmux.conf;
+
+    programs.bash.initExtra = ''
+      tmux() {
+        command_and_reset_cursor tmux "$@"
+      }
+    '';
   };
 }

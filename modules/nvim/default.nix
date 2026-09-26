@@ -52,6 +52,12 @@ in
       )
     ];
 
+    programs.bash.initExtra = ''
+      nvim() {
+        command_and_reset_cursor nvim "$@"
+      }
+    '';
+
     # each file under config/ linked individually into ~/.config/nvim/
     xdg.configFile."nvim" = {
       source = ./config;

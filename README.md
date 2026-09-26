@@ -16,6 +16,11 @@ module. Its home-manager part lives in `home-manager.users.${username}`, and
 the dotfiles it links sit next to it (e.g. `modules/tmux/tmux.conf` becomes
 `~/.config/tmux/tmux.conf`). A host picks its modules in its `imports` list.
 
+Bash is configured through home-manager's `programs.bash` (`modules/bash`);
+other modules add their own lines to it (`programs.bash.bashrcExtra` for exports
+and `PATH`, `programs.bash.initExtra` for interactive setup), so e.g. the `nvim`
+wrapper function lives in `modules/nvim`.
+
 | Module | Contents |
 |---|---|
 | `common` | base CLI packages, fonts, env vars, aliases, bat/eza, home-manager defaults |
@@ -188,7 +193,9 @@ Later includes override earlier settings; missing files are skipped.
    `stow -D .`
 2. Pull, then step 3 of the installation.
    home-manager refuses to overwrite files it does not manage; move any it
-   reports out of the way and switch again.
+   reports out of the way and switch again. It now also writes `~/.profile`
+   (bash is configured through `programs.bash`), so an existing one will be
+   reported.
 3. Check that `~/.config/git/config.local` has the email address.
 4. On a Mac: check that `brew` works (nix-homebrew's `autoMigrate` takes over
    the existing installation), then `brew bundle cleanup` to see leftover

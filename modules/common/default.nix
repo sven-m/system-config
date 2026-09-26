@@ -35,6 +35,7 @@ Configuration for all systems (nixOS and macOS)
   environment.variables = {
     PAGER = "less";
     CLICOLOR = "1";
+    THEOS = "$HOME/theos";
   };
 
   fonts.packages = [ pkgs.nerd-fonts.meslo-lg ];
@@ -46,8 +47,6 @@ Configuration for all systems (nixOS and macOS)
 
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
-
-    home.sessionVariables.THEOS = "$HOME/theos";
 
     programs.bash.initExtra = ''
       export FZF_CTRL_R_OPTS="--reverse"

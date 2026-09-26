@@ -17,19 +17,19 @@ the dotfiles it links sit next to it (e.g. `modules/tmux/tmux.conf` becomes
 `~/.config/tmux/tmux.conf`). A host picks its modules in its `imports` list.
 
 Bash is configured through home-manager's `programs.bash` (`modules/bash`);
-other modules add their own lines to it (`programs.bash.bashrcExtra` for exports
-and `PATH`, `programs.bash.initExtra` for interactive setup), so e.g. the `nvim`
-wrapper function lives in `modules/nvim`.
+other modules add aliases (`programs.bash.shellAliases`) and functions and key
+bindings (`programs.bash.initExtra`), so e.g. the `nvim` wrapper function lives
+in `modules/nvim`.
 
-System-level shell settings (`environment.variables`) are only for what root
-should get too: `EDITOR`, `PAGER`, `CLICOLOR`. Everything else is personal and
-goes through home-manager, in its module: paths and path-like variables in
-`home.sessionPath` / `home.sessionVariables`, aliases in
-`programs.bash.shellAliases`, functions and key bindings in
-`programs.bash.initExtra`. Homebrew comes from nix-darwin's
-`homebrew.enableBashIntegration`. The session variables script runs once per
-chain of shells; `.bashrc`, macOS tmux panes and the dev shell make sure it
-runs where `PATH` was rebuilt or no login shell ran it.
+Environment variables and `PATH` are set at system level, in the module they
+belong to: `environment.variables`, and on macOS `environment.systemPath`. Both
+platforms write these to a `set-environment` script that `/etc/bashrc` runs
+for every interactive shell, login or not. On macOS nix-darwin's tmux wrapper
+makes each pane run it again. home-manager's `home.sessionVariables` is not
+used: it only runs from `~/.profile`, and on macOS `/etc/bashrc` replaces `PATH`
+in every new shell, which undoes it. Root gets these variables too, which is
+harmless on single-user machines. Homebrew comes from nix-darwin's
+`homebrew.enableBashIntegration`.
 
 | Module | Contents |
 |---|---|

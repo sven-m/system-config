@@ -23,9 +23,6 @@ itself, after /etc/tmux.conf.
 
   programs.tmux.enable = true;
   programs.tmux.extraConfig = lib.mkIf pkgs.stdenv.isDarwin ''
-    # panes rebuild PATH (see above), so they must re-run home-manager's
-    # session variables (home.sessionPath) instead of inheriting its marker
-    set-environment -g -u __HM_SESS_VARS_SOURCED
     source-file ~/.config/tmux/tmux.conf
   '';
 

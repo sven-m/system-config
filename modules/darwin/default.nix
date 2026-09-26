@@ -75,6 +75,15 @@ Configuration for all macOS systems
 
   programs.bash.enable = true;
 
+  # Android Studio's SDK and its tools
+  environment.variables.ANDROID_HOME = "$HOME/Library/Android/sdk";
+  environment.systemPath = lib.mkAfter [
+    "$HOME/Library/Android/sdk/emulator"
+    "$HOME/Library/Android/sdk/platform-tools"
+    "$HOME/Library/Android/sdk/build-tools/35.0.0-rc3"
+    "$HOME/Library/Android/sdk/cmdline-tools/latest/bin"
+  ];
+
   security.pam.services.sudo_local.touchIdAuth = true;
   security.pam.services.sudo_local.reattach = true;
 
@@ -109,14 +118,5 @@ Configuration for all macOS systems
 
   home-manager.users.${username} = {
     services.syncthing.enable = true;
-
-    # Android Studio's SDK and its tools
-    home.sessionVariables.ANDROID_HOME = "$HOME/Library/Android/sdk";
-    home.sessionPath = [
-      "$ANDROID_HOME/emulator"
-      "$ANDROID_HOME/platform-tools"
-      "$ANDROID_HOME/build-tools/35.0.0-rc3"
-      "$ANDROID_HOME/cmdline-tools/latest/bin"
-    ];
   };
 }

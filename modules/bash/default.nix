@@ -34,16 +34,6 @@ Bash, through home-manager: it generates ~/.bashrc, ~/.bash_profile and
       bashrcExtra = lib.mkBefore ''
         source "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh"
       '';
-
-      initExtra = ''
-        # Runs command and all arguments and resets cursor back to vertical bar
-        command_and_reset_cursor() {
-          command "$@"
-          local status=$?
-          printf "\e[6 q"
-          return $status
-        }
-      '';
     };
   };
 }

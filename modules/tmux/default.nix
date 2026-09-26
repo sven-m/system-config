@@ -32,9 +32,13 @@ itself, after /etc/tmux.conf.
   home-manager.users.${username} = {
     xdg.configFile."tmux/tmux.conf".source = ./tmux.conf;
 
+    # resets the cursor to a vertical bar afterwards
     programs.bash.initExtra = ''
       tmux() {
-        command_and_reset_cursor tmux "$@"
+        command tmux "$@"
+        local status=$?
+        printf "\e[6 q"
+        return $status
       }
     '';
   };

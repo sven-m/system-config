@@ -55,9 +55,13 @@ in
       )
     ];
 
+    # resets the cursor to a vertical bar afterwards
     programs.bash.initExtra = ''
       nvim() {
-        command_and_reset_cursor nvim "$@"
+        command nvim "$@"
+        local status=$?
+        printf "\e[6 q"
+        return $status
       }
     '';
 

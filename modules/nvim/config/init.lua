@@ -36,6 +36,3 @@ vim.opt.path:append("*/.config/**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
 vim.opt.wildignore:append("build/*")
-
--- CANARY: remove before switching
-vim.keymap.set('n', '<leader>F', '<cmd>vsplit<cr>')

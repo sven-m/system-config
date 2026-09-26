@@ -1,5 +1,4 @@
-# CANARY: remove "test " before switching
-format = "test ${env_var.CFG_DEV_SHELL}$directory$username$status"
+format = "${env_var.CFG_DEV_SHELL}$directory$username$status"
 add_newline = false
 
 # Status module: shows previous command status

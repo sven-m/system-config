@@ -38,7 +38,8 @@ harmless on single-user machines. Homebrew comes from nix-darwin's
 | `darwin` | macOS settings, Homebrew (nix-homebrew) and shared casks, macOS-only tools |
 | `bash`, `fzf`, `starship`, `tmux`, `git`, `lazygit`, `ghostty`, `ssh`, `nvim`, `gdu`, `npm`, `ansible`, `sublime` | the tool and its config |
 | `xcode` | Xcode tooling, `xcode-build-server`, xcodebuild.nvim and the Swift parts of the Neovim config, Xcode themes |
-| `cfg` | the `cfg` flake registry name and the Ctrl-x key bindings below |
+| `android` | Android Studio, `ANDROID_HOME` and the SDK tools in `PATH` (macOS) |
+| `cfg` | the `cfg` flake registry name and the Ctrl-x s key binding below |
 
 Only files tracked by git are visible to the flake: `git add` new files before
 building.
@@ -161,7 +162,7 @@ Later includes override earlier settings; missing files are skipped.
   declared, so formulae and casks come from Homebrew's API.
 - CLI tools come from nixpkgs. The only formula is `xcode-build-server`
   (`modules/xcode`), which nixpkgs does not have.
-- Casks are listed in `homebrew.casks` (`modules/darwin`, `modules/xcode`,
+- Casks are listed in `homebrew.casks` (`modules/darwin`, `modules/xcode`, `modules/android`,
   hosts).
 - App Store apps are not managed; install them by hand.
 - A switch only installs what is missing, it never uninstalls

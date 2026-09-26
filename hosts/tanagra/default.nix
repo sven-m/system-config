@@ -25,6 +25,7 @@ Configuration for tanagra (macOS)
     ../../modules/ssh
     ../../modules/nvim
     ../../modules/xcode
+    ../../modules/android
     ../../modules/sublime
     ../../modules/ansible
     ../../modules/npm

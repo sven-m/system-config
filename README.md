@@ -21,13 +21,15 @@ other modules add their own lines to it (`programs.bash.bashrcExtra` for exports
 and `PATH`, `programs.bash.initExtra` for interactive setup), so e.g. the `nvim`
 wrapper function lives in `modules/nvim`.
 
-System-level shell settings (`environment.variables`, `environment.shellAliases`)
-are only for what root should get too: `EDITOR`, `PAGER`, `CLICOLOR` and the
-eza aliases `ll`/`la`/`lla`. Everything else is personal and goes through
-`programs.bash`: exports and `PATH` in `bashrcExtra`, aliases in
-`shellAliases`, functions and key bindings in `initExtra`. (Not
-`home.sessionVariables`/`home.sessionPath`: those run once per login, so tmux
-panes and the dev shell would miss them.)
+System-level shell settings (`environment.variables`) are only for what root
+should get too: `EDITOR`, `PAGER`, `CLICOLOR`. Everything else is personal and
+goes through home-manager, in its module: paths and path-like variables in
+`home.sessionPath` / `home.sessionVariables`, aliases in
+`programs.bash.shellAliases`, functions and key bindings in
+`programs.bash.initExtra`. Homebrew comes from nix-darwin's
+`homebrew.enableBashIntegration`. The session variables script runs once per
+chain of shells; `.bashrc`, macOS tmux panes and the dev shell make sure it
+runs where `PATH` was rebuilt or no login shell ran it.
 
 | Module | Contents |
 |---|---|

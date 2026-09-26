@@ -21,7 +21,12 @@ of the Nix paths). The wrapper only loads /etc/tmux.conf, which sources ours.
 
   programs.tmux = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
-    extraConfig = "source-file ~/.config/tmux/tmux.conf";
+    extraConfig = ''
+      # panes rebuild PATH (see above), so they must re-run home-manager's
+      # session variables (home.sessionPath) instead of inheriting its marker
+      set-environment -g -u __HM_SESS_VARS_SOURCED
+      source-file ~/.config/tmux/tmux.conf
+    '';
   };
 
   home-manager.users.${username} = {

@@ -1,15 +1,21 @@
 /*
 
 Bash, through home-manager: it generates ~/.bashrc, ~/.bash_profile and
-~/.profile. Other modules add their own lines (programs.bash.bashrcExtra for
-exports and PATH, programs.bash.initExtra for interactive setup).
+~/.profile. Other modules add to it:
+
+- paths and path-like variables: home.sessionPath, home.sessionVariables
+- aliases: programs.bash.shellAliases
+- functions, key bindings, integrations: programs.bash.initExtra
 
 */
 
 { lib, username, ... }:
 
 {
-  home-manager.users.${username} = {
+  home-manager.users.${username} = { config, ... }: {
+    # first in PATH, ahead of the other modules' entries
+    home.sessionPath = lib.mkBefore [ "$HOME/.local/bin" ];
+
     programs.bash = {
       enable = true;
 
@@ -22,23 +28,12 @@ exports and PATH, programs.bash.initExtra for interactive setup).
       # completion comes from the system (programs.bash.completion in modules/common)
       enableCompletion = false;
 
-      bashrcExtra = lib.mkMerge [
-        # before the other modules' bashrcExtra, which use prepend_path
-        (lib.mkBefore ''
-          prepend_path () {
-            case ":$PATH:" in
-              *:"$1":*)
-                ;;
-              *)
-                PATH="$1''${PATH:+:$PATH}"
-            esac
-          }
-        '')
-        # after them, so it ends up first in PATH
-        (lib.mkAfter ''
-          prepend_path "$HOME/.local/bin"
-        '')
-      ];
+      # home-manager only loads the session variables from ~/.profile (login
+      # shells); terminals on NixOS start non-login shells. The script guards
+      # itself, so this is a no-op when a login shell already ran it.
+      bashrcExtra = lib.mkBefore ''
+        source "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh"
+      '';
 
       initExtra = ''
         # Runs command and all arguments and resets cursor back to vertical bar

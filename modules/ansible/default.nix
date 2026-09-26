@@ -13,9 +13,7 @@ in
   environment.systemPackages = [ vault-pass ];
 
   home-manager.users.${username} = {
-    programs.bash.bashrcExtra = ''
-      export ANSIBLE_VAULT_PASSWORD_FILE=${vault-pass}/bin/personal-ansible-vault-pass
-    '';
+    home.sessionVariables.ANSIBLE_VAULT_PASSWORD_FILE = "${vault-pass}/bin/personal-ansible-vault-pass";
 
     home.file.".ansible.cfg".text = ''
       [defaults]

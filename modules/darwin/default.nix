@@ -45,6 +45,8 @@ Configuration for all macOS systems
   # global.brewfile, `brew bundle cleanup` compares against this configuration
   # (add --force to remove what it lists).
   homebrew.enable = true;
+  # `brew shellenv` (PATH, HOMEBREW_*) and Homebrew's completions in /etc/bashrc
+  homebrew.enableBashIntegration = true;
   homebrew.onActivation.cleanup = "none";
   homebrew.global.brewfile = true;
   homebrew.casks = [
@@ -111,17 +113,13 @@ Configuration for all macOS systems
   home-manager.users.${username} = {
     services.syncthing.enable = true;
 
-    programs.bash.bashrcExtra = ''
-      if [ -x /opt/homebrew/bin/brew ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-      fi
-
-      # Android Studio's SDK and its tools
-      export ANDROID_HOME="$HOME/Library/Android/sdk"
-      prepend_path "''${ANDROID_HOME}/cmdline-tools/latest/bin"
-      prepend_path "''${ANDROID_HOME}/build-tools/35.0.0-rc3/"
-      prepend_path "''${ANDROID_HOME}/platform-tools"
-      prepend_path "''${ANDROID_HOME}/emulator"
-    '';
+    # Android Studio's SDK and its tools
+    home.sessionVariables.ANDROID_HOME = "$HOME/Library/Android/sdk";
+    home.sessionPath = [
+      "$ANDROID_HOME/emulator"
+      "$ANDROID_HOME/platform-tools"
+      "$ANDROID_HOME/build-tools/35.0.0-rc3"
+      "$ANDROID_HOME/cmdline-tools/latest/bin"
+    ];
   };
 }

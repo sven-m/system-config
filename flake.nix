@@ -109,6 +109,8 @@
           unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
           # so the new set-environment runs on NixOS (NixOS's once-per-shell marker)
           unset __NIXOS_SET_ENVIRONMENT_DONE
+          # so the new .bashrc runs the new home.sessionVariables/sessionPath (home-manager's marker)
+          unset __HM_SESS_VARS_SOURCED
           # to get the new configuration's environment variables, and a PATH free of what nix develop added
           source ${cfg.system.build.setEnvironment}
           # to keep the new /etc/bashrc from sourcing the installed /etc/profile on NixOS

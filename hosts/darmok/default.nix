@@ -22,6 +22,7 @@ Configuration for darmok (macOS)
     ../../modules/lazygit
     ../../modules/ghostty
     ../../modules/ssh
+    ../../modules/1password
     ../../modules/nvim
     ../../modules/xcode
     ../../modules/android

@@ -47,8 +47,6 @@ Configuration for all macOS systems
   homebrew.onActivation.cleanup = "none";
   homebrew.global.brewfile = true;
   homebrew.casks = [
-    "1password-cli"
-    "1password"
     "apparency"
     "brave-browser"
     "caffeine"

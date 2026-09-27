@@ -29,6 +29,7 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     ../../modules/lazygit
     ../../modules/ghostty
     ../../modules/ssh
+    ../../modules/1password
     ../../modules/nvim
     ../../modules/ansible
     ../../modules/npm
@@ -153,11 +154,6 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-  };
 
   programs.steam = {
     enable = true;

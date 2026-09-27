@@ -7,6 +7,9 @@
   '';
 
   home-manager.users.${username} = {
+    # temporary: shows which shells load home-manager's session variables
+    home.sessionVariables.HM_SESSION_VARS_MARKER = "1";
+
     programs.bash = {
       enable = true;
 

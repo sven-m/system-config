@@ -96,11 +96,11 @@
         # Run by every shell in the dev shell. PATH keeps the installed system,
         # so dev packages can add and override but not remove.
         devBashrc = pkgs.writeText "dev-bashrc" ''
+          source ${cfg.system.build.setEnvironment}
           # set by dev-bash; /etc/bashrc returns early while it is set
           unset NOSYSBASHRC
           # set if this shell already read the installed /etc/bashrc
           unset __ETC_BASHRC_SOURCED
-          source ${cfg.system.build.setEnvironment}
           # stops NixOS's /etc/bashrc from sourcing the installed /etc/profile
           export __ETC_PROFILE_DONE=1
           source ${cfg.environment.etc.bashrc.source}

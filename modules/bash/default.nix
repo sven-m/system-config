@@ -6,9 +6,9 @@
     export PATH="$HOME/.local/bin:$PATH"
   '';
 
-  # temporary: shows which shells run /etc/bashrc's interactive part
+  # temporary, not exported: set only in shells that ran this themselves
   programs.bash.interactiveShellInit = ''
-    export BASH_INTERACTIVE_INIT_MARKER=1
+    BASH_INTERACTIVE_INIT_MARKER=1
   '';
 
   home-manager.users.${username} = {

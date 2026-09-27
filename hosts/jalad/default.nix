@@ -125,7 +125,6 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     gnome-remote-desktop
     spotify
     chromium
-    whatsapp-for-linux
   ];
 
   environment.shellAliases = {

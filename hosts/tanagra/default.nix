@@ -1,13 +1,3 @@
-/*
-
-Configuration for tanagra (macOS)
-
-- home directory
-- host packages and casks
-- Dock items
-
-*/
-
 { config, lib, pkgs, username, ... }:
 
 {

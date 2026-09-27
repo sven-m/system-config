@@ -1,9 +1,3 @@
-/*
-
-Ansible: vault password from 1Password
-
-*/
-
 { pkgs, username, ... }:
 
 let

@@ -1,9 +1,3 @@
-/*
-
-Ghostty config (the app itself: cask on macOS, host packages on Linux)
-
-*/
-
 { username, ... }:
 
 {

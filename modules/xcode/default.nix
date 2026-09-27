@@ -1,20 +1,7 @@
-/*
-
-Xcode / iOS development (macOS only)
-
-- Xcode and device tooling: xcodes, swiftformat, xcbeautify, libimobiledevice
-- xcode-build-server (Homebrew, not in nixpkgs) for sourcekit-lsp
-- xcodebuild.nvim plus the Swift parts of the Neovim config (./nvim)
-- Catppuccin Xcode themes
-- delete-derived-data
-
-*/
-
 { lib, pkgs, home-manager, username, ... }:
 
 let
-  # Every file under ./nvim as its own ~/.config/nvim/<path> entry, so these
-  # land next to the files modules/nvim links into the same directory.
+  # per file, next to the files modules/nvim links into ~/.config/nvim
   nvimFiles = lib.listToAttrs (map
     (file: {
       name = "nvim/${lib.removePrefix "${toString ./nvim}/" (toString file)}";

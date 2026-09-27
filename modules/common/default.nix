@@ -1,13 +1,3 @@
-/*
-
-Configuration for all systems (nixOS and macOS)
-
-- system-wide nix packages
-- shell: environment variables, shell aliases
-- home-manager defaults, bat
-
-*/
-
 { config, lib, pkgs, pkgs-unstable, home-manager, username, ... }:
 
 {
@@ -29,8 +19,7 @@ Configuration for all systems (nixOS and macOS)
     yamllint
   ];
 
-  # System-wide (root too). Personal shell setup goes through home-manager,
-  # in the module it belongs to.
+  # system-wide, so root gets them too
   environment.variables = {
     PAGER = "less";
     CLICOLOR = "1";
@@ -47,7 +36,7 @@ Configuration for all systems (nixOS and macOS)
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";
 
-    # eza plus its aliases (ls, ll, la, lt, lla), all with these options
+    # also aliases ls, ll, la, lt, lla
     programs.eza.enable = true;
     programs.eza.git = true;
     programs.eza.icons = "auto";

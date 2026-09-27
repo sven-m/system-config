@@ -1,8 +1,4 @@
-/*
-
-Hardware configuration for jalad. Update using nixos-generate-config if needed.
-
-*/
+# Update using nixos-generate-config if needed.
 
 { config, lib, pkgs, modulesPath, ... }:
 

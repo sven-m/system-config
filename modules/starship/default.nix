@@ -1,10 +1,3 @@
-/*
-
-Starship prompt, through home-manager: settings from ./starship.toml, prompt
-hook in ~/.bashrc (after the other init code)
-
-*/
-
 { username, ... }:
 
 {

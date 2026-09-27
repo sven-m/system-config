@@ -1,9 +1,3 @@
-/*
-
-lazygit
-
-*/
-
 { pkgs, username, ... }:
 
 {

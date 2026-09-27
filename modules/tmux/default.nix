@@ -1,16 +1,5 @@
-/*
-
-tmux, the session picker its create-session alias runs, and the git
-subcommand that both the picker and the status bar use for the branch name
-
-tmux comes from programs.tmux on both platforms. On macOS it matters:
-nix-darwin's wrapper clears the once-per-shell guards, so every pane re-runs
-nix-darwin's environment setup (a login shell runs path_helper, which would
-otherwise put /usr/bin in front of the Nix paths), and it only loads
-/etc/tmux.conf, which sources ours. On NixOS tmux loads ~/.config/tmux/tmux.conf
-itself, after /etc/tmux.conf.
-
-*/
+# programs.tmux on macOS: nix-darwin's wrapper makes each pane (a login shell,
+# where path_helper puts /usr/bin first) redo nix-darwin's environment setup
 
 { lib, pkgs, username, ... }:
 

@@ -1,9 +1,3 @@
-/*
-
-npm: global installs go to ~/.local
-
-*/
-
 { username, ... }:
 
 {

@@ -1,13 +1,3 @@
-/*
-
-git, git-lfs, diff-so-fancy and the shared git config
-
-The shared config includes, in order:
-- config.host: per host, written by the host module
-- ~/.config/git/config.local: uncommitted, e.g. the email address
-
-*/
-
 { pkgs, username, ... }:
 
 {

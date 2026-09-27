@@ -1,18 +1,3 @@
-/*
-
-Configuration for jalad (nixOS)
-
-- nix settings
-- boot loader
-- boot disk unlock through SSH
-- sleep disabled
-- users
-- ssh server
-- sudo
-- system-wide nix packages
-
-*/
-
 { config, lib, pkgs, username, home-manager, ... }:
 let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPNDocr90NU7RK5CQM8tZ3Go"; in
 {

@@ -1,14 +1,4 @@
-/*
-
-ssh client config, and the ~/.ssh/agent.sock link to the 1Password agent that
-it points IdentityAgent at
-
-System-wide, so root can use SSH to GitHub too (e.g. a git+ssh:// flake under
-sudo): root has no ~/.ssh/config of its own, so the system config sends it to
-the same agent for github.com, and GitHub's host key is known system-wide.
-Your own ~/.ssh/config is read first and wins.
-
-*/
+# System-wide config, so root can use the 1Password agent for GitHub too
 
 { config, pkgs, home-manager, username, ... }:
 
@@ -24,7 +14,7 @@ in
       IdentityAgent ${config.users.users.${username}.home}/.ssh/agent.sock
   '';
 
-  # SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU, as published by GitHub
+  # SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
   programs.ssh.knownHosts."github.com".publicKey =
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
 

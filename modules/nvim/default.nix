@@ -1,11 +1,4 @@
-/*
-
-Neovim: plugins, config and helper scripts
-
-Swift/Xcode support lives in modules/xcode, which adds its own plugin and
-files to ~/.config/nvim.
-
-*/
+# modules/xcode adds its own plugin and files to ~/.config/nvim
 
 { pkgs, username, ... }:
 
@@ -14,7 +7,7 @@ let
     (builtins.readFile ./vimwiki-diary-template);
 in
 {
-  # system-wide, so root (sudoedit, sudo -i) gets it too
+  # system-wide, so root (sudoedit) gets it too
   environment.variables.EDITOR = "nvim";
 
   home-manager.users.${username} = {
@@ -23,7 +16,7 @@ in
     programs.neovim.withRuby = true;
     programs.neovim.withPython3 = false;
 
-    # only on nvim's PATH, used by after/ftplugin/vimwiki.lua
+    # used by after/ftplugin/vimwiki.lua
     programs.neovim.extraPackages = [ vimwiki-diary-template ];
 
     programs.neovim.plugins = with pkgs.vimPlugins; [
@@ -65,7 +58,7 @@ in
       }
     '';
 
-    # each file under config/ linked individually into ~/.config/nvim/
+    # per file, so modules/xcode can add files to the same directory
     xdg.configFile."nvim" = {
       source = ./config;
       recursive = true;

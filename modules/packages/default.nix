@@ -1,9 +1,3 @@
-/*
-
-Extra tools for the full machines (not the temba VM)
-
-*/
-
 { pkgs, ... }:
 
 {

@@ -1,13 +1,3 @@
-/*
-
-Configuration for all macOS systems
-
-- Homebrew itself (nix-homebrew) and the shared casks
-- system-wide nix packages
-- macOS system settings
-
-*/
-
 { config, lib, pkgs, inputs, username, ... }:
 
 {
@@ -30,20 +20,16 @@ Configuration for all macOS systems
     xcp
   ];
 
-  # Installs and pins Homebrew itself. Taps are not declared, so formulae and
-  # casks still come from Homebrew's API.
+  # only Homebrew itself; formulae and casks still come from Homebrew's API
   nix-homebrew = {
     enable = true;
     user = username;
     autoMigrate = true; # take over a Homebrew that was installed by hand
   };
 
-  # A switch only installs what is missing and never uninstalls. With
-  # global.brewfile, `brew bundle cleanup` compares against this configuration
-  # (add --force to remove what it lists).
   homebrew.enable = true;
-  # `brew shellenv` (PATH, HOMEBREW_*) and Homebrew's completions in /etc/bashrc
   homebrew.enableBashIntegration = true;
+  # never uninstalls; `brew bundle cleanup` lists what is not declared here
   homebrew.onActivation.cleanup = "none";
   homebrew.global.brewfile = true;
   homebrew.casks = [

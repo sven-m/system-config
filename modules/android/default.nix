@@ -1,12 +1,3 @@
-/*
-
-Android development (macOS only)
-
-- Android Studio (Homebrew cask)
-- its SDK location and command-line tools in PATH
-
-*/
-
 { lib, ... }:
 
 let

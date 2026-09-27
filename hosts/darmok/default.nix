@@ -1,12 +1,3 @@
-/*
-
-Configuration for darmok (macOS)
-
-- host packages and casks
-- Dock items
-
-*/
-
 { config, lib, pkgs, pkgs-unstable, username, ... }:
 
 {

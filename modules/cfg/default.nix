@@ -1,15 +1,3 @@
-/*
-
-Working with this configuration
-
-- `cfg`: flake registry name for github:sven-m/system-config, so `cfg` and
-  `cfg/<branch>` (`cfg?ref=<branch>` when the branch has a slash) work in
-  any nix command
-- a bash key binding that puts a command on the prompt, cursor on the flake:
-    Ctrl-x s  switch this machine
-
-*/
-
 { lib, pkgs, username, ... }:
 
 let
@@ -22,8 +10,7 @@ let
   };
 in
 {
-  # `_cfg_prefill <text>` replaces the command line with <text>, cursor at the
-  # `@` (which is removed). The switch picks the configuration by hostname.
+  # Ctrl-x s puts the switch command on the prompt, cursor at the `@`
   home-manager.users.${username}.programs.bash.initExtra = ''
     _cfg_prefill() {
       local after_cursor="''${1#*@}"
@@ -33,10 +20,8 @@ in
     bind -x '"\C-xs": _cfg_prefill "sudo ${rebuild} switch --flake .@"'
   '';
 
-  # The system registry (/etc/nix/registry.json), so root sees `cfg` too:
-  # darwin-rebuild runs with root's HOME, which has no user registry. On macOS
-  # Nix is not managed by nix-darwin (Determinate), so the file is written
-  # directly.
+  # System registry, as darwin-rebuild runs with root's HOME. Written directly
+  # on macOS, where Determinate Nix disables nix-darwin's nix.* options.
   nix.registry = lib.mkIf pkgs.stdenv.isLinux {
     cfg.to = cfgFlake;
   };

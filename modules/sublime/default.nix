@@ -1,9 +1,3 @@
-/*
-
-Sublime Text settings (macOS only; the app is a cask)
-
-*/
-
 { username, ... }:
 
 {

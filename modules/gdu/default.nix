@@ -1,9 +1,3 @@
-/*
-
-gdu, disk usage analyzer
-
-*/
-
 { pkgs-unstable, username, ... }:
 
 {

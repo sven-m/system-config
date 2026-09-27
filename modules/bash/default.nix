@@ -6,6 +6,11 @@
     export PATH="$HOME/.local/bin:$PATH"
   '';
 
+  # temporary: shows which shells run /etc/bashrc's interactive part
+  programs.bash.interactiveShellInit = ''
+    export BASH_INTERACTIVE_INIT_MARKER=1
+  '';
+
   home-manager.users.${username} = {
     # temporary: shows which shells load home-manager's session variables
     home.sessionVariables.HM_SESSION_VARS_MARKER = "1";

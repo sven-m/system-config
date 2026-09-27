@@ -5,25 +5,38 @@ temba (NixOS), with home-manager for the dotfiles.
 
 ## Install
 
-1. Install the flake from GitHub. Pick the configuration by name
-   (`darmok`, `tanagra`, `jalad`, `temba`). The build runs as you, so your
-   SSH agent can fetch the private repository; `sudo` only activates it.
+1. Switch to the flake from GitHub. Pick the configuration by name
+   (`darmok`, `tanagra`, `jalad`, `temba`).
 
-   macOS:
+   Root does the fetch but has no access to the private repository yet, so
+   hand it your SSH agent (`SSH_AUTH_SOCK`) and your `known_hosts` for this
+   one command.
+
+   macOS (1Password's agent):
    ```sh
-   nix build 'git+ssh://git@github.com/sven-m/system-config#darwinConfigurations.darmok.system'
-   sudo nix-env -p /nix/var/nix/profiles/system --set ./result
-   sudo ./result/activate
+   sudo env \
+     SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" \
+     GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+     nix run nix-darwin -- switch --flake 'git+ssh://git@github.com/sven-m/system-config#darmok'
    ```
 
-   NixOS:
+   NixOS (the agent in your current `SSH_AUTH_SOCK`):
    ```sh
-   nix build 'git+ssh://git@github.com/sven-m/system-config#nixosConfigurations.jalad.config.system.build.toplevel'
-   sudo nix-env -p /nix/var/nix/profiles/system --set ./result
-   sudo ./result/bin/switch-to-configuration switch
+   sudo env \
+     SSH_AUTH_SOCK="$SSH_AUTH_SOCK" \
+     GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+     nixos-rebuild switch --flake 'git+ssh://git@github.com/sven-m/system-config#jalad'
    ```
 
-   For a branch, add `?ref=<branch>` before the `#`.
+   With a key file instead of an agent, leave out `SSH_AUTH_SOCK` and add
+   `-i $HOME/.ssh/<key>` to `GIT_SSH_COMMAND`. For a branch, add
+   `?ref=<branch>` before the `#`.
+
+   After this, root reaches GitHub through your agent on its own
+   (`modules/ssh`):
+   ```sh
+   sudo darwin-rebuild switch --flake cfg    # or nixos-rebuild
+   ```
 
 ## Development
 

@@ -2,8 +2,9 @@
 
 Working with this configuration
 
-- `cfg`: flake registry name for the repository on GitHub, so `cfg` and
-  `cfg/<branch>` work in any nix command
+- `cfg`: flake registry name for github:sven-m/system-config, so `cfg` and
+  `cfg/<branch>` (`cfg?ref=<branch>` when the branch has a slash) work in
+  any nix command
 - a bash key binding that puts a command on the prompt, cursor on the flake:
     Ctrl-x s  switch this machine
 
@@ -15,14 +16,14 @@ let
   rebuild = if pkgs.stdenv.isDarwin then "darwin-rebuild" else "nixos-rebuild";
 
   cfgFlake = {
-    type = "git";
-    url = "ssh://git@github.com/sven-m/system-config";
+    type = "github";
+    owner = "sven-m";
+    repo = "system-config";
   };
 in
 {
   # `_cfg_prefill <text>` replaces the command line with <text>, cursor at the
-  # `@` (which is removed). The switch picks the configuration by hostname;
-  # root can fetch `cfg` through your SSH agent (see modules/ssh).
+  # `@` (which is removed). The switch picks the configuration by hostname.
   home-manager.users.${username}.programs.bash.initExtra = ''
     _cfg_prefill() {
       local after_cursor="''${1#*@}"

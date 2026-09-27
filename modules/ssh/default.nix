@@ -3,10 +3,10 @@
 ssh client config, and the ~/.ssh/agent.sock link to the 1Password agent that
 it points IdentityAgent at
 
-System-wide, for root: `sudo darwin-rebuild switch --flake cfg` makes root
-fetch the private repository over SSH. Root has no ~/.ssh/config of its own,
-so the system config sends it to the same agent for github.com, and GitHub's
-host key is known system-wide. Your own ~/.ssh/config is read first and wins.
+System-wide, so root can use SSH to GitHub too (e.g. a git+ssh:// flake under
+sudo): root has no ~/.ssh/config of its own, so the system config sends it to
+the same agent for github.com, and GitHub's host key is known system-wide.
+Your own ~/.ssh/config is read first and wins.
 
 */
 

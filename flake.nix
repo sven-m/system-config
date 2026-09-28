@@ -146,19 +146,19 @@
       };
   in
   {
-    darwinConfigurations.darmok = mkDarwin "darmok" darwin-pkgs darwin-pkgs-unstable;
+    darwinConfigurations.sven-mbp = mkDarwin "sven-mbp" darwin-pkgs darwin-pkgs-unstable;
     darwinConfigurations.tanagra = mkDarwin "tanagra" darwin-pkgs darwin-pkgs-unstable;
-    nixosConfigurations.jalad = mkNixos "jalad" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
+    nixosConfigurations.archibald = mkNixos "archibald" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
     nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
     devShells.${darwin64-system} = rec {
-      darmok = mkDevShell "darmok" darwin-pkgs self.darwinConfigurations.darmok;
+      sven-mbp = mkDevShell "sven-mbp" darwin-pkgs self.darwinConfigurations.sven-mbp;
       tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
-      default = darmok;
+      default = sven-mbp;
     };
     devShells.${linux-x86_64-system} = rec {
-      jalad = mkDevShell "jalad" linux-pkgs self.nixosConfigurations.jalad;
-      default = jalad;
+      archibald = mkDevShell "archibald" linux-pkgs self.nixosConfigurations.archibald;
+      default = archibald;
     };
     devShells.${linux-aarch64-system} = rec {
       temba = mkDevShell "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;

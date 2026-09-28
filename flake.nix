@@ -122,6 +122,7 @@
           # home-manager's starship module points login shells at the installed one
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
           # tmux panes start $SHELL, which nix develop set to its minimal bash
+          # (no readline or `complete`)
           export SHELL=${dev-bash}/bin/dev-bash
           # Allows `source ''${cfg.environment.etc.bashrc.source}` as part of devBashrc
           # to do its work, in case nix develop's bash already read the installed one

@@ -112,10 +112,11 @@
         # for the prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
         shellHook = ''
+          # Set built config's env vars and PATH
           source ${cfg.system.build.setEnvironment}
+          # setEnvironment above sets a PATH referring to the installed config, so
+          # we prepend the built config's PATH to give its packages precedence
           export PATH="${devPath}:$PATH"
-          # stops NixOS's /etc/bashrc from sourcing the installed /etc/profile
-          export __ETC_PROFILE_DONE=1
           export XDG_CONFIG_HOME=${homeFiles}/.config
           # home-manager's starship module points login shells at the installed one
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
@@ -123,6 +124,8 @@
           export SHELL=${dev-bash}/bin/dev-bash
           # set if nix develop's bash already read the installed /etc/bashrc
           unset __ETC_BASHRC_SOURCED
+          # Suppress NixOS default behavior of sourcing /etc/profile as part of /etc/bashrc.
+          export __ETC_PROFILE_DONE=1
           source ${devBashrc}
         '';
       };

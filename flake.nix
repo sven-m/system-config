@@ -156,16 +156,5 @@
       temba = mkDevShell "temba" linux-aarch64-pkgs self.nixosConfigurations.temba;
       default = temba;
     };
-
-    packages.${darwin64-system} = with darwin-pkgs; {
-      inherit git;
-      inherit dockutil;
-    };
-    packages.${linux-x86_64-system} = with linux-pkgs; {
-      inherit git;
-    };
-    packages.${linux-aarch64-system} = with linux-aarch64-pkgs; {
-      inherit git;
-    };
   };
 }

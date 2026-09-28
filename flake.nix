@@ -122,7 +122,8 @@
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
           # tmux panes start $SHELL, which nix develop set to its minimal bash
           export SHELL=${dev-bash}/bin/dev-bash
-          # set if nix develop's bash already read the installed /etc/bashrc
+          # Allows dev-bashrc's source of the built config's /etc/bashrc below to do
+          # its work, in case nix develop's bash already read the installed one
           unset __ETC_BASHRC_SOURCED
           # Suppress NixOS default behavior of sourcing /etc/profile as part of /etc/bashrc.
           export __ETC_PROFILE_DONE=1

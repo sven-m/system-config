@@ -1,0 +1,21 @@
+format = "${env_var.CFG_DEV_SHELL}$directory$username$status"
+add_newline = false
+
+# Status module: shows previous command status
+[status]
+style = "bold fg:red"            # used when status != 0
+success_style = "bold fg:green"
+success_symbol = "➜"             # text symbol when success
+symbol = "➜"                     # text symbol when failure (same arrow, different color)
+disabled = false
+format = "[$symbol ]($style)"   # how the status segment is rendered
+
+[username]
+format = "[$user]($style) "
+style_root = "bold red"
+show_always = false
+
+# Only set inside the dev shell (nix develop .#<name>): shows e.g. (tanagra)
+[env_var.CFG_DEV_SHELL]
+format = '[\($env_value\)]($style) '
+style = "bold blue"

@@ -91,7 +91,15 @@
           exec ${pkgs.tmux}/bin/tmux -L dev -f ${homeFiles}/.config/tmux/tmux.conf "$@"
         '';
 
-        devPath = pkgs.lib.makeBinPath [ tmux-dev cfg.system.path hm.home.path ];
+        # home-manager links plugins into ~/.local/share/nvim/site rather than
+        # the wrapper, so nvim would load the installed generation's plugins
+        nvim-dev = pkgs.writeShellScriptBin "nvim" ''
+          exec ${hm.programs.neovim.finalPackage}/bin/nvim --cmd ${pkgs.lib.escapeShellArg ''
+            lua vim.opt.packpath:remove(vim.fn.stdpath("data") .. "/site"); vim.opt.packpath:prepend("${homeFiles}/.local/share/nvim/site")
+          ''} "$@"
+        '';
+
+        devPath = pkgs.lib.makeBinPath [ tmux-dev nvim-dev cfg.system.path hm.home.path ];
 
         # Interactive initialisation script for each shell:
         # - We unset NOSYSBASHRC because dev-bash sets it

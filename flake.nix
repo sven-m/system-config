@@ -102,7 +102,7 @@
           source ${homeFiles}/.bashrc
         '';
 
-        # Custom invokation of bash:
+        # Custom invocation of bash:
         # - Suppress installed /etc/bashrc by setting NOSYSBASHRC
         # - Pass custom interactive initialisation script (above)
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
@@ -116,7 +116,7 @@
           # Apply built config's environment
           source ${cfg.system.build.setEnvironment}
 
-          # Override $PATH with devPath, because built environment refers to
+          # Prepend devPath to $PATH, because built environment refers to
           # installed profile
           export PATH="${devPath}:$PATH"
 
@@ -124,9 +124,9 @@
           export XDG_CONFIG_HOME=${homeFiles}/.config
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
 
-          # Customise invokation of bash to use custom initialisation scripts
-          # and to use bash which has readline+complete (nix develop's bash
-          # lacks this)
+          # Customise invocation of bash to use custom initialisation scripts
+          # and to use bash which has readline+complete (the original $SHELL
+          # lacks readline+complete)
           export SHELL=${dev-bash}/bin/dev-bash
 
           # Unset, so that cfg.environment.etc.bashrc.source can do its work

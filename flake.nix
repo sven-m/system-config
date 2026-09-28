@@ -100,8 +100,6 @@
           # early while it is set
           unset NOSYSBASHRC
           source ${cfg.environment.etc.bashrc.source}
-          # again after /etc/bashrc, whose `brew shellenv` prepends Homebrew
-          export PATH="${devPath}:$PATH"
           source ${homeFiles}/.bashrc
         '';
 
@@ -115,6 +113,7 @@
         CFG_DEV_SHELL = name;
         shellHook = ''
           source ${cfg.system.build.setEnvironment}
+          export PATH="${devPath}:$PATH"
           # stops NixOS's /etc/bashrc from sourcing the installed /etc/profile
           export __ETC_PROFILE_DONE=1
           export XDG_CONFIG_HOME=${homeFiles}/.config

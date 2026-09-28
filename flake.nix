@@ -93,19 +93,19 @@
 
         devPath = pkgs.lib.makeBinPath [ tmux-dev cfg.system.path hm.home.path ];
 
-        # Run by every shell in the dev shell, for what child shells do not
-        # inherit. The environment is set up once, in shellHook.
+        # Interactive initialisation script for each shell:
+        # - We unset NOSYSBASHRC because dev-bash sets it
+        # - We source the built config's /etc/bashrc and ~/.bashrc
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          # after installed /etc/bashrc has been skipped using NOSYSBASHRC, unset it
-          # so the newly built /etc/bashrc can do its work
           unset NOSYSBASHRC
           source ${cfg.environment.etc.bashrc.source}
           source ${homeFiles}/.bashrc
         '';
 
+        # Custom invokation of bash:
+        # - Suppress installed /etc/bashrc by setting NOSYSBASHRC
+        # - Pass custom interactive initialisation script (above)
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
-          # pass NOSYSBASHRC to skip installed /etc/bashrc and pass a custom
-          # interactive initialisation script
           NOSYSBASHRC=1 exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
         '';
       in pkgs.mkShellNoCC {
@@ -113,19 +113,23 @@
         # for the prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
         shellHook = ''
-          # Set built config's env vars and PATH
+          # Apply built config's environment
           source ${cfg.system.build.setEnvironment}
-          # setEnvironment above sets a PATH referring to the installed config, so
-          # we prepend the built config's PATH to give its packages precedence
+
+          # Override $PATH with devPath, because built environment refers to
+          # installed profile
           export PATH="${devPath}:$PATH"
+
+          # Override XDG, Starship configuration
           export XDG_CONFIG_HOME=${homeFiles}/.config
-          # home-manager's starship module points login shells at the installed one
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
-          # tmux panes start $SHELL, which nix develop set to its minimal bash
-          # (no readline or `complete`)
+
+          # Customise invokation of bash to use custom initialisation scripts
+          # and to use bash which has readline+complete (nix develop's bash
+          # lacks this)
           export SHELL=${dev-bash}/bin/dev-bash
-          # Allows `source ''${cfg.environment.etc.bashrc.source}` as part of devBashrc
-          # to do its work, in case nix develop's bash already read the installed one
+
+          # Unset, so that cfg.environment.etc.bashrc.source can do its work
           unset __ETC_BASHRC_SOURCED
           # Suppress NixOS default behavior of sourcing /etc/profile as part of /etc/bashrc.
           export __ETC_PROFILE_DONE=1

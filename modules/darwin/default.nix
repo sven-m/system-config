@@ -8,7 +8,13 @@
   system.stateVersion = 4;
   system.primaryUser = username;
 
-  nix.enable = false; # using determinate systems nix
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.trusted-users = [ username ];
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 30d";
+  };
 
   environment.systemPackages = with pkgs; [
     aria2

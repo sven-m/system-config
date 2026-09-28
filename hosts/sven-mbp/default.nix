@@ -88,7 +88,7 @@
     "/System/Applications/Apps.app"
     "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
     "/Applications/Ghostty.app"
-    "/Applications/Xcode-26.5.0.app"
+    "/Applications/Xcode-27.0.0.app"
     "/Applications/Nix Apps/WinBox.app"
     "/Applications/Claude.app"
     "/System/Applications/App Store.app"

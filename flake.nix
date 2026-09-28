@@ -93,22 +93,16 @@
 
         devPath = pkgs.lib.makeBinPath [ tmux-dev cfg.system.path hm.home.path ];
 
-        # Run by every shell in the dev shell. PATH keeps the installed system,
-        # so dev packages can add and override but not remove.
+        # Run by every shell in the dev shell, for what child shells do not
+        # inherit. The environment is set up once, in shellHook.
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          source ${cfg.system.build.setEnvironment}
-          # Ensures /etc/bashrc runs its interactive setup instead of returning
-          # early (dev-bash's NOSYSBASHRC, or the installed /etc/bashrc already read
-          # by this shell). Prevents NixOS's /etc/bashrc from sourcing the installed
-          # /etc/profile, which would redo the installed environment over the above.
+          # set by dev-bash to skip the installed /etc/bashrc; the new one returns
+          # early while it is set
           unset NOSYSBASHRC
-          unset __ETC_BASHRC_SOURCED
-          export __ETC_PROFILE_DONE=1
           source ${cfg.environment.etc.bashrc.source}
+          # again after /etc/bashrc, whose `brew shellenv` prepends Homebrew
           export PATH="${devPath}:$PATH"
           source ${homeFiles}/.bashrc
-          # home-manager's starship module points login shells at the installed one
-          export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
         '';
 
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
@@ -120,9 +114,16 @@
         # for the prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
         shellHook = ''
+          source ${cfg.system.build.setEnvironment}
+          # stops NixOS's /etc/bashrc from sourcing the installed /etc/profile
+          export __ETC_PROFILE_DONE=1
           export XDG_CONFIG_HOME=${homeFiles}/.config
+          # home-manager's starship module points login shells at the installed one
+          export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
           # tmux panes start $SHELL, which nix develop set to its minimal bash
           export SHELL=${dev-bash}/bin/dev-bash
+          # set if nix develop's bash already read the installed /etc/bashrc
+          unset __ETC_BASHRC_SOURCED
           source ${devBashrc}
         '';
       };

@@ -96,15 +96,16 @@
         # Run by every shell in the dev shell, for what child shells do not
         # inherit. The environment is set up once, in shellHook.
         devBashrc = pkgs.writeText "dev-bashrc" ''
-          # set by dev-bash to skip the installed /etc/bashrc; the new one returns
-          # early while it is set
+          # after installed /etc/bashrc has been skipped using NOSYSBASHRC, unset it
+          # so the newly built /etc/bashrc can do its work
           unset NOSYSBASHRC
           source ${cfg.environment.etc.bashrc.source}
           source ${homeFiles}/.bashrc
         '';
 
         dev-bash = pkgs.writeShellScriptBin "dev-bash" ''
-          # nix develop's bash lacks readline and `complete`
+          # pass NOSYSBASHRC to skip installed /etc/bashrc and pass a custom
+          # interactive initialisation script
           NOSYSBASHRC=1 exec ${pkgs.bashInteractive}/bin/bash --rcfile ${devBashrc} "$@"
         '';
       in pkgs.mkShellNoCC {

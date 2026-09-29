@@ -5,7 +5,7 @@
     inputs.nix-homebrew.darwinModules.nix-homebrew
   ];
 
-  system.stateVersion = 4;
+  system.stateVersion = 7;
   system.primaryUser = username;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

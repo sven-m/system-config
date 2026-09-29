@@ -17,12 +17,19 @@
   };
 
   environment.systemPackages = with pkgs; [
+    apparency
     aria2
     betterdisplay
     bundler
+    caffeine
     container
+    daisydisk
+    ghostty-bin
+    google-chrome
     mas
     rustup
+    spotify
+    wireshark
     xcp
   ];
 
@@ -39,21 +46,12 @@
   homebrew.onActivation.cleanup = "none";
   homebrew.global.brewfile = true;
   homebrew.casks = [
-    "apparency"
-    "brave-browser"
-    "caffeine"
-    "charles"
-    "daisydisk"
-    "ghostty"
-    "google-chrome"
     "leader-key"
     "mac-mouse-fix"
     "proxyman"
-    "spotify"
     "sublime-text"
     "transmit"
     "tuna"
-    "wireshark-app"
   ];
 
   # App Store apps are installed by hand, not through homebrew.masApps

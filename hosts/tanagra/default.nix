@@ -29,6 +29,7 @@
     pkgs.typescript
     pkgs.jetbrains.idea
     pkgs.lynx
+    pkgs.zoom-us
   ];
 
   environment.shellAliases = {
@@ -37,7 +38,6 @@
 
   homebrew.casks = [
     "github-copilot-for-xcode"
-    "zoom"
   ];
 
   # App Store apps are installed by hand, not through homebrew.masApps
@@ -45,8 +45,7 @@
 
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Apps.app"
-    "/Applications/Brave Browser.app"
-    "/Applications/Ghostty.app"
+    "/Applications/Nix Apps/Ghostty.app"
     "/Applications/Xcode-27.0.0.app"
     "/Applications/Slack.app"
     "/System/Applications/App Store.app"

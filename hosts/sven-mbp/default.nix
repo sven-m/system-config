@@ -35,7 +35,6 @@
     pkgs.ghidra
     pkgs.gnupg
     pkgs.libssh
-    pkgs.obsidian
     pkgs.ollama
     pkgs.openssh
     pkgs.pass

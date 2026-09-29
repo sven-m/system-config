@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, username, ... }:
+{ config, lib, pkgs, pkgs-unstable, inputs, username, ... }:
 
 {
   imports = [
@@ -23,7 +23,8 @@
     bundler
     caffeine
     container
-    daisydisk
+    # its unversioned download URL breaks the pinned hash on every release
+    pkgs-unstable.daisydisk
     ghostty-bin
     google-chrome
     mas

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, inputs, username, ... }:
+{ config, lib, pkgs, inputs, username, ... }:
 
 {
   imports = [
@@ -23,8 +23,6 @@
     bundler
     caffeine
     container
-    # its unversioned download URL breaks the pinned hash on every release
-    pkgs-unstable.daisydisk
     ghostty-bin
     google-chrome
     mas
@@ -47,6 +45,7 @@
   homebrew.onActivation.cleanup = "none";
   homebrew.global.brewfile = true;
   homebrew.casks = [
+    "daisydisk"
     "leader-key"
     "mac-mouse-fix"
     "proxyman"

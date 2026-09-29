@@ -20,15 +20,6 @@ in
     bind -x '"\C-xs": _cfg_prefill "sudo ${rebuild} switch --flake .@"'
   '';
 
-  # System registry, as darwin-rebuild runs with root's HOME. Written directly
-  # on macOS, where Determinate Nix disables nix-darwin's nix.* options.
-  nix.registry = lib.mkIf pkgs.stdenv.isLinux {
-    cfg.to = cfgFlake;
-  };
-  environment.etc = lib.mkIf pkgs.stdenv.isDarwin {
-    "nix/registry.json".text = builtins.toJSON {
-      version = 2;
-      flakes = [ { from = { type = "indirect"; id = "cfg"; }; to = cfgFlake; } ];
-    };
-  };
+  # System registry, as darwin-rebuild runs with root's HOME
+  nix.registry.cfg.to = cfgFlake;
 }

@@ -43,8 +43,8 @@ in
           src = pkgs.fetchFromGitHub {
             owner = "wojciech-kulik";
             repo = "xcodebuild.nvim";
-            rev = "633eb71c0b354581837025581b7261dbe5361226";
-            hash = "sha256-8Ooyiq9ECBTr3o2hn6cPesA8YZ2hmcCBWAVL3FciBRU=";
+            rev = "45cd4a8daabcc1c4716388fadc036e06732756bd";
+            hash = "sha256-UZWEvsiKRduICDVWb9+XWu9uU6inNNoIJ6Az46rvM7Y=";
           };
         }
       )

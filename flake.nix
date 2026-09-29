@@ -147,13 +147,11 @@
   in
   {
     darwinConfigurations.sven-mbp = mkDarwin "sven-mbp" darwin-pkgs darwin-pkgs-unstable;
-    darwinConfigurations.tanagra = mkDarwin "tanagra" darwin-pkgs darwin-pkgs-unstable;
     nixosConfigurations.archibald = mkNixos "archibald" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
     nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
     devShells.${darwin64-system} = rec {
       sven-mbp = mkDevShell "sven-mbp" darwin-pkgs self.darwinConfigurations.sven-mbp;
-      tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
       default = sven-mbp;
     };
     devShells.${linux-x86_64-system} = rec {

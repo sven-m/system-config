@@ -86,15 +86,17 @@
         hm = cfg.home-manager.users.${username};
         homeFiles = hm.home-files;
 
-        # without -f, tmux also loads ~/.config/tmux/tmux.conf, which then wins
+        # without -f, tmux also loads ~/.config/tmux/tmux.conf, which then wins;
+        # SHELL here, as nix develop resets it after shellHook and the tmux
+        # server picks its default-shell from it
         tmux-dev = pkgs.writeShellScriptBin "tmux" ''
-          exec ${pkgs.tmux}/bin/tmux -L dev -f ${homeFiles}/.config/tmux/tmux.conf "$@"
+          SHELL=${dev-bash}/bin/dev-bash exec ${pkgs.tmux}/bin/tmux -L dev -f ${homeFiles}/.config/tmux/tmux.conf "$@"
         '';
 
         # home-manager links plugins into ~/.local/share/nvim/site rather than
         # the wrapper, so nvim would load the installed generation's plugins
         nvim-dev = pkgs.writeShellScriptBin "nvim" ''
-          exec ${hm.programs.neovim.finalPackage}/bin/nvim --cmd ${pkgs.lib.escapeShellArg ''
+          SHELL=${dev-bash}/bin/dev-bash exec ${hm.programs.neovim.finalPackage}/bin/nvim --cmd ${pkgs.lib.escapeShellArg ''
             lua vim.opt.packpath:remove(vim.fn.stdpath("data") .. "/site"); vim.opt.packpath:prepend("${homeFiles}/.local/share/nvim/site")
           ''} "$@"
         '';
@@ -132,11 +134,6 @@
           export XDG_CONFIG_HOME=${homeFiles}/.config
           export STARSHIP_CONFIG=${homeFiles}/.config/starship.toml
 
-          # Customise invocation of bash to use custom initialisation scripts
-          # and to use bash which has readline+complete (the original $SHELL
-          # lacks readline+complete)
-          export SHELL=${dev-bash}/bin/dev-bash
-
           # Unset, so that cfg.environment.etc.bashrc.source can do its work
           unset __ETC_BASHRC_SOURCED
           # Suppress NixOS default behavior of sourcing /etc/profile as part of /etc/bashrc.
@@ -147,13 +144,11 @@
   in
   {
     darwinConfigurations.sven-mbp = mkDarwin "sven-mbp" darwin-pkgs darwin-pkgs-unstable;
-    darwinConfigurations.tanagra = mkDarwin "tanagra" darwin-pkgs darwin-pkgs-unstable;
     nixosConfigurations.archibald = mkNixos "archibald" linux-pkgs linux-pkgs-unstable [ disko.nixosModules.disko ];
     nixosConfigurations.temba = mkNixos "temba" linux-aarch64-pkgs linux-aarch64-pkgs-unstable [ ];
 
     devShells.${darwin64-system} = rec {
       sven-mbp = mkDevShell "sven-mbp" darwin-pkgs self.darwinConfigurations.sven-mbp;
-      tanagra = mkDevShell "tanagra" darwin-pkgs self.darwinConfigurations.tanagra;
       default = sven-mbp;
     };
     devShells.${linux-x86_64-system} = rec {

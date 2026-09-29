@@ -38,7 +38,12 @@
     pkgs.ollama
     pkgs.openssh
     pkgs.pass
+    pkgs.proton-pass
+    pkgs.protonmail-bridge
+    pkgs.protonmail-desktop
     pkgs.supabase-cli
+    pkgs.utm
+    pkgs.vagrant
     pkgs.winbox4
   ];
 
@@ -57,14 +62,8 @@
     "ios-app-signer"
     "nextcloud-vfs"
     "nordvpn"
-    "obsidian"
-    "proton-mail-bridge"
-    "proton-mail"
-    "proton-pass"
     "raspberry-pi-imager"
     "tuna"
-    "utm"
-    "vagrant"
     "vivaldi"
   ];
 
@@ -87,7 +86,7 @@
   system.defaults.dock.persistent-apps = [
     "/System/Applications/Apps.app"
     "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"
-    "/Applications/Ghostty.app"
+    "/Applications/Nix Apps/Ghostty.app"
     "/Applications/Xcode-27.0.0.app"
     "/Applications/Nix Apps/WinBox.app"
     "/Applications/Claude.app"

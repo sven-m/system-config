@@ -15,7 +15,7 @@ format = "[$user]($style) "
 style_root = "bold red"
 show_always = false
 
-# Only set inside the dev shell (nix develop .#<name>): shows e.g. (tanagra)
+# Only set inside the dev shell (nix develop .#<name>): shows e.g. (sven-mbp)
 [env_var.CFG_DEV_SHELL]
 format = '[\($env_value\)]($style) '
 style = "bold blue"

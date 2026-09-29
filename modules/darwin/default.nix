@@ -46,7 +46,6 @@
   homebrew.global.brewfile = true;
   homebrew.casks = [
     "daisydisk"
-    "leader-key"
     "mac-mouse-fix"
     "proxyman"
     "sublime-text"

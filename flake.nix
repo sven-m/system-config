@@ -122,11 +122,9 @@
         inherit name;
         # for the prompt; nix develop turns `name` into <name>-env
         CFG_DEV_SHELL = name;
-        CFG_DEV_SET_ENVIRONMENT = "${cfg.system.build.setEnvironment}";
         shellHook = ''
           # Apply built config's environment
-          echo "dev shell: sourcing $CFG_DEV_SET_ENVIRONMENT" >&2
-          source "$CFG_DEV_SET_ENVIRONMENT"
+          source ${cfg.system.build.setEnvironment}
 
           # Prepend devPath to $PATH, because built environment refers to
           # installed profile

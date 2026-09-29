@@ -39,7 +39,6 @@
     pkgs.openssh
     pkgs.pass
     pkgs.proton-pass
-    pkgs.protonmail-bridge
     pkgs.protonmail-desktop
     pkgs.supabase-cli
     pkgs.utm
@@ -57,11 +56,12 @@
     "docker-desktop"
     "electrum"
     "google-drive"
-    "ledger-wallet"
     "iloader"
     "ios-app-signer"
+    "ledger-wallet"
     "nextcloud-vfs"
     "nordvpn"
+    "proton-mail-bridge"
     "raspberry-pi-imager"
     "tuna"
     "vivaldi"

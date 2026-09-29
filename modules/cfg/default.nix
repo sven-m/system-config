@@ -22,4 +22,6 @@ in
 
   # System registry, as darwin-rebuild runs with root's HOME
   nix.registry.cfg.to = cfgFlake;
+  # otherwise `cfg?ref=<branch>` doesn't match this entry
+  nix.registry.cfg.exact = false;
 }

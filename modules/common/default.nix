@@ -31,7 +31,7 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = false;
   home-manager.users.${username} = {
-    home.stateVersion = "23.11";
+    home.stateVersion = "26.05";
 
     programs.bat.enable = true;
     programs.bat.config.theme = "TwoDark";

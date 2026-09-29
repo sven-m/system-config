@@ -27,7 +27,12 @@ in
       [[ $COMP_CWORD -eq 1 ]] || return
       local branches
       branches=$(git ls-remote --heads https://github.com/${cfgFlake.owner}/${cfgFlake.repo} 2>/dev/null | sed 's|.*refs/heads/||')
-      COMPREPLY=($(compgen -W "$branches" -- "''${COMP_WORDS[1]}"))
+      # fzf's documented helper; only on its trigger so plain Tab stays non-interactive
+      if [[ ''${COMP_WORDS[1]} == *"''${FZF_COMPLETION_TRIGGER-**}" ]] && declare -F _fzf_complete >/dev/null; then
+        _fzf_complete --prompt="branch> " -- "$@" <<<"$branches"
+      else
+        COMPREPLY=($(compgen -W "$branches" -- "''${COMP_WORDS[1]}"))
+      fi
     }
     complete -F _cfg_develop cfg-develop
   '';

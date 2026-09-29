@@ -30,19 +30,25 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
 
   boot.initrd = {
     availableKernelModules = [ "r8169" ];
+    systemd.network = {
+      enable = true;
+      networks."10-ether" = {
+        matchConfig.Type = "ether";
+        DHCP = "yes";
+      };
+    };
     network = {
       enable = true;
-      udhcpc.enable = true;
       flushBeforeStage2 = true;
       ssh = {
         enable = true;
         port = 22;
-        authorizedKeys = [ sven-mbp-key ];
+        # Login triggers the LUKS password prompt and continues boot.
+        authorizedKeys = [ ''command="systemctl default" ${sven-mbp-key}'' ];
         hostKeys = [
           "/etc/ssh/ssh_host_ed25519_key"
           "/etc/ssh/ssh_host_rsa_key"
         ];
-        shell = "/bin/cryptsetup-askpass";
       };
     };
   };

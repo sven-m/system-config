@@ -36,3 +36,4 @@ vim.opt.path:append("*/.config/**")
 vim.o.wildmode = "longest:full,full"
 vim.opt.wildoptions:append("fuzzy")
 vim.opt.wildignore:append("build/*")
+vim.opt.grepprg = "rg --vimgrep --hidden --glob=!.git"

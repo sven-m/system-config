@@ -48,7 +48,6 @@
     "daisydisk"
     "mac-mouse-fix"
     "proxyman"
-    "sublime-text"
     "transmit"
     "tuna"
   ];

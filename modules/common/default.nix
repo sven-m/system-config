@@ -34,7 +34,9 @@
     home.stateVersion = "26.05";
 
     programs.bat.enable = true;
-    programs.bat.config.theme = "TwoDark";
+    programs.bat.config.theme-light = "ansi";
+    programs.bat.config.theme-dark = "Catppuccin Mocha";
+    programs.bat.config.theme = lib.mkIf pkgs.stdenv.isDarwin "auto:system";
 
     # also aliases ls, ll, la, lt, lla
     programs.eza.enable = true;

@@ -13,7 +13,19 @@ local bufnr_component = {
 
 require("lualine").setup({
   options = {
-    theme = "adwaita-mocha", -- lua/lualine/themes/adwaita-mocha.lua
+    -- lualine re-runs this on ColorScheme and background changes
+    theme = function()
+      if vim.o.background == "light" then return "adwaita" end
+      -- auto prefers a theme named after vim.g.colors_name (catppuccin-mocha's
+      -- blue one, should catppuccin be loaded directly); hide the name so it
+      -- generates one from the highlight groups
+      local colors_name = vim.g.colors_name
+      vim.g.colors_name = nil
+      local ok, theme = pcall(dofile, vim.api.nvim_get_runtime_file("lua/lualine/themes/auto.lua", false)[1])
+      vim.g.colors_name = colors_name
+      if not ok then error(theme) end
+      return theme
+    end,
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' }
   },

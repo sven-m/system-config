@@ -1,0 +1,67 @@
+diff --git a/autoload/vimwiki/diary.vim b/autoload/vimwiki/diary.vim
+index 16f939b..b6018d2 100644
+--- a/autoload/vimwiki/diary.vim
++++ b/autoload/vimwiki/diary.vim
+@@ -435,14 +435,6 @@ function! vimwiki#diary#generate_diary_section() abort
+           let topcap = captions['top']
+           let link_tpl = vimwiki#vars#get_global('WikiLinkTemplate2')
+ 
+-          if vimwiki#vars#get_wikilocal('syntax') ==# 'markdown'
+-            let link_tpl = vimwiki#vars#get_syntaxlocal('Weblink1Template')
+-
+-            if empty(topcap) " When using markdown syntax, we should ensure we always have a link description.
+-              let topcap = fl
+-            endif
+-          endif
+-
+           if empty(topcap)
+             let top_link_tpl = vimwiki#vars#get_global('WikiLinkTemplate1')
+           else
+diff --git a/autoload/vimwiki/vars.vim b/autoload/vimwiki/vars.vim
+index 0a9b733..4698e85 100644
+--- a/autoload/vimwiki/vars.vim
++++ b/autoload/vimwiki/vars.vim
+@@ -1042,7 +1042,7 @@ function! vimwiki#vars#populate_syntax_vars(syntax) abort
+   let syntax_dic.rxWeblinkMatchDescr = ''
+ 
+   " template for matching all wiki links with a given target file
+-  let syntax_dic.WikiLinkMatchUrlTemplate =
++  let g:vimwiki_WikiLinkMatchUrlTemplate =
+         \ g:vimwiki_global_vars.rx_wikilink_prefix .
+         \ '\zs__LinkUrl__\ze\%(#.*\)\?' .
+         \ g:vimwiki_global_vars.rx_wikilink_suffix .
+@@ -1053,6 +1053,9 @@ function! vimwiki#vars#populate_syntax_vars(syntax) abort
+         \ '.*' .
+         \ g:vimwiki_global_vars.rx_wikilink_suffix
+ 
++  let syntax_dic.WikiLinkMatchUrlTemplate =
++        \ g:vimwiki_WikiLinkMatchUrlTemplate
++
+   " a) match [[URL|DESCRIPTION]]
+   let syntax_dic.rxWikiLink = g:vimwiki_global_vars.rx_wikilink_prefix.
+         \ g:vimwiki_global_vars.rxWikiLinkUrl.'\%('.g:vimwiki_global_vars.rx_wikilink_separator.
+@@ -1263,6 +1266,8 @@ function! s:populate_extra_markdown_vars() abort
+   let mkd_syntax.rxWeblink1Url = valid_chars_url.'\{-}'
+   let mkd_syntax.rxWeblink1Descr = valid_chars.'\{-}'
+   let mkd_syntax.WikiLinkMatchUrlTemplate =
++        \ g:vimwiki_WikiLinkMatchUrlTemplate .
++        \ '\|' .
+         \ mkd_syntax.rx_wikilink_md_prefix .
+         \ '.*' .
+         \ rx_wikilink_md_separator .
+@@ -1339,13 +1344,8 @@ function! s:normalize_syntax_settings(syntax) abort
+   " Link1: used when:
+   "   user press enter on a non-link (normalize_link)
+   "   command generate link form file name (generate_link)
+-  if a:syntax ==# 'markdown'
+-    let syntax_dic.Link1 = syntax_dic.Weblink1Template
+-    let syntax_dic.Link2 = syntax_dic.Weblink1Template
+-  else
+-    let syntax_dic.Link1 = vimwiki#vars#get_global('WikiLinkTemplate1')
+-    let syntax_dic.Link2 = vimwiki#vars#get_global('WikiLinkTemplate2')
+-  endif
++  let syntax_dic.Link1 = vimwiki#vars#get_global('WikiLinkTemplate1')
++  let syntax_dic.Link2 = vimwiki#vars#get_global('WikiLinkTemplate2')
+ endfunction
+ 
+ 

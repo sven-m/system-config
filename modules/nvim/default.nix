@@ -37,13 +37,15 @@ in
       (
         pkgs.vimUtils.buildVimPlugin {
           pname = "vimwiki-wikilinks";
-          version = "v2024.01.24-wikilinks";
+          version = "2024-10-13";
           src = pkgs.fetchFromGitHub {
-            owner = "sven-m";
+            owner = "vimwiki";
             repo = "vimwiki";
-            rev= "602920c7dc66badb58540b91ba0be872bf430375";
-            hash = "sha256-jHR0Q3XLEdn2Og5AzTNXIFEvVpz9SCjUb2ms5V7YjSY=";
+            rev = "72792615e739d0eb54a9c8f7e0a46a6e2407c9e8";
+            hash = "sha256-O85nZUWxIKm0gFILAkWH9WqfVcEbnbxR56grqMmum3A=";
           };
+          # use [[wikilinks]] instead of markdown links, also in markdown syntax
+          patches = [ ./vimwiki-wikilinks.patch ];
         }
       )
     ];

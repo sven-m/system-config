@@ -35,6 +35,11 @@ vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
         return
       end
 
+      -- auto_header modifies freshly followed links; only the first :w is manual
+      if vim.fn.filereadable(vim.api.nvim_buf_get_name(0)) == 0 then
+        return
+      end
+
       vim.cmd("silent! update")
     end, 100)
   end,

@@ -30,19 +30,25 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
 
   boot.initrd = {
     availableKernelModules = [ "r8169" ];
+    systemd.network = {
+      enable = true;
+      networks."10-ether" = {
+        matchConfig.Type = "ether";
+        DHCP = "yes";
+      };
+    };
     network = {
       enable = true;
-      udhcpc.enable = true;
       flushBeforeStage2 = true;
       ssh = {
         enable = true;
         port = 22;
-        authorizedKeys = [ sven-mbp-key ];
+        # Login triggers the LUKS password prompt and continues boot.
+        authorizedKeys = [ ''command="systemctl default" ${sven-mbp-key}'' ];
         hostKeys = [
           "/etc/ssh/ssh_host_ed25519_key"
           "/etc/ssh/ssh_host_rsa_key"
         ];
-        shell = "/bin/cryptsetup-askpass";
       };
     };
   };
@@ -53,7 +59,7 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
 
-  # networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "archibald";
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -78,8 +84,8 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
 
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   services.xrdp.enable = true;
   services.xrdp.defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
@@ -150,6 +156,9 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Pairing for iPhone USB tethering.
+  services.usbmuxd.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

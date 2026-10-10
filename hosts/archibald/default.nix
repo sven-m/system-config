@@ -79,17 +79,37 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   #  useXkbConfig = true; # use xkb.options in tty.
   #};
 
+  services.flatpak.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
 
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
+  #services.displayManager.gdm.wayland = true;
   services.desktopManager.gnome.enable = true;
+
+  programs.xwayland.enable = true;
 
   services.xrdp.enable = true;
   services.xrdp.defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
   services.xrdp.openFirewall = true;
+
+  #services.gnome.gnome-keyring.enable = false;
+
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      ovmf.enable = true; # Optional for UEFI/Windows 11
+    };
+  };
+
+  services.udev = {
+    packages = with pkgs; [ virtio-win ]; # VirtIO drivers for Windows
+  };
 
   # Configure keymap in X11
   #services.xserver.xkb.layout = "us";
@@ -112,7 +132,7 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${username} = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "sudo" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "sudo" "libvirtd" "kvm" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [ ];
     openssh.authorizedKeys.keys = [ sven-mbp-key ];
   };
@@ -131,11 +151,21 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     gnome-remote-desktop
     spotify
     chromium
+    virt-manager
+    spice-gtk
   ];
+
+  security.polkit.enable = true;
 
   environment.shellAliases = {
   };
 
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+  };
+
+  programs._1password-gui.polkitPolicyOwners = [ "${username}" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

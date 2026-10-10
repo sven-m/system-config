@@ -103,7 +103,6 @@ let sven-mbp-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDGub/hqN4ZP0t46b9RjPND
     qemu = {
       package = pkgs.qemu_kvm;
       runAsRoot = true;
-      ovmf.enable = true; # Optional for UEFI/Windows 11
     };
   };
 
